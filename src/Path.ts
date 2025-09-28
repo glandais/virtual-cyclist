@@ -251,6 +251,22 @@ export class Path {
         this.setField(pointIndex, PointField.SPEED, value);
     }
 
+    getSpeedMax(pointIndex: number): number {
+        return this.getField(pointIndex, PointField.SPEED_MAX);
+    }
+
+    setSpeedMax(pointIndex: number, value: number): void {
+        this.setField(pointIndex, PointField.SPEED_MAX, value);
+    }
+
+    getSpeedMaxIncline(pointIndex: number): number {
+        return this.getField(pointIndex, PointField.SPEED_MAX_INCLINE);
+    }
+
+    setSpeedMaxIncline(pointIndex: number, value: number): void {
+        this.setField(pointIndex, PointField.SPEED_MAX_INCLINE, value);
+    }
+
     getGrade(pointIndex: number): number {
         return this.getField(pointIndex, PointField.GRADE);
     }
