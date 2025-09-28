@@ -1,0 +1,10 @@
+node_modules/
+coverage/
+dist/
+build/
+.github/
+*.min.js
+package-lock.json
+CHANGELOG.md
+.claude/
+.serena/
