@@ -1,0 +1,181 @@
+import { Cyclist as ICyclist } from './types';
+import {
+    DEFAULT_CYCLIST_MASS_KG,
+    DEFAULT_CYCLIST_POWER_W,
+    DEFAULT_MAX_BRAKE_G,
+    DEFAULT_DRAG_COEFFICIENT,
+    DEFAULT_FRONTAL_AREA,
+    DEFAULT_MAX_LEAN_ANGLE_DEG,
+    DEFAULT_MAX_SPEED_KMH,
+    G,
+} from './constants';
+
+/**
+ * Cyclist class implementing the Cyclist interface with utility methods.
+ * Represents a cyclist with physical and performance characteristics
+ * for virtual cycling simulations.
+ *
+ * Based on the Java Cyclist class from gpx2web project.
+ */
+export class Cyclist implements ICyclist {
+    readonly mKg: number;
+    readonly power: number;
+    readonly harmonics: boolean;
+    readonly maxBrakeG: number;
+    readonly cd: number;
+    readonly a: number;
+    readonly maxAngleDeg: number;
+    readonly maxSpeedKmH: number;
+
+    /**
+     * Create a new Cyclist instance.
+     *
+     * @param mKg Total mass of cyclist + bike system (kg)
+     * @param power Sustained power output capability (watts)
+     * @param harmonics Whether to use harmonic calculations
+     * @param maxBrakeG Maximum braking deceleration (g-force units)
+     * @param cd Aerodynamic drag coefficient (dimensionless)
+     * @param a Frontal area for aerodynamic calculations (m²)
+     * @param maxAngleDeg Maximum lean angle for cornering (degrees)
+     * @param maxSpeedKmH Maximum speed capability (km/h)
+     */
+    constructor(
+        mKg: number,
+        power: number,
+        harmonics: boolean,
+        maxBrakeG: number,
+        cd: number,
+        a: number,
+        maxAngleDeg: number,
+        maxSpeedKmH: number
+    ) {
+        this.mKg = mKg;
+        this.power = power;
+        this.harmonics = harmonics;
+        this.maxBrakeG = maxBrakeG;
+        this.cd = cd;
+        this.a = a;
+        this.maxAngleDeg = maxAngleDeg;
+        this.maxSpeedKmH = maxSpeedKmH;
+    }
+
+    /**
+     * Create a cyclist with default parameters validated from cycling research.
+     *
+     * Default configuration represents:
+     * - 80kg total system mass (recreational cyclist + road bike)
+     * - 280W sustainable power output (~3.5 W/kg FTP)
+     * - Conservative braking and handling limits for safety
+     * - Typical aerodynamic parameters for recreational cycling position
+     *
+     * @returns Cyclist instance with scientifically validated defaults
+     */
+    static getDefault(): Cyclist {
+        return new Cyclist(
+            DEFAULT_CYCLIST_MASS_KG,
+            DEFAULT_CYCLIST_POWER_W,
+            false, // harmonics - not a physical parameter
+            DEFAULT_MAX_BRAKE_G,
+            DEFAULT_DRAG_COEFFICIENT,
+            DEFAULT_FRONTAL_AREA,
+            DEFAULT_MAX_LEAN_ANGLE_DEG,
+            DEFAULT_MAX_SPEED_KMH
+        );
+    }
+
+    /**
+     * Get the tangent of the maximum lean angle.
+     * Used in cornering physics calculations for determining maximum
+     * lateral acceleration without losing traction.
+     *
+     * Formula: tan(θ) where θ is the maximum lean angle
+     *
+     * @returns Tangent of maximum lean angle (dimensionless)
+     */
+    getTanMaxAngle(): number {
+        return Math.tan((this.maxAngleDeg * Math.PI) / 180.0);
+    }
+
+    /**
+     * Get maximum braking deceleration in SI units.
+     * Converts from g-force units to meters per second squared
+     * for use in physics calculations.
+     *
+     * Formula: a_max = maxBrakeG × g
+     * Where g = 9.8 m/s² (standard gravitational acceleration)
+     *
+     * @returns Maximum braking deceleration (m/s²)
+     */
+    getMaxBrakeMS2(): number {
+        return this.maxBrakeG * G;
+    }
+
+    /**
+     * Get maximum speed in SI units.
+     * Converts from km/h to meters per second for physics calculations.
+     *
+     * Formula: v_ms = v_kmh / 3.6
+     *
+     * @returns Maximum speed (m/s)
+     */
+    getMaxSpeedMs(): number {
+        return this.maxSpeedKmH / 3.6;
+    }
+
+    /**
+     * Calculate power-to-weight ratio.
+     * Important metric for cycling performance, especially on climbs.
+     *
+     * @returns Power-to-weight ratio (W/kg)
+     */
+    getPowerToWeightRatio(): number {
+        return this.power / this.mKg;
+    }
+
+    /**
+     * Calculate aerodynamic drag area (CdA).
+     * Combined aerodynamic parameter used in drag force calculations.
+     *
+     * Formula: CdA = cd × a
+     *
+     * @returns Aerodynamic drag area (m²)
+     */
+    getAerodynamicDragArea(): number {
+        return this.cd * this.a;
+    }
+
+    /**
+     * Create a copy of this cyclist with modified parameters.
+     *
+     * @param modifications Partial cyclist parameters to override
+     * @returns New cyclist instance with applied modifications
+     */
+    withModifications(modifications: Partial<ICyclist>): Cyclist {
+        return new Cyclist(
+            modifications.mKg ?? this.mKg,
+            modifications.power ?? this.power,
+            modifications.harmonics ?? this.harmonics,
+            modifications.maxBrakeG ?? this.maxBrakeG,
+            modifications.cd ?? this.cd,
+            modifications.a ?? this.a,
+            modifications.maxAngleDeg ?? this.maxAngleDeg,
+            modifications.maxSpeedKmH ?? this.maxSpeedKmH
+        );
+    }
+
+    /**
+     * Get a string representation of the cyclist configuration.
+     *
+     * @returns Human-readable string describing the cyclist
+     */
+    toString(): string {
+        return `Cyclist {
+            mass: ${this.mKg}kg,
+            power: ${this.power}W (${this.getPowerToWeightRatio().toFixed(1)} W/kg),
+            CdA: ${this.getAerodynamicDragArea().toFixed(3)}m²,
+            maxBrake: ${this.maxBrakeG}g (${this.getMaxBrakeMS2().toFixed(1)} m/s²),
+            maxLean: ${this.maxAngleDeg}°,
+            maxSpeed: ${this.maxSpeedKmH}km/h (${this.getMaxSpeedMs().toFixed(1)} m/s)
+        }`;
+    }
+}
