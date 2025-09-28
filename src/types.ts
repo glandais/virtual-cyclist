@@ -1,3 +1,5 @@
+import { Path } from './Path';
+
 /**
  * Enum defining the index of each field in the chunked array storage.
  * Based on PropertyKeys.java from gpx2web project.
@@ -202,4 +204,10 @@ export interface Bike {
 
     /** Drivetrain efficiency (0-1, dimensionless) */
     readonly efficiency: number;
+}
+
+export interface Course {
+    readonly path: Path;
+    readonly bike: Bike;
+    readonly cyclist: Cyclist;
 }

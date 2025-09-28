@@ -112,6 +112,30 @@ async function loadGPXDemo() {
         });
         console.log('Custom bike efficiency:', (customBike.efficiency * 100).toFixed(1), '%');
 
+        // Test MaxSpeedComputer functionality
+        console.log('\nTesting MaxSpeedComputer...');
+        const { MaxSpeedComputer } = window.VirtualCyclist;
+
+        const maxSpeedComputer = new MaxSpeedComputer();
+        const course = {
+            path: correctedPath,
+            cyclist: defaultCyclist,
+            bike: defaultBike,
+        };
+
+        console.log('Computing maximum speeds...');
+        maxSpeedComputer.computeMaxSpeeds(course);
+        console.log('Max speeds computed successfully!');
+
+        // Show sample speed calculations for first few points
+        console.log('Sample max speeds for first 5 points:');
+        for (let i = 0; i < Math.min(5, correctedPath.getPointCount()); i++) {
+            const point = correctedPath.getPointData(i);
+            console.log(
+                `Point ${i}: max speed = ${correctedPath.getSpeedMax(i).toFixed(2)} m/s (${(correctedPath.getSpeedMax(i) * 3.6).toFixed(1)} km/h), radius = ${point.radius.toFixed(1)}m`
+            );
+        }
+
         // console.log(correctedPath.toGPX());
     } catch (error) {
         console.error('Demo failed:', error);
