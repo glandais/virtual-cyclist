@@ -105,3 +105,50 @@ export interface Point {
     readonly heartRate: number; // Heart rate (bpm)
     readonly cadence: number; // Pedaling cadence (rpm)
 }
+
+export const EMPTY_POINT: Point = {
+    // Spatial & Navigation
+    lat: 0,
+    lon: 0,
+    ele: 0,
+    bearing: 0,
+    dist: 0,
+    radius: 0,
+
+    // Temporal
+    time: 0,
+    elapsed: 0,
+
+    // Physics & Power
+    power: 0,
+    pCyclistRaw: 0,
+    pCyclistWheel: 0,
+    pCyclistOptimalPower: 0,
+    pCyclistCurrentSpeed: 0,
+    pCyclistOptimalSpeed: 0,
+    pAero: 0,
+    pGravity: 0,
+    pRollingResistance: 0,
+    pWheelBearings: 0,
+    pPowerFromAcc: 0,
+    pPowerWheelFromAcc: 0,
+    aeroCoef: 0,
+    grade: 0,
+
+    // Speed & Motion
+    speed: 0,
+    speedMax: 0,
+    speedMaxIncline: 0,
+    virtSpeedCurrent: 0,
+
+    // Environmental
+    temperature: 0,
+    windSpeed: 0,
+    windDirection: 0,
+    windBearing: 0,
+    windAlpha: 0,
+
+    // Physiological
+    heartRate: 0,
+    cadence: 0,
+};

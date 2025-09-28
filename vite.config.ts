@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => {
             emptyOutDir: true,
             lib: {
                 entry: resolve(__dirname, 'src/index.ts'),
-                name: 'virtualcyclist',
+                name: 'VirtualCyclist',
                 formats: ['es', 'umd', 'iife'],
                 fileName: format => {
                     switch (format) {
