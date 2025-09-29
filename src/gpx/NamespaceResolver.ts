@@ -201,21 +201,4 @@ export class NamespaceResolver {
 
         return prefix ? `${prefix}:${localName}` : localName;
     }
-
-    /**
-     * Get all registered namespaces as a Map
-     */
-    getAllNamespaces(): Map<string, string> {
-        return new Map(this.namespaceToPrefix);
-    }
-
-    /**
-     * Debug method to log all discovered namespaces
-     */
-    logNamespaces(): void {
-        console.log('Discovered namespaces:');
-        for (const [uri, prefix] of this.namespaceToPrefix) {
-            console.log(`  ${prefix || '(default)'}: ${uri}`);
-        }
-    }
 }

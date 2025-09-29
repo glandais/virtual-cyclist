@@ -252,8 +252,8 @@ class GPXDemoApp {
         this.setProcessing(true, 'Parsing GPX data...');
 
         try {
-            // Parse GPX using VirtualCyclist library
-            this.currentPath = window.VirtualCyclist.Path.fromGPX(gpxContent);
+            // Parse GPX using VirtualCyclist PathConverter
+            this.currentPath = window.VirtualCyclist.PathConverter.fromGPX(gpxContent);
 
             // Compute basic arrays (distances, bearings, etc.)
             this.currentPath.computeArrays();

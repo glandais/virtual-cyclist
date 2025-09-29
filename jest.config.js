@@ -9,7 +9,9 @@ module.exports = {
     setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
     moduleNameMapper: {
         '\\.(css|less|scss|sass)$': '<rootDir>/test/__mocks__/styleMock.js',
+        '@glandais/elevation': '<rootDir>/test/__mocks__/@glandais/elevation.ts',
     },
+    transformIgnorePatterns: ['node_modules/(?!(@glandais/elevation)/)'],
     coverageThreshold: {
         global: {
             branches: 50,
