@@ -12,19 +12,7 @@ interface TestCourse {
     bike: Bike;
 }
 
-// Extended class to test protected methods
-class MaxSpeedComputerExtended extends MaxSpeedComputer {
-    public firstPass(course: TestCourse): void {
-        return super.firstPass(course);
-    }
-
-    public secondPass(course: TestCourse): void {
-        return super.secondPass(course);
-    }
-}
-
 describe('MaxSpeedComputer', () => {
-    let maxSpeedComputer: MaxSpeedComputerExtended;
     let path: Path;
     let cyclist: Cyclist;
     let bike: Bike;
@@ -40,7 +28,6 @@ describe('MaxSpeedComputer', () => {
             throw error;
         }
 
-        maxSpeedComputer = new MaxSpeedComputerExtended();
         path = GPXParser.parse(gpx).tracks[0];
         path.computeArrays();
         cyclist = Cyclist.getDefault();
@@ -50,7 +37,7 @@ describe('MaxSpeedComputer', () => {
 
     test('should compute max speeds without errors', () => {
         expect(() => {
-            maxSpeedComputer.computeMaxSpeeds(course);
+            MaxSpeedComputer.computeMaxSpeeds(course);
         }).not.toThrow();
     });
 });

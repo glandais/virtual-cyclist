@@ -1,3 +1,5 @@
+import { Bike } from './Bike';
+import { Cyclist } from './Cyclist';
 import { Path } from './Path';
 import { AeroProvider } from './physics/power/aero/aero/AeroProvider';
 import { WindProvider } from './physics/power/aero/wind/WindProvider';
@@ -166,57 +168,6 @@ export const EMPTY_POINT: Point = {
     heartRate: NaN,
     cadence: NaN,
 };
-
-/**
- * Cyclist configuration interface for virtual cycling simulations.
- * Contains physical and performance parameters for cyclist modeling.
- */
-export interface Cyclist {
-    /** Total mass of cyclist + bike system (kg) */
-    readonly mKg: number;
-
-    /** Sustained power output capability (watts) */
-    readonly power: number;
-
-    /** Whether to use harmonic calculations (advanced physics option) */
-    readonly harmonics: boolean;
-
-    /** Maximum braking deceleration (g-force units) */
-    readonly maxBrakeG: number;
-
-    /** Aerodynamic drag coefficient (dimensionless) */
-    readonly cd: number;
-
-    /** Frontal area for aerodynamic calculations (m²) */
-    readonly a: number;
-
-    /** Maximum lean angle for cornering (degrees) */
-    readonly maxAngleDeg: number;
-
-    /** Maximum speed capability (km/h) */
-    readonly maxSpeedKmH: number;
-}
-
-/**
- * Bicycle configuration interface for virtual cycling simulations.
- * Contains mechanical and physical parameters for bicycle modeling.
- */
-export interface Bike {
-    /** Rolling resistance coefficient (dimensionless) */
-    readonly crr: number;
-
-    /** Front wheel rotational inertia (kg⋅m²) */
-    readonly inertiaFront: number;
-
-    /** Rear wheel rotational inertia (kg⋅m²) */
-    readonly inertiaRear: number;
-
-    /** Wheel radius (meters) */
-    readonly wheelRadius: number;
-
-    /** Drivetrain efficiency (0-1, dimensionless) */
-    readonly efficiency: number;
-}
 
 export interface Course {
     readonly path: Path;

@@ -1,4 +1,3 @@
-import { Cyclist as ICyclist } from './types';
 import {
     DEFAULT_CYCLIST_MASS_KG,
     DEFAULT_CYCLIST_POWER_W,
@@ -17,7 +16,7 @@ import {
  *
  * Based on the Java Cyclist class from gpx2web project.
  */
-export class Cyclist implements ICyclist {
+export class Cyclist {
     readonly mKg: number;
     readonly power: number;
     readonly harmonics: boolean;
@@ -152,25 +151,6 @@ export class Cyclist implements ICyclist {
      */
     getAerodynamicDragArea(): number {
         return this.cd * this.a;
-    }
-
-    /**
-     * Create a copy of this cyclist with modified parameters.
-     *
-     * @param modifications Partial cyclist parameters to override
-     * @returns New cyclist instance with applied modifications
-     */
-    withModifications(modifications: Partial<ICyclist>): Cyclist {
-        return new Cyclist(
-            modifications.mKg ?? this.mKg,
-            modifications.power ?? this.power,
-            modifications.harmonics ?? this.harmonics,
-            modifications.maxBrakeG ?? this.maxBrakeG,
-            modifications.cd ?? this.cd,
-            modifications.a ?? this.a,
-            modifications.maxAngleDeg ?? this.maxAngleDeg,
-            modifications.maxSpeedKmH ?? this.maxSpeedKmH
-        );
     }
 
     /**

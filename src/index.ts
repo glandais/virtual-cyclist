@@ -1,5 +1,5 @@
 // Type exports
-export type { Point, Cyclist as ICyclist, Bike as IBike, Course } from './types';
+export type { Point, Course } from './types';
 export { PointField, FIELDS_PER_POINT } from './types';
 
 // Class exports
@@ -21,3 +21,5 @@ export * from './constants';
 
 // GPX exports
 export { GPXParser, GPXWriter } from './gpx';
+
+export { Enhancer } from './Enhancer';

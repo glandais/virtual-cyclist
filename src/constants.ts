@@ -39,6 +39,9 @@ export const DT = 1.0;
  */
 export const SEMI_MAJOR_AXIS = 6378137.0;
 
+/** Mean radius in meters (used for distance calculations) */
+export const MEAN_RADIUS = 6371000;
+
 /**
  * WGS-84 first eccentricity squared (dimensionless)
  * Source: World Geodetic System 1984 specification

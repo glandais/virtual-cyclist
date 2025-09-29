@@ -3,5 +3,10 @@ export { PowerComputer } from './PowerComputer';
 export { aeroPowerProvider } from './aero';
 export { rollingResistancePowerProvider, wheelBearingsPowerProvider } from './rolling';
 export { gravPowerProvider } from './grav';
-export { muscularPowerProvider, OptimalSpeedService, OptimalSpeeds } from './cyclist';
+export {
+    muscularPowerProvider,
+    OptimalSpeedService,
+    OptimalSpeeds,
+    powerProviderConstant,
+} from './cyclist';
 export type { CyclistPowerProvider } from './cyclist';
