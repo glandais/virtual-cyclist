@@ -48,7 +48,7 @@ export class Elevation {
                     windowSize: 150,
                 },
             });
-        const result = new Path();
+        const result = new Path('fake');
 
         // Add all corrected coordinates to the result path
         for (let i = 0; i < resultCoordinates.length; i++) {

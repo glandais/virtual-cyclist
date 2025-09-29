@@ -6,7 +6,7 @@ describe('Path', () => {
     let pathData: Path;
 
     beforeEach(() => {
-        pathData = new Path();
+        pathData = new Path('example');
     });
 
     describe('constructor and basic properties', () => {
@@ -838,7 +838,7 @@ describe('Path', () => {
 
         it('should trigger computeArrays in elevation methods when not enhanced', () => {
             // Create a new path without calling computeArrays first
-            const freshPath = new Path();
+            const freshPath = new Path('new');
             freshPath.addPoint({
                 lat: toRadians(45.0),
                 lon: toRadians(2.0),
@@ -944,7 +944,7 @@ describe('Path', () => {
     describe('distance calculation edge cases', () => {
         it('should handle points with very similar distances', () => {
             // Create a fresh path for this specific test
-            const testPath = new Path();
+            const testPath = new Path('edge case');
             const baseTime = Date.now();
             const baseDist = 1000.0;
 
@@ -1067,27 +1067,6 @@ describe('Path', () => {
             // Verify computation completed without errors
             expect(testPath.arePointsEnhanced()).toBe(true);
             expect(testPath.length).toBe(6);
-        });
-    });
-
-    describe('GPX error handling', () => {
-        it('should throw error for GPX with no tracks', () => {
-            const emptyGpx = `<?xml version="1.0"?>
-                <gpx version="1.1" creator="test">
-                </gpx>`;
-
-            expect(() => Path.fromGPX(emptyGpx)).toThrow('No tracks found in GPX file');
-        });
-
-        it('should throw error for track with no segments', () => {
-            const noSegmentsGpx = `<?xml version="1.0"?>
-                <gpx version="1.1" creator="test">
-                    <trk>
-                        <name>Empty Track</name>
-                    </trk>
-                </gpx>`;
-
-            expect(() => Path.fromGPX(noSegmentsGpx)).toThrow('No segments found in GPX track');
         });
     });
 

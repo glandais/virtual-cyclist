@@ -14,10 +14,10 @@ module.exports = {
     transformIgnorePatterns: ['node_modules/(?!(@glandais/elevation)/)'],
     coverageThreshold: {
         global: {
-            branches: 50,
-            functions: 50,
-            lines: 50,
-            statements: 50,
+            branches: 80,
+            functions: 80,
+            lines: 80,
+            statements: 80,
         },
     },
     collectCoverageFrom: ['src/**/*.ts', '!src/**/*.test.ts', '!src/**/*.d.ts'],
