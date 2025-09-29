@@ -5,7 +5,7 @@ import { toRadians } from '../../src/constants';
 describe('Elevation', () => {
     describe('fixElevation', () => {
         test('should process path with single point', async () => {
-            const inputPath = new Path();
+            const inputPath = new Path('test');
             inputPath.addPoint({
                 lat: toRadians(46.5197),
                 lon: toRadians(6.6323),
@@ -53,7 +53,7 @@ describe('Elevation', () => {
         });
 
         test('should process path with multiple points', async () => {
-            const inputPath = new Path();
+            const inputPath = new Path('test');
 
             // Add multiple points along a route
             const points = [
@@ -112,7 +112,7 @@ describe('Elevation', () => {
         });
 
         test('should process empty path', async () => {
-            const inputPath = new Path();
+            const inputPath = new Path('test');
 
             const result = await Elevation.fixElevation(inputPath);
 
@@ -120,7 +120,7 @@ describe('Elevation', () => {
         });
 
         test('should preserve coordinates while updating elevation', async () => {
-            const inputPath = new Path();
+            const inputPath = new Path('test');
             const originalLat = toRadians(47.3769);
             const originalLon = toRadians(8.5417);
 
@@ -169,7 +169,7 @@ describe('Elevation', () => {
         });
 
         test('should handle path with varying coordinates', async () => {
-            const inputPath = new Path();
+            const inputPath = new Path('test');
 
             // Add points with different coordinates and elevations
             const testPoints = [
@@ -234,7 +234,7 @@ describe('Elevation', () => {
         });
 
         test('should create new path instance', async () => {
-            const inputPath = new Path();
+            const inputPath = new Path('test');
             inputPath.addPoint({
                 lat: toRadians(46.5197),
                 lon: toRadians(6.6323),
@@ -287,7 +287,7 @@ describe('Elevation', () => {
         });
 
         test('should handle large path with many points', async () => {
-            const inputPath = new Path();
+            const inputPath = new Path('test');
 
             // Create a path with 100 points
             for (let i = 0; i < 100; i++) {
@@ -340,7 +340,7 @@ describe('Elevation', () => {
         });
 
         test('should handle extreme coordinate values', async () => {
-            const inputPath = new Path();
+            const inputPath = new Path('test');
 
             // Add points with extreme but valid coordinate values
             const extremePoints = [

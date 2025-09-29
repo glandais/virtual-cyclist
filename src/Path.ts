@@ -1,6 +1,4 @@
 import { PointField, Point, FIELDS_PER_POINT } from './types';
-import { PathConverter } from './gpx/PathConverter';
-import { GPXData, GPXWriteOptions } from './gpx/types';
 import { toDegrees } from './constants';
 
 /**
@@ -32,7 +30,7 @@ export class Path {
     private maxLon = -Number.MAX_VALUE;
     private pointsEnhanced = false;
 
-    constructor() {
+    constructor(public name: string) {
         // Pre-allocate initial chunks for better performance
         this.ensureCapacity(this.INITIAL_CHUNKS * this.CHUNK_SIZE);
     }
@@ -166,12 +164,20 @@ export class Path {
         return this.getField(pointIndex, PointField.LAT);
     }
 
+    getLatitudeDeg(pointIndex: number): number {
+        return toDegrees(this.getField(pointIndex, PointField.LAT));
+    }
+
     setLatitude(pointIndex: number, value: number): void {
         this.setField(pointIndex, PointField.LAT, value);
     }
 
     getLongitude(pointIndex: number): number {
         return this.getField(pointIndex, PointField.LON);
+    }
+
+    getLongitudeDeg(pointIndex: number): number {
+        return toDegrees(this.getField(pointIndex, PointField.LON));
     }
 
     setLongitude(pointIndex: number, value: number): void {
@@ -686,45 +692,5 @@ export class Path {
      */
     public arePointsEnhanced(): boolean {
         return this.pointsEnhanced;
-    }
-
-    // === GPX Import/Export Methods (Compatibility Layer) ===
-
-    /**
-     * Create a Path from GPX file content.
-     * @param gpxContent GPX XML content as string
-     * @returns New Path instance with data from the first track
-     * @deprecated Use PathConverter.fromGPX() instead
-     */
-    static fromGPX(gpxContent: string): Path {
-        return PathConverter.fromGPX(gpxContent);
-    }
-
-    /**
-     * Export this Path to GPX XML format.
-     * @param options GPX write options
-     * @returns GPX XML string
-     * @deprecated Use PathConverter.toGPX() instead
-     */
-    toGPX(options?: GPXWriteOptions): string {
-        return PathConverter.toGPX(this, options);
-    }
-
-    /**
-     * Load GPX content into this existing Path instance (clears existing data).
-     * @param gpxContent GPX XML content as string
-     * @deprecated Use PathConverter.loadIntoPath() instead
-     */
-    loadFromGPX(gpxContent: string): void {
-        PathConverter.loadIntoPath(this, gpxContent);
-    }
-
-    /**
-     * Export to GPXData structure for advanced customization.
-     * @returns GPXData object
-     * @deprecated Use PathConverter.toGPXData() instead
-     */
-    toGPXData(): GPXData {
-        return PathConverter.toGPXData(this);
     }
 }

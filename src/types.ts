@@ -110,51 +110,57 @@ export interface Point {
     readonly cadence: number; // Pedaling cadence (rpm)
 }
 
+type Writable<T> = {
+    -readonly [K in keyof T]: T[K];
+};
+
+export type PointWritable = Writable<Point>;
+
 export const EMPTY_POINT: Point = {
     // Spatial & Navigation
-    lat: 0,
-    lon: 0,
-    ele: 0,
-    bearing: 0,
-    dist: 0,
-    radius: 0,
+    lat: NaN,
+    lon: NaN,
+    ele: NaN,
+    bearing: NaN,
+    dist: NaN,
+    radius: NaN,
 
     // Temporal
-    time: 0,
-    elapsed: 0,
+    time: NaN,
+    elapsed: NaN,
 
     // Physics & Power
-    power: 0,
-    pCyclistRaw: 0,
-    pCyclistWheel: 0,
-    pCyclistOptimalPower: 0,
-    pCyclistCurrentSpeed: 0,
-    pCyclistOptimalSpeed: 0,
-    pAero: 0,
-    pGravity: 0,
-    pRollingResistance: 0,
-    pWheelBearings: 0,
-    pPowerFromAcc: 0,
-    pPowerWheelFromAcc: 0,
-    aeroCoef: 0,
-    grade: 0,
+    power: NaN,
+    pCyclistRaw: NaN,
+    pCyclistWheel: NaN,
+    pCyclistOptimalPower: NaN,
+    pCyclistCurrentSpeed: NaN,
+    pCyclistOptimalSpeed: NaN,
+    pAero: NaN,
+    pGravity: NaN,
+    pRollingResistance: NaN,
+    pWheelBearings: NaN,
+    pPowerFromAcc: NaN,
+    pPowerWheelFromAcc: NaN,
+    aeroCoef: NaN,
+    grade: NaN,
 
     // Speed & Motion
-    speed: 0,
-    speedMax: 0,
-    speedMaxIncline: 0,
-    virtSpeedCurrent: 0,
+    speed: NaN,
+    speedMax: NaN,
+    speedMaxIncline: NaN,
+    virtSpeedCurrent: NaN,
 
     // Environmental
-    temperature: 0,
-    windSpeed: 0,
-    windDirection: 0,
-    windBearing: 0,
-    windAlpha: 0,
+    temperature: NaN,
+    windSpeed: NaN,
+    windDirection: NaN,
+    windBearing: NaN,
+    windAlpha: NaN,
 
     // Physiological
-    heartRate: 0,
-    cadence: 0,
+    heartRate: NaN,
+    cadence: NaN,
 };
 
 /**
@@ -212,4 +218,12 @@ export interface Course {
     readonly path: Path;
     readonly bike: Bike;
     readonly cyclist: Cyclist;
+}
+
+/**
+ * Complete GPX document structure
+ */
+export interface Paths {
+    name?: string;
+    tracks: Path[];
 }

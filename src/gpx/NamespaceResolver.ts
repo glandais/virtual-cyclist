@@ -35,12 +35,6 @@ export class NamespaceResolver {
                 this.registerNamespace(prefix, attr.value);
             }
         }
-
-        // Also check parent elements for namespace declarations
-        // (though typically they're all declared on the root element)
-        if (element.parentElement) {
-            this.extractNamespaces(element.parentElement);
-        }
     }
 
     /**
@@ -63,13 +57,6 @@ export class NamespaceResolver {
      */
     getNamespaceUri(prefix: string): string | null {
         return this.prefixToNamespace.get(prefix) || null;
-    }
-
-    /**
-     * Get preferred prefix for a given namespace URI
-     */
-    getPrefix(namespaceUri: string): string | null {
-        return this.namespaceToPrefix.get(namespaceUri) || null;
     }
 
     /**
@@ -108,32 +95,6 @@ export class NamespaceResolver {
         }
 
         return null;
-    }
-
-    /**
-     * Find all elements with a specific local name in a specific namespace.
-     *
-     * @param parent Parent element to search within
-     * @param localName Local name of the element (without prefix)
-     * @param namespaceUri Target namespace URI
-     * @returns Array of matching elements
-     */
-    findElementsByNamespace(parent: Element, localName: string, namespaceUri: string): Element[] {
-        // If namespace is not registered, return empty array
-        if (!this.hasNamespace(namespaceUri)) {
-            return [];
-        }
-
-        const matches: Element[] = [];
-        const children = parent.children;
-        for (let i = 0; i < children.length; i++) {
-            const child = children[i];
-            if (this.elementMatches(child, localName, namespaceUri)) {
-                matches.push(child);
-            }
-        }
-
-        return matches;
     }
 
     /**
@@ -176,29 +137,5 @@ export class NamespaceResolver {
             const prefix = tagName.substring(0, colonIndex);
             return this.getNamespaceUri(prefix);
         }
-    }
-
-    /**
-     * Check if an element belongs to a specific namespace
-     */
-    isElementInNamespace(element: Element, namespaceUri: string): boolean {
-        return this.getElementNamespace(element) === namespaceUri;
-    }
-
-    /**
-     * Create a qualified element name for a given namespace and local name.
-     * Uses the prefix discovered in this document.
-     */
-    createQualifiedName(localName: string, namespaceUri: string): string | null {
-        if (!this.hasNamespace(namespaceUri)) {
-            return null;
-        }
-
-        const prefix = this.getPrefix(namespaceUri);
-        if (prefix === null) {
-            return null;
-        }
-
-        return prefix ? `${prefix}:${localName}` : localName;
     }
 }

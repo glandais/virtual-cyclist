@@ -31,7 +31,7 @@ describe('MaxSpeedComputer', () => {
 
     beforeEach(() => {
         maxSpeedComputer = new MaxSpeedComputerExtended();
-        path = new Path();
+        path = new Path('test');
         cyclist = Cyclist.getDefault();
         bike = Bike.getDefault();
         course = { path, cyclist, bike };
@@ -115,7 +115,7 @@ describe('MaxSpeedComputer', () => {
 
     test('should handle straight path segments', () => {
         // Create a straight path
-        const straightPath = new Path();
+        const straightPath = new Path('test');
         for (let i = 0; i < 5; i++) {
             straightPath.addPoint({
                 ...EMPTY_POINT,
@@ -222,7 +222,7 @@ describe('MaxSpeedComputer', () => {
 
     test('second pass should handle sufficient braking distance scenario', () => {
         // Create a custom path with longer distances to ensure sufficient braking distance
-        const testPath = new Path();
+        const testPath = new Path('test');
         const testCyclist = Cyclist.getDefault();
         const testBike = Bike.getDefault();
         const testCourse = { path: testPath, cyclist: testCyclist, bike: testBike };

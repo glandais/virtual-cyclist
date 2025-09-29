@@ -1,8 +1,7 @@
-import { GPXData, GPXWriteOptions, KNOWN_NAMESPACES, NAMESPACE_PREFIXES } from './types';
+import { KNOWN_NAMESPACES, NAMESPACE_PREFIXES } from './types';
 import { Path } from '../Path';
+import { Paths, Point } from '../types';
 import { toDegrees } from '../constants';
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 /**
  * Writer for GPX files with namespace-aware extension generation.
@@ -11,45 +10,22 @@ import { toDegrees } from '../constants';
  * for various extension formats and namespace declarations.
  */
 export class GPXWriter {
-    private options: Required<GPXWriteOptions>;
-
-    constructor(options: GPXWriteOptions = {}) {
-        this.options = {
-            trackName: options.trackName || 'Virtual Cyclist Track',
-            trackType: options.trackType || 'cycling',
-            creator: options.creator || '@glandais/virtual-cyclist',
-            includeExtensions: options.includeExtensions ?? true,
-            includeHeartRate: options.includeHeartRate ?? true,
-            includeCadence: options.includeCadence ?? true,
-            includePower: options.includePower ?? true,
-            includeTemperature: options.includeTemperature ?? true,
-            prettyPrint: options.prettyPrint ?? false,
-            useGarminExtensions: options.useGarminExtensions ?? true,
-            usePowerExtensions: options.usePowerExtensions ?? true,
-        };
-    }
-
     /**
      * Convert Path object to GPX XML string
      */
     writeFromPath(path: Path): string {
-        // Convert Path to GPXData
-        const gpxData = this.pathToGPXData(path);
-        return this.write(gpxData);
+        return this.write({ name: path.name, tracks: [path] });
     }
 
     /**
      * Convert GPXData to GPX XML string
      */
-    write(gpxData: GPXData): string {
+    write(gpxData: Paths): string {
         const doc = this.createDocument();
-        const gpxElement = this.createGPXElement(doc, gpxData);
+        const gpxElement = this.createGPXElement(doc);
 
-        // Add metadata if present
-        if (gpxData.metadata) {
-            const metadataElement = this.createMetadataElement(doc, gpxData.metadata);
-            gpxElement.appendChild(metadataElement);
-        }
+        const metadataElement = this.createMetadataElement(doc, gpxData);
+        gpxElement.appendChild(metadataElement);
 
         // Add tracks
         for (const track of gpxData.tracks) {
@@ -69,93 +45,9 @@ export class GPXWriter {
         }
 
         // Pretty print if requested
-        if (this.options.prettyPrint) {
-            xmlString = this.formatXML(xmlString);
-        }
+        xmlString = this.formatXML(xmlString);
 
         return xmlString;
-    }
-
-    /**
-     * Convert Path object to GPXData structure
-     */
-    private pathToGPXData(path: Path): GPXData {
-        const gpxData: GPXData = {
-            version: '1.1',
-            creator: this.options.creator,
-            tracks: [
-                {
-                    name: this.options.trackName,
-                    type: this.options.trackType,
-                    segments: [
-                        {
-                            trackPoints: [],
-                        },
-                    ],
-                },
-            ],
-        };
-
-        const segment = gpxData.tracks[0].segments[0];
-        const pointCount = path.getPointCount();
-
-        for (let i = 0; i < pointCount; i++) {
-            const point = path.getPointData(i);
-
-            const trackPoint: any = {
-                lat: toDegrees(point.lat),
-                lon: toDegrees(point.lon),
-            };
-
-            // Add elevation if available
-            if (point.ele !== undefined) {
-                trackPoint.ele = point.ele;
-            }
-
-            // Add time if available
-            if (point.time !== undefined) {
-                trackPoint.time = new Date(point.time);
-            }
-
-            // Add extensions if enabled and data is available
-            if (this.options.includeExtensions) {
-                const extensions: any = {};
-                let hasExtensions = false;
-
-                if (this.options.includeHeartRate && point.heartRate !== undefined) {
-                    extensions.heartRate = point.heartRate;
-                    hasExtensions = true;
-                }
-
-                if (this.options.includeCadence && point.cadence !== undefined) {
-                    extensions.cadence = point.cadence;
-                    hasExtensions = true;
-                }
-
-                if (this.options.includeTemperature && point.temperature !== undefined) {
-                    extensions.temperature = point.temperature;
-                    hasExtensions = true;
-                }
-
-                if (this.options.includePower && point.power !== undefined) {
-                    extensions.power = point.power;
-                    hasExtensions = true;
-                }
-
-                if (point.speed !== undefined) {
-                    extensions.speed = point.speed;
-                    hasExtensions = true;
-                }
-
-                if (hasExtensions) {
-                    trackPoint.extensions = extensions;
-                }
-            }
-
-            segment.trackPoints.push(trackPoint);
-        }
-
-        return gpxData;
     }
 
     /**
@@ -169,36 +61,28 @@ export class GPXWriter {
     /**
      * Create GPX root element with proper namespaces
      */
-    private createGPXElement(doc: Document, gpxData: GPXData): Element {
+    private createGPXElement(doc: Document): Element {
         const gpxElement = doc.createElement('gpx');
 
         // Set GPX attributes
-        gpxElement.setAttribute('version', gpxData.version || '1.1');
-        gpxElement.setAttribute('creator', gpxData.creator || this.options.creator);
+        gpxElement.setAttribute('version', '1.1');
+        gpxElement.setAttribute('creator', '@glandais/virtual-cyclist');
 
         // Add namespace declarations
         gpxElement.setAttribute('xmlns', KNOWN_NAMESPACES.GPX);
         gpxElement.setAttribute('xmlns:xsi', KNOWN_NAMESPACES.W3C_XSI);
 
         // Add extension namespaces if needed
-        if (this.options.includeExtensions) {
-            if (this.options.useGarminExtensions) {
-                gpxElement.setAttribute(
-                    `xmlns:${NAMESPACE_PREFIXES[KNOWN_NAMESPACES.GARMIN_TPX]}`,
-                    KNOWN_NAMESPACES.GARMIN_TPX
-                );
-            }
+        gpxElement.setAttribute(
+            `xmlns:${NAMESPACE_PREFIXES[KNOWN_NAMESPACES.GARMIN_TPX]}`,
+            KNOWN_NAMESPACES.GARMIN_TPX
+        );
 
-            if (this.options.usePowerExtensions) {
-                // Power extensions use non-namespaced elements
-            }
-
-            // Add schema location
-            gpxElement.setAttribute(
-                'xsi:schemaLocation',
-                `${KNOWN_NAMESPACES.GPX} http://www.topografix.com/GPX/1/1/gpx.xsd`
-            );
-        }
+        // Add schema location
+        gpxElement.setAttribute(
+            'xsi:schemaLocation',
+            `${KNOWN_NAMESPACES.GPX} http://www.topografix.com/GPX/1/1/gpx.xsd`
+        );
 
         return gpxElement;
     }
@@ -206,64 +90,13 @@ export class GPXWriter {
     /**
      * Create metadata element
      */
-    private createMetadataElement(doc: Document, metadata: any): Element {
+    private createMetadataElement(doc: Document, gpxData: Paths): Element {
         const metadataElement = doc.createElement('metadata');
 
-        if (metadata.name) {
+        if (gpxData.name) {
             const nameElement = doc.createElement('name');
-            nameElement.textContent = metadata.name;
+            nameElement.textContent = gpxData.name;
             metadataElement.appendChild(nameElement);
-        }
-
-        if (metadata.desc) {
-            const descElement = doc.createElement('desc');
-            descElement.textContent = metadata.desc;
-            metadataElement.appendChild(descElement);
-        }
-
-        if (metadata.time) {
-            const timeElement = doc.createElement('time');
-            timeElement.textContent = metadata.time.toISOString();
-            metadataElement.appendChild(timeElement);
-        }
-
-        if (metadata.author) {
-            const authorElement = doc.createElement('author');
-
-            if (metadata.author.name) {
-                const nameElement = doc.createElement('name');
-                nameElement.textContent = metadata.author.name;
-                authorElement.appendChild(nameElement);
-            }
-
-            if (metadata.author.email) {
-                const emailElement = doc.createElement('email');
-                const [id, domain] = metadata.author.email.split('@');
-                emailElement.setAttribute('id', id);
-                emailElement.setAttribute('domain', domain);
-                authorElement.appendChild(emailElement);
-            }
-
-            if (metadata.author.link) {
-                const linkElement = doc.createElement('link');
-                linkElement.setAttribute('href', metadata.author.link);
-                authorElement.appendChild(linkElement);
-            }
-
-            metadataElement.appendChild(authorElement);
-        }
-
-        if (metadata.link) {
-            const linkElement = doc.createElement('link');
-            linkElement.setAttribute('href', metadata.link.href);
-
-            if (metadata.link.text) {
-                const textElement = doc.createElement('text');
-                textElement.textContent = metadata.link.text;
-                linkElement.appendChild(textElement);
-            }
-
-            metadataElement.appendChild(linkElement);
         }
 
         return metadataElement;
@@ -272,7 +105,7 @@ export class GPXWriter {
     /**
      * Create track element
      */
-    private createTrackElement(doc: Document, track: any): Element {
+    private createTrackElement(doc: Document, track: Path): Element {
         const trackElement = doc.createElement('trk');
 
         if (track.name) {
@@ -281,71 +114,41 @@ export class GPXWriter {
             trackElement.appendChild(nameElement);
         }
 
-        if (track.type) {
-            const typeElement = doc.createElement('type');
-            typeElement.textContent = track.type;
-            trackElement.appendChild(typeElement);
+        const segmentElement = doc.createElement('trkseg');
+        for (const trackPoint of track) {
+            const trackPointElement = this.createTrackPointElement(doc, trackPoint);
+            segmentElement.appendChild(trackPointElement);
         }
-
-        if (track.number !== undefined) {
-            const numberElement = doc.createElement('number');
-            numberElement.textContent = track.number.toString();
-            trackElement.appendChild(numberElement);
-        }
-
-        if (track.desc) {
-            const descElement = doc.createElement('desc');
-            descElement.textContent = track.desc;
-            trackElement.appendChild(descElement);
-        }
-
-        // Add track segments
-        for (const segment of track.segments) {
-            const segmentElement = this.createTrackSegmentElement(doc, segment);
-            trackElement.appendChild(segmentElement);
-        }
+        trackElement.appendChild(segmentElement);
 
         return trackElement;
     }
 
     /**
-     * Create track segment element
-     */
-    private createTrackSegmentElement(doc: Document, segment: any): Element {
-        const segmentElement = doc.createElement('trkseg');
-
-        for (const trackPoint of segment.trackPoints) {
-            const trackPointElement = this.createTrackPointElement(doc, trackPoint);
-            segmentElement.appendChild(trackPointElement);
-        }
-
-        return segmentElement;
-    }
-
-    /**
      * Create track point element with extensions
      */
-    private createTrackPointElement(doc: Document, trackPoint: any): Element {
+    private createTrackPointElement(doc: Document, trackPoint: Point): Element {
         const trackPointElement = doc.createElement('trkpt');
 
-        trackPointElement.setAttribute('lat', trackPoint.lat.toString());
-        trackPointElement.setAttribute('lon', trackPoint.lon.toString());
+        trackPointElement.setAttribute('lat', toDegrees(trackPoint.lat).toString());
+        trackPointElement.setAttribute('lon', toDegrees(trackPoint.lon).toString());
 
-        if (trackPoint.ele !== undefined) {
+        if (!isNaN(trackPoint.ele)) {
             const eleElement = doc.createElement('ele');
             eleElement.textContent = trackPoint.ele.toString();
             trackPointElement.appendChild(eleElement);
         }
 
-        if (trackPoint.time) {
+        if (!isNaN(trackPoint.time)) {
             const timeElement = doc.createElement('time');
-            timeElement.textContent = trackPoint.time.toISOString();
+            timeElement.textContent = new Date(trackPoint.time).toISOString();
             trackPointElement.appendChild(timeElement);
         }
 
         // Add extensions if present
-        if (trackPoint.extensions && this.options.includeExtensions) {
-            const extensionsElement = this.createExtensionsElement(doc, trackPoint.extensions);
+        const extensionsElement = this.createExtensionsElement(doc, trackPoint);
+
+        if (extensionsElement.hasChildNodes()) {
             trackPointElement.appendChild(extensionsElement);
         }
 
@@ -355,56 +158,47 @@ export class GPXWriter {
     /**
      * Create extensions element with proper namespace handling
      */
-    private createExtensionsElement(doc: Document, extensions: any): Element {
+    private createExtensionsElement(doc: Document, trackPoint: Point): Element {
         const extensionsElement = doc.createElement('extensions');
 
-        if (this.options.useGarminExtensions) {
-            // Create Garmin TrackPointExtension
-            const tpxElement = doc.createElement(
-                `${NAMESPACE_PREFIXES[KNOWN_NAMESPACES.GARMIN_TPX]}:TrackPointExtension`
+        // Create Garmin TrackPointExtension
+        const tpxElement = doc.createElement(
+            `${NAMESPACE_PREFIXES[KNOWN_NAMESPACES.GARMIN_TPX]}:TrackPointExtension`
+        );
+
+        if (!isNaN(trackPoint.heartRate)) {
+            const hrElement = doc.createElement(
+                `${NAMESPACE_PREFIXES[KNOWN_NAMESPACES.GARMIN_TPX]}:hr`
             );
+            hrElement.textContent = Math.round(trackPoint.heartRate).toString();
+            tpxElement.appendChild(hrElement);
+        }
 
-            if (extensions.heartRate !== undefined) {
-                const hrElement = doc.createElement(
-                    `${NAMESPACE_PREFIXES[KNOWN_NAMESPACES.GARMIN_TPX]}:hr`
-                );
-                hrElement.textContent = Math.round(extensions.heartRate).toString();
-                tpxElement.appendChild(hrElement);
-            }
+        if (!isNaN(trackPoint.cadence)) {
+            const cadElement = doc.createElement(
+                `${NAMESPACE_PREFIXES[KNOWN_NAMESPACES.GARMIN_TPX]}:cad`
+            );
+            cadElement.textContent = Math.round(trackPoint.cadence).toString();
+            tpxElement.appendChild(cadElement);
+        }
 
-            if (extensions.cadence !== undefined) {
-                const cadElement = doc.createElement(
-                    `${NAMESPACE_PREFIXES[KNOWN_NAMESPACES.GARMIN_TPX]}:cad`
-                );
-                cadElement.textContent = Math.round(extensions.cadence).toString();
-                tpxElement.appendChild(cadElement);
-            }
+        if (!isNaN(trackPoint.temperature)) {
+            const atempElement = doc.createElement(
+                `${NAMESPACE_PREFIXES[KNOWN_NAMESPACES.GARMIN_TPX]}:atemp`
+            );
+            atempElement.textContent = trackPoint.temperature.toString();
+            tpxElement.appendChild(atempElement);
+        }
 
-            if (extensions.temperature !== undefined) {
-                const atempElement = doc.createElement(
-                    `${NAMESPACE_PREFIXES[KNOWN_NAMESPACES.GARMIN_TPX]}:atemp`
-                );
-                atempElement.textContent = extensions.temperature.toString();
-                tpxElement.appendChild(atempElement);
-            }
-
-            if (tpxElement.hasChildNodes()) {
-                extensionsElement.appendChild(tpxElement);
-            }
+        if (tpxElement.hasChildNodes()) {
+            extensionsElement.appendChild(tpxElement);
         }
 
         // Add custom power extensions if enabled
-        if (this.options.usePowerExtensions && extensions.power !== undefined) {
+        if (!isNaN(trackPoint.power)) {
             const powerElement = doc.createElement('power');
-            powerElement.textContent = Math.round(extensions.power).toString();
+            powerElement.textContent = Math.round(trackPoint.power).toString();
             extensionsElement.appendChild(powerElement);
-        }
-
-        // Add speed if present (non-namespaced)
-        if (extensions.speed !== undefined) {
-            const speedElement = doc.createElement('speed');
-            speedElement.textContent = extensions.speed.toString();
-            extensionsElement.appendChild(speedElement);
         }
 
         return extensionsElement;
@@ -445,16 +239,16 @@ export class GPXWriter {
     /**
      * Static method to quickly write GPX from Path
      */
-    static writeFromPath(path: Path, options?: GPXWriteOptions): string {
-        const writer = new GPXWriter(options);
+    static writeFromPath(path: Path): string {
+        const writer = new GPXWriter();
         return writer.writeFromPath(path);
     }
 
     /**
      * Static method to quickly write GPX data
      */
-    static write(gpxData: GPXData, options?: GPXWriteOptions): string {
-        const writer = new GPXWriter(options);
+    static write(gpxData: Paths): string {
+        const writer = new GPXWriter();
         return writer.write(gpxData);
     }
 }
