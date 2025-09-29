@@ -1,5 +1,6 @@
 import { GPXData, GPXWriteOptions, KNOWN_NAMESPACES, NAMESPACE_PREFIXES } from './types';
 import { Path } from '../Path';
+import { toDegrees } from '../constants';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -102,8 +103,8 @@ export class GPXWriter {
             const point = path.getPointData(i);
 
             const trackPoint: any = {
-                lat: point.lat,
-                lon: point.lon,
+                lat: toDegrees(point.lat),
+                lon: toDegrees(point.lon),
             };
 
             // Add elevation if available

@@ -7,10 +7,10 @@ import { Path } from './Path';
  */
 export enum PointField {
     // Spatial & Navigation (6 properties)
-    LAT = 0, // Latitude (degrees)
-    LON = 1, // Longitude (degrees)
+    LAT = 0, // Latitude (radians)
+    LON = 1, // Longitude (radians)
     ELE = 2, // Elevation (meters)
-    BEARING = 3, // Direction bearing (degrees)
+    BEARING = 3, // Direction bearing (radians)
     DIST = 4, // Distance (meters)
     RADIUS = 5, // Turn radius (meters)
 
@@ -43,9 +43,9 @@ export enum PointField {
     // Environmental (5 properties)
     TEMPERATURE = 26, // Temperature (celsius)
     WIND_SPEED = 27, // Wind speed (m/s)
-    WIND_DIRECTION = 28, // Wind direction (degrees)
-    WIND_BEARING = 29, // Wind bearing (degrees)
-    WIND_ALPHA = 30, // Wind angle (degrees)
+    WIND_DIRECTION = 28, // Wind direction (radians)
+    WIND_BEARING = 29, // Wind bearing (radians)
+    WIND_ALPHA = 30, // Wind angle (radians)
 
     // Physiological (2 properties)
     HEART_RATE = 31, // Heart rate (bpm)
@@ -60,13 +60,15 @@ export const FIELDS_PER_POINT = 33;
 /**
  * Interface representing a complete point with all 33 properties.
  * All values are stored as numbers with appropriate unit conversions.
+ *
+ * Note: Angles are stored in RADIANS for efficient physics calculations.
  */
 export interface Point {
     // Spatial & Navigation
-    readonly lat: number; // Latitude (degrees)
-    readonly lon: number; // Longitude (degrees)
+    readonly lat: number; // Latitude (radians)
+    readonly lon: number; // Longitude (radians)
     readonly ele: number; // Elevation (meters)
-    readonly bearing: number; // Direction bearing (degrees)
+    readonly bearing: number; // Direction bearing (radians)
     readonly dist: number; // Distance (meters)
     readonly radius: number; // Turn radius (meters)
 
@@ -99,9 +101,9 @@ export interface Point {
     // Environmental
     readonly temperature: number; // Temperature (celsius)
     readonly windSpeed: number; // Wind speed (m/s)
-    readonly windDirection: number; // Wind direction (degrees)
-    readonly windBearing: number; // Wind bearing (degrees)
-    readonly windAlpha: number; // Wind angle (degrees)
+    readonly windDirection: number; // Wind direction (radians)
+    readonly windBearing: number; // Wind bearing (radians)
+    readonly windAlpha: number; // Wind angle (radians)
 
     // Physiological
     readonly heartRate: number; // Heart rate (bpm)

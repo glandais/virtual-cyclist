@@ -159,27 +159,26 @@ export class MaxSpeedComputer {
         const vf = path.getSpeedMax(currentIndex); // Required speed at current point
         const a = -cyclist.getMaxBrakeMS2(); // Braking deceleration (negative)
 
-        // Time needed to brake from v0 to vf
-        const t = (vf - v0) / a;
-
-        if (t <= 0) {
-            // No braking needed (vf >= v0)
+        if (vf >= v0) {
+            // No braking needed (target speed is higher or equal)
             return;
         }
 
         // Distance available for braking
         const dist = path.getDistance(currentIndex) - path.getDistance(prevIndex);
 
-        // Distance needed for braking: d = v₀×t + ½×a×t²
-        const dBrake = v0 * t + (a * t * t) / 2;
+        // Check if we can brake from v0 to vf in the available distance
+        // Using kinematic equation: vf² = v0² + 2×a×d
+        // Rearranging: required_distance = (vf² - v0²) / (2×a)
+        const requiredDistance = (vf * vf - v0 * v0) / (2 * a);
 
-        if (dBrake <= dist) {
+        if (requiredDistance <= dist) {
             // Sufficient distance available for braking
             return;
         }
 
         // Insufficient distance - reduce the maximum speed at previous point
-        // Solve: v₀² = v_f² - 2×a×distance (a is negative, so we subtract)
+        // Solve for maximum v0: v0² = vf² - 2×a×distance (a is negative)
         const newMaxSpeedPrevious = Math.sqrt(vf * vf - 2 * a * dist);
         path.setSpeedMax(prevIndex, newMaxSpeedPrevious);
     }
@@ -242,12 +241,13 @@ export class MaxSpeedComputer {
      * @returns Local Cartesian coordinates as Vector3D
      */
     private transform(path: Path, pointIndex: number, refIndex: number): Vector3D {
-        const lon = path.getLongitude(pointIndex) - path.getLongitude(refIndex);
-        const lat = path.getLatitude(pointIndex) - path.getLatitude(refIndex);
+        const lonRad = path.getLongitude(pointIndex) - path.getLongitude(refIndex);
+        const latRad = path.getLatitude(pointIndex) - path.getLatitude(refIndex);
 
-        // Convert to radians and scale by Earth's circumference
-        const x = (lon / (2 * Math.PI)) * CIRC * Math.cos(path.getLatitude(refIndex));
-        const y = (lat / (2 * Math.PI)) * CIRC;
+        // Convert radians to meters using Earth's circumference
+        // lat/lon are already in radians, so direct scaling by circumference
+        const x = (lonRad * CIRC * Math.cos(path.getLatitude(refIndex))) / (2 * Math.PI);
+        const y = (latRad * CIRC) / (2 * Math.PI);
 
         return new Vector3D(x, y, 0);
     }

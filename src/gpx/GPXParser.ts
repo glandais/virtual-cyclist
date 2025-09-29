@@ -1,6 +1,7 @@
 import { GPXData, GPXTrack, GPXTrackSegment, GPXTrackPoint, GPXMetadata } from './types';
 import { NamespaceResolver } from './NamespaceResolver';
 import { ExtensionParser } from './ExtensionParser';
+import { toRadians } from '../constants';
 
 /**
  * Parser for GPX files with comprehensive namespace and extension support.
@@ -199,12 +200,16 @@ export class GPXParser {
             throw new Error('Invalid track point: missing lat or lon attribute');
         }
 
-        const lat = parseFloat(latStr);
-        const lon = parseFloat(lonStr);
+        const latDegrees = parseFloat(latStr);
+        const lonDegrees = parseFloat(lonStr);
 
-        if (isNaN(lat) || isNaN(lon)) {
+        if (isNaN(latDegrees) || isNaN(lonDegrees)) {
             throw new Error('Invalid track point: lat or lon is not a valid number');
         }
+
+        // Convert degrees to radians for internal storage
+        const lat = toRadians(latDegrees);
+        const lon = toRadians(lonDegrees);
 
         const trackPoint: GPXTrackPoint = { lat, lon };
 
