@@ -33,6 +33,9 @@ describe('GPX Integration Tests', () => {
             expect(path.getLongitudeDeg(0)).toBeCloseTo(6.396115, 3);
             expect(path.getTime(0)).toBeCloseTo(1730643922000, 3);
             expect(path.getPower(0)).toBeCloseTo(45.0, 3);
+            expect(path.getTotalDistance()).toBeCloseTo(130392.6632939374, 3);
+
+            GPXWriter.writeFromPath(path);
         });
 
         test('amazfit.gpx', () => {
