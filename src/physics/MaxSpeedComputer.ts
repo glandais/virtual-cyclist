@@ -25,12 +25,14 @@ export interface MaxSpeedCourse {
  * Based on bicycle dynamics and physics research.
  */
 export class MaxSpeedComputer {
+    private constructor() {}
+
     /**
      * Compute maximum safe speeds for all points in the course.
      *
      * @param course Course containing path, cyclist, and bike parameters
      */
-    computeMaxSpeeds(course: MaxSpeedCourse): void {
+    static computeMaxSpeeds(course: MaxSpeedCourse): void {
         // First pass, forward: max speed by incline/cornering
         this.firstPass(course);
 
@@ -46,7 +48,7 @@ export class MaxSpeedComputer {
      *
      * @param course Course to process
      */
-    protected firstPass(course: MaxSpeedCourse): void {
+    protected static firstPass(course: MaxSpeedCourse): void {
         const path = course.path;
         const cyclist = course.cyclist;
         const pointCount = path.getPointCount();
@@ -75,7 +77,7 @@ export class MaxSpeedComputer {
      *
      * @param course Course to process
      */
-    protected secondPass(course: MaxSpeedCourse): void {
+    protected static secondPass(course: MaxSpeedCourse): void {
         const path = course.path;
         const pointCount = path.getPointCount();
 
@@ -95,7 +97,7 @@ export class MaxSpeedComputer {
      * @param currentIndex Index of current point
      * @param nextIndex Index of next point
      */
-    private computeMaxSpeedByIncline(
+    private static computeMaxSpeedByIncline(
         course: MaxSpeedCourse,
         prevIndex: number,
         currentIndex: number,
@@ -147,7 +149,7 @@ export class MaxSpeedComputer {
      * @param prevIndex Index of previous point
      * @param currentIndex Index of current point
      */
-    private computeMaxSpeedByBraking(
+    private static computeMaxSpeedByBraking(
         course: MaxSpeedCourse,
         prevIndex: number,
         currentIndex: number
@@ -195,7 +197,7 @@ export class MaxSpeedComputer {
      * @param c Third point (Vector3D)
      * @returns Circle center as Vector3D, or null if points are collinear
      */
-    private getCircleCenter(a: Vector3D, b: Vector3D, c: Vector3D): Vector3D | null {
+    private static getCircleCenter(a: Vector3D, b: Vector3D, c: Vector3D): Vector3D | null {
         const ax = a.x,
             ay = a.y;
         const bx = b.x,
@@ -240,7 +242,7 @@ export class MaxSpeedComputer {
      * @param refIndex Index of reference point (origin)
      * @returns Local Cartesian coordinates as Vector3D
      */
-    private transform(path: Path, pointIndex: number, refIndex: number): Vector3D {
+    private static transform(path: Path, pointIndex: number, refIndex: number): Vector3D {
         const lonRad = path.getLongitude(pointIndex) - path.getLongitude(refIndex);
         const latRad = path.getLatitude(pointIndex) - path.getLatitude(refIndex);
 

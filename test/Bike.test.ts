@@ -240,64 +240,6 @@ describe('Bike', () => {
         });
     });
 
-    describe('withModifications', () => {
-        test('should create modified bike with single parameter change', () => {
-            const originalBike = new Bike(0.004, 0.08, 0.12, 0.7, 0.976);
-            const modifiedBike = originalBike.withModifications({ crr: 0.005 });
-
-            expect(modifiedBike.crr).toBe(0.005);
-            expect(modifiedBike.inertiaFront).toBe(0.08);
-            expect(modifiedBike.inertiaRear).toBe(0.12);
-            expect(modifiedBike.wheelRadius).toBe(0.7);
-            expect(modifiedBike.efficiency).toBe(0.976);
-            expect(modifiedBike).not.toBe(originalBike);
-        });
-
-        test('should create modified bike with multiple parameter changes', () => {
-            const originalBike = new Bike(0.004, 0.08, 0.12, 0.7, 0.976);
-            const modifiedBike = originalBike.withModifications({
-                crr: 0.006,
-                efficiency: 0.95,
-                wheelRadius: 0.65,
-            });
-
-            expect(modifiedBike.crr).toBe(0.006);
-            expect(modifiedBike.inertiaFront).toBe(0.08);
-            expect(modifiedBike.inertiaRear).toBe(0.12);
-            expect(modifiedBike.wheelRadius).toBe(0.65);
-            expect(modifiedBike.efficiency).toBe(0.95);
-        });
-
-        test('should create modified bike with all parameters changed', () => {
-            const originalBike = new Bike(0.004, 0.08, 0.12, 0.7, 0.976);
-            const modifiedBike = originalBike.withModifications({
-                crr: 0.006,
-                inertiaFront: 0.1,
-                inertiaRear: 0.15,
-                wheelRadius: 0.65,
-                efficiency: 0.95,
-            });
-
-            expect(modifiedBike.crr).toBe(0.006);
-            expect(modifiedBike.inertiaFront).toBe(0.1);
-            expect(modifiedBike.inertiaRear).toBe(0.15);
-            expect(modifiedBike.wheelRadius).toBe(0.65);
-            expect(modifiedBike.efficiency).toBe(0.95);
-        });
-
-        test('should create identical bike with empty modifications', () => {
-            const originalBike = new Bike(0.004, 0.08, 0.12, 0.7, 0.976);
-            const modifiedBike = originalBike.withModifications({});
-
-            expect(modifiedBike.crr).toBe(originalBike.crr);
-            expect(modifiedBike.inertiaFront).toBe(originalBike.inertiaFront);
-            expect(modifiedBike.inertiaRear).toBe(originalBike.inertiaRear);
-            expect(modifiedBike.wheelRadius).toBe(originalBike.wheelRadius);
-            expect(modifiedBike.efficiency).toBe(originalBike.efficiency);
-            expect(modifiedBike).not.toBe(originalBike);
-        });
-    });
-
     describe('toString', () => {
         test('should generate readable string for default bike', () => {
             const bike = Bike.getDefault();

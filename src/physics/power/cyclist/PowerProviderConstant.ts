@@ -43,4 +43,4 @@ class PowerProviderConstant extends CyclistPowerProviderBase {
     }
 }
 
-export const cyclistPowerProvider: CyclistPowerProvider = new PowerProviderConstant();
+export const powerProviderConstant: CyclistPowerProvider = new PowerProviderConstant();

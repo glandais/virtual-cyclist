@@ -149,6 +149,10 @@ class GPXDemoApp {
             this.computeMaxSpeeds();
         });
 
+        document.getElementById('enhance-path-btn').addEventListener('click', () => {
+            this.enhancePath();
+        });
+
         document.getElementById('reset-zoom-btn').addEventListener('click', () => {
             this.resetZoom();
         });
@@ -378,6 +382,30 @@ class GPXDemoApp {
         } catch (error) {
             console.error('Error computing max speeds:', error);
             this.showError('Failed to compute max speeds: ' + error.message);
+        } finally {
+            this.setProcessing(false);
+        }
+    }
+
+    async enhancePath() {
+        if (this.isProcessing || !this.currentPath) return;
+
+        this.setProcessing(true, 'Enhancing path (elevation + speeds + virtualization + simplification)...');
+
+        try {
+            // Use VirtualCyclist Enhancer for full enhancement pipeline
+            const enhancedPath = await window.VirtualCyclist.Enhancer.enhancePath(this.currentPath);
+            this.currentPath = enhancedPath;
+
+            // Update file info and chart
+            this.updateFileInfo('Enhanced GPX');
+            this.updateChart();
+
+            this.showSuccess('Path enhanced successfully!');
+            console.log('Path enhancement completed');
+        } catch (error) {
+            console.error('Error enhancing path:', error);
+            this.showError('Failed to enhance path: ' + error.message);
         } finally {
             this.setProcessing(false);
         }
@@ -657,6 +685,7 @@ class GPXDemoApp {
         // Enable/disable buttons based on state
         document.getElementById('fix-elevation-btn').disabled = this.isProcessing || !hasPath;
         document.getElementById('compute-speeds-btn').disabled = this.isProcessing || !hasPath;
+        document.getElementById('enhance-path-btn').disabled = this.isProcessing || !hasPath;
         document.getElementById('reset-zoom-btn').disabled = this.isProcessing || !hasChart;
 
         // Update file selection controls

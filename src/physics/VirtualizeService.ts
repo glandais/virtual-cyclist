@@ -36,9 +36,7 @@ import { MINIMAL_SPEED, DT } from '../constants';
  * @see OptimalSpeeds
  */
 export class VirtualizeService {
-    private readonly powerComputer: PowerComputer = PowerComputer.INSTANCE;
-
-    private constructor() {}
+    private static readonly powerComputer: PowerComputer = PowerComputer.INSTANCE;
 
     /**
      * Virtualizes a GPS track using physics-based simulation.
@@ -53,7 +51,7 @@ export class VirtualizeService {
      *
      * @param course Course configuration with path, cyclist, and bike parameters
      */
-    virtualizeTrack(courseInput: CoursePhysicsInput): void {
+    static virtualizeTrack(courseInput: CoursePhysicsInput): Path {
         // Pre-compute optimal speeds lookup table
         const optimalSpeeds = new OptimalSpeeds(courseInput);
         const course: CoursePhysics = { ...courseInput, optimalSpeeds };
@@ -164,10 +162,7 @@ export class VirtualizeService {
             newPath.setField(i, 8, cyclistPower); // PointField.POWER = 8
         }
 
-        // Replace course path with simulated path
-        // Note: This requires Course to have mutable path or a setter
-        // For now, we'll need to handle this externally
-        // course.path = newPath; // Would need Course interface change
+        return newPath;
     }
 
     /**
@@ -179,7 +174,7 @@ export class VirtualizeService {
      * @param dx Distance to travel
      * @returns Index of next waypoint, or current index if not crossing
      */
-    private getNextIndex(
+    private static getNextIndex(
         dists: Float64Array,
         distsLength: number,
         dist: number,
@@ -201,7 +196,7 @@ export class VirtualizeService {
      * @param dist Target distance
      * @returns Index of waypoint at or before dist, or -1 if not found
      */
-    private getIndex(dists: Float64Array, distsLength: number, dist: number): number {
+    private static getIndex(dists: Float64Array, distsLength: number, dist: number): number {
         let left = 0;
         let right = distsLength - 1;
 

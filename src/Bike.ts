@@ -1,4 +1,3 @@
-import { Bike as IBike } from './types';
 import {
     DEFAULT_CRR,
     DEFAULT_INERTIA_FRONT,
@@ -14,7 +13,7 @@ import {
  *
  * Based on the Java Bike class from gpx2web project.
  */
-export class Bike implements IBike {
+export class Bike {
     readonly crr: number;
     readonly inertiaFront: number;
     readonly inertiaRear: number;
@@ -154,22 +153,6 @@ export class Bike implements IBike {
      */
     getRollingResistanceForce(normalForce: number): number {
         return this.crr * normalForce;
-    }
-
-    /**
-     * Create a copy of this bike with modified parameters.
-     *
-     * @param modifications Partial bike parameters to override
-     * @returns New bike instance with applied modifications
-     */
-    withModifications(modifications: Partial<IBike>): Bike {
-        return new Bike(
-            modifications.crr ?? this.crr,
-            modifications.inertiaFront ?? this.inertiaFront,
-            modifications.inertiaRear ?? this.inertiaRear,
-            modifications.wheelRadius ?? this.wheelRadius,
-            modifications.efficiency ?? this.efficiency
-        );
     }
 
     /**
