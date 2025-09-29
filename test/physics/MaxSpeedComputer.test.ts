@@ -1,9 +1,9 @@
-import { MaxSpeedComputer } from '../MaxSpeedComputer';
-import { Path } from '../../Path';
-import { Cyclist } from '../../Cyclist';
-import { Bike } from '../../Bike';
-import { EMPTY_POINT } from '../../types';
-import { toRadians } from '../../constants';
+import { MaxSpeedComputer } from '../../src/physics/MaxSpeedComputer';
+import { Path } from '../../src/Path';
+import { Cyclist } from '../../src/Cyclist';
+import { Bike } from '../../src/Bike';
+import { EMPTY_POINT } from '../../src/types';
+import { toRadians } from '../../src/constants';
 
 interface TestCourse {
     path: Path;
@@ -196,5 +196,99 @@ describe('MaxSpeedComputer', () => {
 
         expect(finalSpeed).toBeCloseTo(1.0, 1);
         expect(penultimateSpeed).toBeLessThan(cyclist.getMaxSpeedMs());
+    });
+
+    test('second pass should handle no braking needed scenario', () => {
+        // Create a path where speeds are already appropriate (no braking needed)
+        // Set progressively increasing speeds (acceleration scenario)
+        for (let i = 0; i < path.getPointCount(); i++) {
+            const progressiveSpeed = 5.0 + i * 2.0; // 5, 7, 9, 11, 13 m/s
+            path.setSpeedMax(i, Math.min(progressiveSpeed, cyclist.getMaxSpeedMs()));
+        }
+
+        // Store original speeds to verify they don't change
+        const originalSpeeds: number[] = [];
+        for (let i = 0; i < path.getPointCount(); i++) {
+            originalSpeeds.push(path.getSpeedMax(i));
+        }
+
+        maxSpeedComputer.secondPass(course);
+
+        // Speeds should remain unchanged since no braking is needed (line 164)
+        for (let i = 0; i < path.getPointCount(); i++) {
+            expect(path.getSpeedMax(i)).toBeCloseTo(originalSpeeds[i], 2);
+        }
+    });
+
+    test('second pass should handle sufficient braking distance scenario', () => {
+        // Create a custom path with longer distances to ensure sufficient braking distance
+        const testPath = new Path();
+        const testCyclist = Cyclist.getDefault();
+        const testBike = Bike.getDefault();
+        const testCourse = { path: testPath, cyclist: testCyclist, bike: testBike };
+
+        // Add points with large distances between them (1000m apart)
+        for (let i = 0; i < 3; i++) {
+            testPath.addPoint({
+                lat: toRadians(45.0 + i * 0.01),
+                lon: toRadians(2.0 + i * 0.01),
+                ele: 100,
+                bearing: 0,
+                dist: i * 1000, // 1000m between each point
+                radius: 0,
+                time: Date.now() + i * 60000,
+                elapsed: i * 60000,
+                power: 250,
+                pCyclistRaw: 240,
+                pCyclistWheel: 230,
+                pCyclistOptimalPower: 245,
+                pCyclistCurrentSpeed: 220,
+                pCyclistOptimalSpeed: 235,
+                pAero: -80,
+                pGravity: -20,
+                pRollingResistance: -15,
+                pWheelBearings: -5,
+                pPowerFromAcc: 10,
+                pPowerWheelFromAcc: 9,
+                aeroCoef: 0.7,
+                grade: 0.05,
+                speed: 15.5,
+                speedMax: 18.0,
+                speedMaxIncline: 16.0,
+                virtSpeedCurrent: 15.5,
+                temperature: 20,
+                windSpeed: 2.0,
+                windDirection: 180,
+                windBearing: 170,
+                windAlpha: 10,
+                heartRate: 150,
+                cadence: 90,
+            });
+        }
+
+        const maxSpeed = testCyclist.getMaxSpeedMs();
+
+        // Set high speeds initially
+        for (let i = 0; i < testPath.getPointCount() - 1; i++) {
+            testPath.setSpeedMax(i, maxSpeed);
+        }
+
+        // Set a moderately lower speed at the last point
+        // With 1000m distance, this should be sufficient for gentle braking
+        testPath.setSpeedMax(testPath.getPointCount() - 1, maxSpeed * 0.9);
+
+        const testComputer = new MaxSpeedComputerExtended();
+
+        // Store speeds before second pass
+        const speedsBeforePass: number[] = [];
+        for (let i = 0; i < testPath.getPointCount(); i++) {
+            speedsBeforePass.push(testPath.getSpeedMax(i));
+        }
+
+        testComputer.secondPass(testCourse);
+
+        // With sufficient braking distance (1000m), speeds should be preserved (line 177)
+        // The algorithm should determine that braking is feasible and not modify earlier speeds
+        expect(testPath.getSpeedMax(0)).toBeCloseTo(speedsBeforePass[0], 1);
     });
 });

@@ -306,7 +306,9 @@ describe('Path', () => {
 
             // Verify we can still access all points correctly
             expect(pathData.getLatitude(0)).toBe(toRadians(48.8566));
-            expect(pathData.getLatitude(pointsToAdd - 1)).toBe(toRadians(48.8566 + (pointsToAdd - 1) * 0.001));
+            expect(pathData.getLatitude(pointsToAdd - 1)).toBe(
+                toRadians(48.8566 + (pointsToAdd - 1) * 0.001)
+            );
         });
     });
 
@@ -564,6 +566,528 @@ describe('Path', () => {
             for (let i = 0; i < 33; i++) {
                 expect(sortedValues[i]).toBe(i);
             }
+        });
+    });
+
+    describe('field accessor methods', () => {
+        beforeEach(() => {
+            // Add a test point with known values
+            pathData.addPoint({
+                lat: toRadians(48.8566),
+                lon: toRadians(2.3522),
+                ele: 35,
+                bearing: 45.5,
+                dist: 1234.5,
+                radius: 50.0,
+                time: Date.now(),
+                elapsed: 3600000,
+                power: 250,
+                pCyclistRaw: 240,
+                pCyclistWheel: 230,
+                pCyclistOptimalPower: 245,
+                pCyclistCurrentSpeed: 220,
+                pCyclistOptimalSpeed: 235,
+                pAero: -80,
+                pGravity: -20,
+                pRollingResistance: -15,
+                pWheelBearings: -5,
+                pPowerFromAcc: 10,
+                pPowerWheelFromAcc: 9,
+                aeroCoef: 0.7,
+                grade: 0.05,
+                speed: 15.5,
+                speedMax: 18.0,
+                speedMaxIncline: 16.0,
+                virtSpeedCurrent: 15.5,
+                temperature: 20,
+                windSpeed: 2.0,
+                windDirection: 180,
+                windBearing: 170,
+                windAlpha: 10,
+                heartRate: 150,
+                cadence: 90,
+            });
+        });
+
+        it('should handle speedMaxIncline field', () => {
+            expect(pathData.getSpeedMaxIncline(0)).toBe(16.0);
+            pathData.setSpeedMaxIncline(0, 14.5);
+            expect(pathData.getSpeedMaxIncline(0)).toBe(14.5);
+        });
+    });
+
+    describe('computeArrays method', () => {
+        it('should handle empty path correctly', () => {
+            // Test early return for empty path
+            expect(() => pathData.computeArrays()).not.toThrow();
+            expect(pathData.getTotalDistance()).toBe(0);
+            expect(pathData.getMinElevation()).toBe(0);
+            expect(pathData.getMaxElevation()).toBe(0);
+        });
+
+        it('should calculate speed when time difference exists', () => {
+            // Add points with time and distance differences to trigger speed calculation
+            const baseTime = Date.now();
+            pathData.addPoint({
+                lat: toRadians(45.0),
+                lon: toRadians(2.0),
+                ele: 100,
+                bearing: 0,
+                dist: 0,
+                radius: 0,
+                time: baseTime,
+                elapsed: 0,
+                power: 0,
+                pCyclistRaw: 0,
+                pCyclistWheel: 0,
+                pCyclistOptimalPower: 0,
+                pCyclistCurrentSpeed: 0,
+                pCyclistOptimalSpeed: 0,
+                pAero: 0,
+                pGravity: 0,
+                pRollingResistance: 0,
+                pWheelBearings: 0,
+                pPowerFromAcc: 0,
+                pPowerWheelFromAcc: 0,
+                aeroCoef: 0.7,
+                grade: 0,
+                speed: 0,
+                speedMax: 0,
+                speedMaxIncline: 0,
+                virtSpeedCurrent: 0,
+                temperature: 20,
+                windSpeed: 0,
+                windDirection: 0,
+                windBearing: 0,
+                windAlpha: 0,
+                heartRate: 0,
+                cadence: 0,
+            });
+
+            pathData.addPoint({
+                lat: toRadians(45.001),
+                lon: toRadians(2.001),
+                ele: 105,
+                bearing: 0,
+                dist: 100, // 100 meter distance
+                radius: 0,
+                time: baseTime + 10000, // 10 seconds later
+                elapsed: 10000,
+                power: 0,
+                pCyclistRaw: 0,
+                pCyclistWheel: 0,
+                pCyclistOptimalPower: 0,
+                pCyclistCurrentSpeed: 0,
+                pCyclistOptimalSpeed: 0,
+                pAero: 0,
+                pGravity: 0,
+                pRollingResistance: 0,
+                pWheelBearings: 0,
+                pPowerFromAcc: 0,
+                pPowerWheelFromAcc: 0,
+                aeroCoef: 0.7,
+                grade: 0,
+                speed: 0,
+                speedMax: 0,
+                speedMaxIncline: 0,
+                virtSpeedCurrent: 0,
+                temperature: 20,
+                windSpeed: 0,
+                windDirection: 0,
+                windBearing: 0,
+                windAlpha: 0,
+                heartRate: 0,
+                cadence: 0,
+            });
+
+            pathData.computeArrays();
+
+            // Speed calculation should trigger the code path (actual value depends on algorithm)
+            expect(pathData.getSpeed(0)).toBeGreaterThan(0);
+            // Grade calculation should be positive (actual value depends on distance calculation)
+            expect(pathData.getGrade(0)).toBeGreaterThan(0);
+        });
+    });
+
+    describe('statistics methods', () => {
+        beforeEach(() => {
+            // Add test points with varying elevations
+            pathData.addPoint({
+                lat: toRadians(45.0),
+                lon: toRadians(2.0),
+                ele: 100,
+                bearing: 0,
+                dist: 0,
+                radius: 0,
+                time: Date.now(),
+                elapsed: 0,
+                power: 250,
+                pCyclistRaw: 240,
+                pCyclistWheel: 230,
+                pCyclistOptimalPower: 245,
+                pCyclistCurrentSpeed: 220,
+                pCyclistOptimalSpeed: 235,
+                pAero: -80,
+                pGravity: -20,
+                pRollingResistance: -15,
+                pWheelBearings: -5,
+                pPowerFromAcc: 10,
+                pPowerWheelFromAcc: 9,
+                aeroCoef: 0.7,
+                grade: 0.05,
+                speed: 15.5,
+                speedMax: 18.0,
+                speedMaxIncline: 16.0,
+                virtSpeedCurrent: 15.5,
+                temperature: 20,
+                windSpeed: 2.0,
+                windDirection: 180,
+                windBearing: 170,
+                windAlpha: 10,
+                heartRate: 150,
+                cadence: 90,
+            });
+
+            const p = {
+                lat: toRadians(45.001),
+                lon: toRadians(2.001),
+                ele: 150, // Higher elevation
+                bearing: 0,
+                dist: 1000,
+                radius: 0,
+                time: Date.now() + 60000,
+                elapsed: 60000,
+                power: 250,
+                pCyclistRaw: 240,
+                pCyclistWheel: 230,
+                pCyclistOptimalPower: 245,
+                pCyclistCurrentSpeed: 220,
+                pCyclistOptimalSpeed: 235,
+                pAero: -80,
+                pGravity: -20,
+                pRollingResistance: -15,
+                pWheelBearings: -5,
+                pPowerFromAcc: 10,
+                pPowerWheelFromAcc: 9,
+                aeroCoef: 0.7,
+                grade: 0.05,
+                speed: 15.5,
+                speedMax: 18.0,
+                speedMaxIncline: 16.0,
+                virtSpeedCurrent: 15.5,
+                temperature: 20,
+                windSpeed: 2.0,
+                windDirection: 180,
+                windBearing: 170,
+                windAlpha: 10,
+                heartRate: 150,
+                cadence: 90,
+            };
+
+            pathData.addPoint(p);
+            pathData.addPoint(p);
+
+            pathData.addPoint({
+                lat: toRadians(45.002),
+                lon: toRadians(2.002),
+                ele: 80, // Lower elevation
+                bearing: 0,
+                dist: 2000,
+                radius: 0,
+                time: Date.now() + 120000,
+                elapsed: 120000,
+                power: 250,
+                pCyclistRaw: 240,
+                pCyclistWheel: 230,
+                pCyclistOptimalPower: 245,
+                pCyclistCurrentSpeed: 220,
+                pCyclistOptimalSpeed: 235,
+                pAero: -80,
+                pGravity: -20,
+                pRollingResistance: -15,
+                pWheelBearings: -5,
+                pPowerFromAcc: 10,
+                pPowerWheelFromAcc: 9,
+                aeroCoef: 0.7,
+                grade: 0.05,
+                speed: 15.5,
+                speedMax: 18.0,
+                speedMaxIncline: 16.0,
+                virtSpeedCurrent: 15.5,
+                temperature: 20,
+                windSpeed: 2.0,
+                windDirection: 180,
+                windBearing: 170,
+                windAlpha: 10,
+                heartRate: 150,
+                cadence: 90,
+            });
+        });
+
+        it('should calculate elevation statistics', () => {
+            expect(pathData.getMinElevation()).toBe(80);
+            expect(pathData.getMaxElevation()).toBe(150);
+            expect(pathData.getTotalElevationGain()).toBeGreaterThan(0);
+            // Note: getTotalElevationLoss returns negative values, so check it's less than 0
+            expect(pathData.getTotalElevationLoss()).toBeLessThan(0);
+        });
+
+        it('should calculate distance statistics', () => {
+            expect(pathData.getTotalDistance()).toBeGreaterThan(0);
+        });
+
+        it('should trigger computeArrays in elevation methods when not enhanced', () => {
+            // Create a new path without calling computeArrays first
+            const freshPath = new Path();
+            freshPath.addPoint({
+                lat: toRadians(45.0),
+                lon: toRadians(2.0),
+                ele: 100,
+                bearing: 0,
+                dist: 0,
+                radius: 0,
+                time: Date.now(),
+                elapsed: 0,
+                power: 250,
+                pCyclistRaw: 240,
+                pCyclistWheel: 230,
+                pCyclistOptimalPower: 245,
+                pCyclistCurrentSpeed: 220,
+                pCyclistOptimalSpeed: 235,
+                pAero: -80,
+                pGravity: -20,
+                pRollingResistance: -15,
+                pWheelBearings: -5,
+                pPowerFromAcc: 10,
+                pPowerWheelFromAcc: 9,
+                aeroCoef: 0.7,
+                grade: 0.05,
+                speed: 15.5,
+                speedMax: 18.0,
+                speedMaxIncline: 16.0,
+                virtSpeedCurrent: 15.5,
+                temperature: 20,
+                windSpeed: 2.0,
+                windDirection: 180,
+                windBearing: 170,
+                windAlpha: 10,
+                heartRate: 150,
+                cadence: 90,
+            });
+
+            // These should trigger computeArrays internally (lines 647, 658)
+            expect(freshPath.arePointsEnhanced()).toBe(false);
+            const elevationGain = freshPath.getTotalElevationGain();
+            expect(elevationGain).toBeGreaterThanOrEqual(0);
+
+            // Reset enhancement status to test the other method
+            freshPath['pointsEnhanced'] = false;
+            const elevationLoss = freshPath.getTotalElevationLoss();
+            expect(elevationLoss).toBeLessThanOrEqual(0);
+        });
+    });
+
+    describe('geographic bounds and enhancement status', () => {
+        it('should return bounds and check enhancement status', () => {
+            // Add points to create bounds
+            pathData.addPoint({
+                lat: toRadians(45.0),
+                lon: toRadians(2.0),
+                ele: 100,
+                bearing: 0,
+                dist: 0,
+                radius: 0,
+                time: Date.now(),
+                elapsed: 0,
+                power: 250,
+                pCyclistRaw: 240,
+                pCyclistWheel: 230,
+                pCyclistOptimalPower: 245,
+                pCyclistCurrentSpeed: 220,
+                pCyclistOptimalSpeed: 235,
+                pAero: -80,
+                pGravity: -20,
+                pRollingResistance: -15,
+                pWheelBearings: -5,
+                pPowerFromAcc: 10,
+                pPowerWheelFromAcc: 9,
+                aeroCoef: 0.7,
+                grade: 0.05,
+                speed: 15.5,
+                speedMax: 18.0,
+                speedMaxIncline: 16.0,
+                virtSpeedCurrent: 15.5,
+                temperature: 20,
+                windSpeed: 2.0,
+                windDirection: 180,
+                windBearing: 170,
+                windAlpha: 10,
+                heartRate: 150,
+                cadence: 90,
+            });
+
+            // Test getBounds method (lines 673-681)
+            expect(pathData.arePointsEnhanced()).toBe(false);
+            const bounds = pathData.getBounds();
+            expect(bounds).toHaveProperty('minLat');
+            expect(bounds).toHaveProperty('maxLat');
+            expect(bounds).toHaveProperty('minLon');
+            expect(bounds).toHaveProperty('maxLon');
+            expect(bounds.minLat).toBeCloseTo(toRadians(45.0), 5);
+            expect(bounds.maxLat).toBeCloseTo(toRadians(45.0), 5);
+
+            // arePointsEnhanced should now return true after getBounds triggered computeArrays
+            expect(pathData.arePointsEnhanced()).toBe(true);
+        });
+    });
+
+    describe('distance calculation edge cases', () => {
+        it('should handle points with very similar distances', () => {
+            // Create a fresh path for this specific test
+            const testPath = new Path();
+            const baseTime = Date.now();
+            const baseDist = 1000.0;
+
+            // Add first point
+            testPath.addPoint({
+                lat: toRadians(45.0),
+                lon: toRadians(2.0),
+                ele: 100,
+                bearing: 0,
+                dist: baseDist,
+                radius: 0,
+                time: baseTime,
+                elapsed: 0,
+                power: 0,
+                pCyclistRaw: 0,
+                pCyclistWheel: 0,
+                pCyclistOptimalPower: 0,
+                pCyclistCurrentSpeed: 0,
+                pCyclistOptimalSpeed: 0,
+                pAero: 0,
+                pGravity: 0,
+                pRollingResistance: 0,
+                pWheelBearings: 0,
+                pPowerFromAcc: 0,
+                pPowerWheelFromAcc: 0,
+                aeroCoef: 0.7,
+                grade: 0,
+                speed: 0,
+                speedMax: 0,
+                speedMaxIncline: 0,
+                virtSpeedCurrent: 0,
+                temperature: 20,
+                windSpeed: 0,
+                windDirection: 0,
+                windBearing: 0,
+                windAlpha: 0,
+                heartRate: 0,
+                cadence: 0,
+            });
+
+            // Add multiple consecutive points with identical distances (to trigger maxIndex++ loop)
+            for (let i = 1; i <= 4; i++) {
+                testPath.addPoint({
+                    lat: toRadians(45.0 + i * 0.0001),
+                    lon: toRadians(2.0 + i * 0.0001),
+                    ele: 100,
+                    bearing: 0,
+                    dist: baseDist, // Exact same distance to trigger the loop condition
+                    radius: 0,
+                    time: baseTime + i * 1000,
+                    elapsed: i * 1000,
+                    power: 0,
+                    pCyclistRaw: 0,
+                    pCyclistWheel: 0,
+                    pCyclistOptimalPower: 0,
+                    pCyclistCurrentSpeed: 0,
+                    pCyclistOptimalSpeed: 0,
+                    pAero: 0,
+                    pGravity: 0,
+                    pRollingResistance: 0,
+                    pWheelBearings: 0,
+                    pPowerFromAcc: 0,
+                    pPowerWheelFromAcc: 0,
+                    aeroCoef: 0.7,
+                    grade: 0,
+                    speed: 0,
+                    speedMax: 0,
+                    speedMaxIncline: 0,
+                    virtSpeedCurrent: 0,
+                    temperature: 20,
+                    windSpeed: 0,
+                    windDirection: 0,
+                    windBearing: 0,
+                    windAlpha: 0,
+                    heartRate: 0,
+                    cadence: 0,
+                });
+            }
+
+            // Add a final point with significantly different distance
+            testPath.addPoint({
+                lat: toRadians(45.01),
+                lon: toRadians(2.01),
+                ele: 110,
+                bearing: 0,
+                dist: baseDist + 100, // Much larger distance difference
+                radius: 0,
+                time: baseTime + 5000,
+                elapsed: 5000,
+                power: 0,
+                pCyclistRaw: 0,
+                pCyclistWheel: 0,
+                pCyclistOptimalPower: 0,
+                pCyclistCurrentSpeed: 0,
+                pCyclistOptimalSpeed: 0,
+                pAero: 0,
+                pGravity: 0,
+                pRollingResistance: 0,
+                pWheelBearings: 0,
+                pPowerFromAcc: 0,
+                pPowerWheelFromAcc: 0,
+                aeroCoef: 0.7,
+                grade: 0,
+                speed: 0,
+                speedMax: 0,
+                speedMaxIncline: 0,
+                virtSpeedCurrent: 0,
+                temperature: 20,
+                windSpeed: 0,
+                windDirection: 0,
+                windBearing: 0,
+                windAlpha: 0,
+                heartRate: 0,
+                cadence: 0,
+            });
+
+            // This should trigger the while loop with multiple iterations of maxIndex++ (line 565)
+            testPath.computeArrays();
+
+            // Verify computation completed without errors
+            expect(testPath.arePointsEnhanced()).toBe(true);
+            expect(testPath.length).toBe(6);
+        });
+    });
+
+    describe('GPX error handling', () => {
+        it('should throw error for GPX with no tracks', () => {
+            const emptyGpx = `<?xml version="1.0"?>
+                <gpx version="1.1" creator="test">
+                </gpx>`;
+
+            expect(() => Path.fromGPX(emptyGpx)).toThrow('No tracks found in GPX file');
+        });
+
+        it('should throw error for track with no segments', () => {
+            const noSegmentsGpx = `<?xml version="1.0"?>
+                <gpx version="1.1" creator="test">
+                    <trk>
+                        <name>Empty Track</name>
+                    </trk>
+                </gpx>`;
+
+            expect(() => Path.fromGPX(noSegmentsGpx)).toThrow('No segments found in GPX track');
         });
     });
 

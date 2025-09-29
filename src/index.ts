@@ -20,7 +20,7 @@ export { Elevation } from './elevation';
 export * from './constants';
 
 // GPX exports
-export { GPXParser, GPXWriter } from './gpx';
+export { GPXParser, GPXWriter, PathConverter } from './gpx';
 export type {
     GPXData,
     GPXTrack,

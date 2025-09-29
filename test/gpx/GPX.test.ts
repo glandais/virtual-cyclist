@@ -1,4 +1,5 @@
-import { Path, GPXParser, GPXWriter } from '../src';
+import { Path, GPXParser, GPXWriter, PathConverter } from '../../src';
+import { toRadians } from '../../src/constants';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -17,7 +18,7 @@ describe('GPX Integration Tests', () => {
     beforeAll(() => {
         // Load all sample GPX files
         for (const filename of sampleGpxFiles) {
-            const filePath = join(__dirname, '..', 'gpx', filename);
+            const filePath = join(__dirname, '../..', 'gpx', filename);
             try {
                 sampleGpxContent[filename] = readFileSync(filePath, 'utf-8');
             } catch (error) {
@@ -151,8 +152,8 @@ describe('GPX Integration Tests', () => {
 
             // Add some test points
             path.addPoint({
-                lat: 46.5197,
-                lon: 6.6323,
+                lat: toRadians(46.5197),
+                lon: toRadians(6.6323),
                 ele: 372,
                 time: new Date('2023-06-15T10:00:00Z').getTime(),
                 heartRate: 120,
@@ -204,8 +205,8 @@ describe('GPX Integration Tests', () => {
         test('should include extensions when enabled', () => {
             const path = new Path();
             path.addPoint({
-                lat: 46.5197,
-                lon: 6.6323,
+                lat: toRadians(46.5197),
+                lon: toRadians(6.6323),
                 ele: 372,
                 heartRate: 120,
                 cadence: 80,
@@ -253,8 +254,8 @@ describe('GPX Integration Tests', () => {
         test('should exclude extensions when disabled', () => {
             const path = new Path();
             path.addPoint({
-                lat: 46.5197,
-                lon: 6.6323,
+                lat: toRadians(46.5197),
+                lon: toRadians(6.6323),
                 ele: 372,
                 heartRate: 120,
                 time: new Date('2023-06-15T10:00:00Z').getTime(),
@@ -298,8 +299,8 @@ describe('GPX Integration Tests', () => {
         test('static writeFromPath method should work', () => {
             const path = new Path();
             path.addPoint({
-                lat: 46.5197,
-                lon: 6.6323,
+                lat: toRadians(46.5197),
+                lon: toRadians(6.6323),
                 ele: 372,
                 time: new Date('2023-06-15T10:00:00Z').getTime(),
                 bearing: 0,
@@ -360,8 +361,8 @@ describe('GPX Integration Tests', () => {
         test('should export Path to GPX', () => {
             const path = new Path();
             path.addPoint({
-                lat: 46.5197,
-                lon: 6.6323,
+                lat: toRadians(46.5197),
+                lon: toRadians(6.6323),
                 ele: 372,
                 time: new Date('2023-06-15T10:00:00Z').getTime(),
                 heartRate: 120,
@@ -461,8 +462,8 @@ describe('GPX Integration Tests', () => {
         test('should export to GPXData structure', () => {
             const path = new Path();
             path.addPoint({
-                lat: 46.5197,
-                lon: 6.6323,
+                lat: toRadians(46.5197),
+                lon: toRadians(6.6323),
                 ele: 372,
                 time: new Date('2023-06-15T10:00:00Z').getTime(),
                 heartRate: 120,
@@ -574,6 +575,187 @@ describe('GPX Integration Tests', () => {
 
             const parser = new GPXParser();
             expect(() => parser.parse(invalidTrackPointGpx)).toThrow();
+        });
+    });
+
+    describe('PathConverter', () => {
+        test('should create Path from GPX using PathConverter', () => {
+            const basicGpx = `<?xml version="1.0" encoding="UTF-8"?>
+                <gpx version="1.1" creator="test">
+                    <trk>
+                        <trkseg>
+                            <trkpt lat="46.5197" lon="6.6323" ele="372.2">
+                                <time>2023-01-01T10:00:00Z</time>
+                            </trkpt>
+                        </trkseg>
+                    </trk>
+                </gpx>`;
+
+            const path = PathConverter.fromGPX(basicGpx);
+            expect(path.getPointCount()).toBe(1);
+            expect(path.getLatitude(0)).toBeCloseTo(toRadians(46.5197), 6);
+            expect(path.getLongitude(0)).toBeCloseTo(toRadians(6.6323), 6);
+            // Note: Elevation and extensions parsing might depend on GPX parser implementation
+            expect(path.getElevation(0)).toBeGreaterThanOrEqual(0);
+        });
+
+        test('should export Path to GPX using PathConverter', () => {
+            const path = new Path();
+            path.addPoint({
+                lat: toRadians(46.5197),
+                lon: toRadians(6.6323),
+                ele: 372.2,
+                bearing: 0,
+                dist: 0,
+                radius: 0,
+                time: new Date('2023-01-01T10:00:00Z').getTime(),
+                elapsed: 0,
+                power: 250,
+                pCyclistRaw: 240,
+                pCyclistWheel: 230,
+                pCyclistOptimalPower: 245,
+                pCyclistCurrentSpeed: 220,
+                pCyclistOptimalSpeed: 235,
+                pAero: -80,
+                pGravity: -20,
+                pRollingResistance: -15,
+                pWheelBearings: -5,
+                pPowerFromAcc: 10,
+                pPowerWheelFromAcc: 9,
+                aeroCoef: 0.7,
+                grade: 0.05,
+                speed: 15.5,
+                speedMax: 18.0,
+                speedMaxIncline: 16.0,
+                virtSpeedCurrent: 15.5,
+                temperature: 20,
+                windSpeed: 2.0,
+                windDirection: 180,
+                windBearing: 170,
+                windAlpha: 10,
+                heartRate: 150,
+                cadence: 90,
+            });
+
+            const gpxContent = PathConverter.toGPX(path);
+            expect(gpxContent).toContain('<gpx');
+            expect(gpxContent).toContain('lat="46.5197"');
+            expect(gpxContent).toContain('lon="6.6323"');
+            expect(gpxContent).toContain('<ele>372.2</ele>');
+        });
+
+        test('should load GPX into existing Path using PathConverter', () => {
+            const basicGpx = `<?xml version="1.0" encoding="UTF-8"?>
+                <gpx version="1.1" creator="test">
+                    <trk>
+                        <trkseg>
+                            <trkpt lat="46.5197" lon="6.6323">
+                                <ele>372.2</ele>
+                            </trkpt>
+                        </trkseg>
+                    </trk>
+                </gpx>`;
+
+            const path = new Path();
+            // Add some initial data
+            path.addPoint({
+                lat: toRadians(45.0),
+                lon: toRadians(5.0),
+                ele: 100,
+                bearing: 0,
+                dist: 0,
+                radius: 0,
+                time: 0,
+                elapsed: 0,
+                power: 0,
+                pCyclistRaw: 0,
+                pCyclistWheel: 0,
+                pCyclistOptimalPower: 0,
+                pCyclistCurrentSpeed: 0,
+                pCyclistOptimalSpeed: 0,
+                pAero: 0,
+                pGravity: 0,
+                pRollingResistance: 0,
+                pWheelBearings: 0,
+                pPowerFromAcc: 0,
+                pPowerWheelFromAcc: 0,
+                aeroCoef: 0,
+                grade: 0,
+                speed: 0,
+                speedMax: 0,
+                speedMaxIncline: 0,
+                virtSpeedCurrent: 0,
+                temperature: 0,
+                windSpeed: 0,
+                windDirection: 0,
+                windBearing: 0,
+                windAlpha: 0,
+                heartRate: 0,
+                cadence: 0,
+            });
+
+            expect(path.getPointCount()).toBe(1);
+
+            PathConverter.loadIntoPath(path, basicGpx);
+
+            expect(path.getPointCount()).toBe(1);
+            expect(path.getLatitude(0)).toBeCloseTo(toRadians(46.5197), 6);
+            expect(path.getLongitude(0)).toBeCloseTo(toRadians(6.6323), 6);
+            expect(path.getElevation(0)).toBeGreaterThanOrEqual(0);
+        });
+
+        test('should export Path to GPXData using PathConverter', () => {
+            const path = new Path();
+            path.addPoint({
+                lat: toRadians(46.5197),
+                lon: toRadians(6.6323),
+                ele: 372.2,
+                bearing: 0,
+                dist: 0,
+                radius: 0,
+                time: new Date('2023-01-01T10:00:00Z').getTime(),
+                elapsed: 0,
+                power: 250,
+                pCyclistRaw: 240,
+                pCyclistWheel: 230,
+                pCyclistOptimalPower: 245,
+                pCyclistCurrentSpeed: 220,
+                pCyclistOptimalSpeed: 235,
+                pAero: -80,
+                pGravity: -20,
+                pRollingResistance: -15,
+                pWheelBearings: -5,
+                pPowerFromAcc: 10,
+                pPowerWheelFromAcc: 9,
+                aeroCoef: 0.7,
+                grade: 0.05,
+                speed: 15.5,
+                speedMax: 18.0,
+                speedMaxIncline: 16.0,
+                virtSpeedCurrent: 15.5,
+                temperature: 20,
+                windSpeed: 2.0,
+                windDirection: 180,
+                windBearing: 170,
+                windAlpha: 10,
+                heartRate: 150,
+                cadence: 90,
+            });
+
+            const gpxData = PathConverter.toGPXData(path);
+
+            expect(gpxData.version).toBe('1.1');
+            expect(gpxData.creator).toBe('@glandais/virtual-cyclist');
+            expect(gpxData.tracks).toHaveLength(1);
+            expect(gpxData.tracks[0].segments).toHaveLength(1);
+            expect(gpxData.tracks[0].segments[0].trackPoints).toHaveLength(1);
+
+            const trackPoint = gpxData.tracks[0].segments[0].trackPoints[0];
+            expect(trackPoint.lat).toBeCloseTo(46.5197, 6);
+            expect(trackPoint.lon).toBeCloseTo(6.6323, 6);
+            expect(trackPoint.ele).toBe(372.2);
+            expect(trackPoint.extensions?.heartRate).toBe(150);
+            expect(trackPoint.extensions?.cadence).toBe(90);
         });
     });
 });

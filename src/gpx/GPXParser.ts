@@ -242,13 +242,6 @@ export class GPXParser {
     }
 
     /**
-     * Utility method to get the namespace resolver for debugging
-     */
-    getNamespaceResolver(): NamespaceResolver | null {
-        return this.namespaceResolver || null;
-    }
-
-    /**
      * Static method to quickly parse GPX content
      */
     static parse(gpxContent: string): GPXData {
