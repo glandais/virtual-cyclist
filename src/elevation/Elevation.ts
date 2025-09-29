@@ -1,6 +1,7 @@
 import { Path } from '../Path';
 import { EMPTY_POINT } from '../types';
 import ElevationProvider, { Coordinates, CoordinatesElevation } from '@glandais/elevation';
+import { toRadians } from '../constants';
 
 const elevationProvider = new ElevationProvider();
 
@@ -24,8 +25,8 @@ export class Elevation {
             const coord = resultCoordinates[i];
             result.addPoint({
                 ...EMPTY_POINT,
-                lat: coord.latitude,
-                lon: coord.longitude,
+                lat: toRadians(coord.latitude),
+                lon: toRadians(coord.longitude),
                 ele: coord.elevation,
             });
         }

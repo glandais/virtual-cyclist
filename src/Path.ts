@@ -2,6 +2,7 @@ import { PointField, Point, FIELDS_PER_POINT } from './types';
 import { GPXParser } from './gpx/GPXParser';
 import { GPXWriter } from './gpx/GPXWriter';
 import { GPXData, GPXWriteOptions } from './gpx/types';
+import { toDegrees } from './constants';
 
 /**
  * High-performance chunked storage for GPS path data with 33 properties per point.
@@ -480,8 +481,8 @@ export class Path {
     }> {
         for (let i = 0; i < this.pointCount; i++) {
             yield {
-                latitude: this.getLatitude(i),
-                longitude: this.getLongitude(i),
+                latitude: toDegrees(this.getLatitude(i)),
+                longitude: toDegrees(this.getLongitude(i)),
                 elevation: this.getElevation(i),
             };
         }
