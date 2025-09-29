@@ -468,6 +468,9 @@ class GPXDemoApp {
                 const distance = point.dist / 1000; // Convert to km
                 let value = point[fieldKey];
 
+                if (isNaN(value)) {
+                    value = 0;
+                }
                 // Convert radians to degrees for better readability
                 if (fieldInfo.unit === 'rad') {
                     value = (value * 180) / Math.PI;

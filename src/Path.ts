@@ -120,18 +120,18 @@ export class Path {
 
     /**
      * Calculate distance between two points using Haversine formula.
-     * @param lat1 Latitude of first point (degrees)
-     * @param lon1 Longitude of first point (degrees)
-     * @param lat2 Latitude of second point (degrees)
-     * @param lon2 Longitude of second point (degrees)
+     * @param lat1 Latitude of first point (radians)
+     * @param lon1 Longitude of first point (radians)
+     * @param lat2 Latitude of second point (radians)
+     * @param lon2 Longitude of second point (radians)
      * @returns Distance in meters
      */
     private distanceTo(lat1: number, lon1: number, lat2: number, lon2: number): number {
         const R = 6371000; // Earth's radius in meters
-        const φ1 = (lat1 * Math.PI) / 180;
-        const φ2 = (lat2 * Math.PI) / 180;
-        const Δφ = ((lat2 - lat1) * Math.PI) / 180;
-        const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+        const φ1 = lat1;
+        const φ2 = lat2;
+        const Δφ = lat2 - lat1;
+        const Δλ = lon2 - lon1;
 
         const a =
             Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
@@ -143,18 +143,15 @@ export class Path {
 
     /**
      * Simple coordinate projection to Cartesian coordinates for bearing calculation.
-     * @param lat Latitude in degrees
-     * @param lon Longitude in degrees
+     * @param lat Latitude in radians
+     * @param lon Longitude in radians
      * @returns Projected x,y coordinates
      */
     private project(lat: number, lon: number): { x: number; y: number } {
         // Simple cylindrical projection (adequate for bearing calculations)
-        const latRad = (lat * Math.PI) / 180;
-        const lonRad = (lon * Math.PI) / 180;
-
         return {
-            x: lonRad * Math.cos(latRad),
-            y: latRad,
+            x: lon * Math.cos(lat),
+            y: lat,
         };
     }
 
