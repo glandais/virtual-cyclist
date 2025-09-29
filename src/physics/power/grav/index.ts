@@ -1,0 +1,1 @@
+export { gravPowerProvider } from './GravPowerProvider';

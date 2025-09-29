@@ -1,3 +1,4 @@
 export { GPXParser } from './GPXParser';
 export { GPXWriter } from './GPXWriter';
-export * from './types';
+export { KNOWN_NAMESPACES } from './types';
+export type { ExtensionFieldMapping } from './types';

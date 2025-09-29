@@ -222,6 +222,131 @@ Key papers validating the physics models:
 2. Isvan, O. (2011). "Power Optimization for the Propulsion of Lightweight Vehicles." https://www.sheldonbrown.com/isvan/Power%20Management%20for%20Lightweight%20Vehicles.pdf
 3. Standard physics references for energy conservation and dynamics
 
+## Import Style and Module Organization
+
+### Import Path Conventions
+
+**Always use relative paths** - Never use absolute paths with `src/` prefix:
+
+```typescript
+// ✅ Correct
+import { Path } from '../Path';
+import { Course } from '../../types';
+
+// ❌ Wrong
+import { Path } from 'src/Path';
+import { Course } from 'src/types';
+```
+
+**Prefer importing from index.ts** - Use parent folder's index.ts instead of deep relative paths:
+
+```typescript
+// ✅ Preferred
+import { AeroPowerProvider } from '../aero';
+import { PowerProvider } from '..';
+
+// ⚠️ Acceptable but less maintainable
+import { AeroPowerProvider } from '../aero/AeroPowerProvider';
+import { PowerProvider } from '../PowerProvider';
+```
+
+### Index.ts Structure
+
+**Every folder with multiple related files should have an index.ts** that serves as the public API for that module:
+
+```
+src/
+  index.ts              # Main public API for package consumers
+  physics/
+    index.ts            # Re-exports MaxSpeedComputer + power module
+    MaxSpeedComputer.ts
+    power/
+      index.ts          # Re-exports PowerComputer + submodules
+      PowerComputer.ts
+      aero/
+        index.ts        # Re-exports AeroPowerProvider + submodules
+        AeroPowerProvider.ts
+        aero/
+          index.ts      # Exports AeroProvider, AeroProviderConstant
+          AeroProvider.ts
+          AeroProviderConstant.ts
+```
+
+**Hierarchy Rules:**
+
+- **Leaf folders**: Export their own public classes/types/interfaces
+- **Parent folders**: Re-export from subfolders + own public items
+- **src/index.ts**: The final public API exposed to package consumers
+
+### Export Guidelines
+
+**Selective exports only** - Export exactly what's needed, nothing more:
+
+```typescript
+// ✅ Correct - Selective exports
+export { ClassName } from './ClassName';
+export type { InterfaceName } from './types';
+export { helperFunction } from './utils';
+
+// ❌ Wrong - Over-exposes internals
+export * from './types';
+export * from './internals';
+```
+
+**Use `export type` for type-only exports** - Enables better tree-shaking:
+
+```typescript
+// ✅ Correct
+export type { Point, Course, Cyclist } from './types';
+export { PointField } from './types'; // Enum - runtime value
+
+// ❌ Wrong
+export { Point, Course, Cyclist } from './types'; // Types as values
+```
+
+**Example index.ts patterns:**
+
+```typescript
+// Leaf module (src/utils/index.ts)
+export { Vector3D } from './Vector3D';
+
+// Parent module (src/physics/index.ts)
+export { MaxSpeedComputer } from './MaxSpeedComputer';
+export type { MaxSpeedCourse } from './MaxSpeedComputer';
+// Re-export from submodules
+export { PowerComputer } from './power';
+
+// Root module (src/index.ts)
+export { Path } from './Path';
+export type { Point, Course } from './types';
+export { GPXParser, GPXWriter } from './gpx';
+export { MaxSpeedComputer } from './physics';
+```
+
+### Type Organization
+
+**Shared types** - Place in appropriate `types.ts` file:
+
+- Top-level shared types → `src/types.ts`
+- Domain-specific types → `src/domain/types.ts`
+- Only export types that are part of the public API
+
+**Type export patterns:**
+
+```typescript
+// types.ts - Define and export types
+export interface Point {
+    /* ... */
+}
+export interface Course {
+    /* ... */
+}
+
+// index.ts - Re-export only public types
+export type { Point, Course } from './types';
+// Don't re-export internal types like PointWritable
+```
+
 ## Best Practices
 
 1. **Modularity**: Keep modules focused on single responsibilities
@@ -231,3 +356,4 @@ Key papers validating the physics models:
 5. **Documentation**: Comprehensive JSDoc for all public APIs
 6. **Testing**: Test edge cases, boundaries, and error conditions
 7. **Consistency**: Follow existing patterns and conventions
+8. **Import Hygiene**: Use relative paths and import from index.ts files
