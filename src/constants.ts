@@ -129,6 +129,12 @@ export const DEFAULT_MAX_BRAKE_G = 0.6;
 export const DEFAULT_MAX_LEAN_ANGLE_DEG = 35;
 
 /**
+ * Maximum lean angle for cornering (radians)
+ * Converted from degrees for internal physics calculations
+ */
+export const DEFAULT_MAX_LEAN_ANGLE_RAD = (DEFAULT_MAX_LEAN_ANGLE_DEG * Math.PI) / 180;
+
+/**
  * Maximum speed capability (km/h)
  * Source: Reasonable maximum for recreational cycling on roads
  * Professional sprinting can exceed this, but represents safe operational limit
@@ -161,3 +167,23 @@ export const DEFAULT_FRONTAL_AREA = 0.5;
  * Reference: Used in cycling aerodynamics research (Martin et al.)
  */
 export const DEFAULT_AIR_DENSITY = 1.225;
+
+// ============================================================================
+// ANGLE CONVERSION UTILITIES
+// ============================================================================
+
+/**
+ * Convert degrees to radians.
+ *
+ * @param degrees Angle in degrees
+ * @returns Angle in radians
+ */
+export const toRadians = (degrees: number): number => (degrees * Math.PI) / 180;
+
+/**
+ * Convert radians to degrees.
+ *
+ * @param radians Angle in radians
+ * @returns Angle in degrees
+ */
+export const toDegrees = (radians: number): number => (radians * 180) / Math.PI;

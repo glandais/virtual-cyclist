@@ -125,14 +125,49 @@ async function loadGPXDemo() {
 
         console.log('Computing maximum speeds...');
         maxSpeedComputer.computeMaxSpeeds(course);
-        console.log('Max speeds computed successfully!');
+        console.log('Max speeds computed successfully! ✅');
+
+        // Collect all speed values for analysis
+        const allSpeeds = [];
+        for (let i = 0; i < correctedPath.getPointCount(); i++) {
+            allSpeeds.push(correctedPath.getSpeedMax(i));
+        }
+
+        // Statistical analysis
+        const minSpeed = Math.min(...allSpeeds);
+        const maxSpeed = Math.max(...allSpeeds);
+        const avgSpeed = allSpeeds.reduce((a, b) => a + b) / allSpeeds.length;
+        const uniqueSpeeds = [...new Set(allSpeeds.map(s => Math.round(s * 100) / 100))];
+
+        console.log('\n🚀 MaxSpeedComputer Results Analysis:');
+        console.log(`   Total points: ${allSpeeds.length}`);
+        console.log(
+            `   Speed range: ${minSpeed.toFixed(2)} - ${maxSpeed.toFixed(2)} m/s (${(minSpeed * 3.6).toFixed(1)} - ${(maxSpeed * 3.6).toFixed(1)} km/h)`
+        );
+        console.log(
+            `   Average speed: ${avgSpeed.toFixed(2)} m/s (${(avgSpeed * 3.6).toFixed(1)} km/h)`
+        );
+        console.log(
+            `   Unique speed values: ${uniqueSpeeds.length} (${uniqueSpeeds.length > 1 ? '✅ Varied speeds' : '❌ All same speed'})`
+        );
+
+        // Check for the old bug (all speeds = 2.00 m/s)
+        const allSameSpeed = allSpeeds.every(speed => Math.abs(speed - 2.0) < 0.01);
+        if (allSameSpeed) {
+            console.log('   🚨 BUG DETECTED: All speeds are 2.00 m/s!');
+        } else {
+            console.log('   ✅ BUG FIXED: Speeds are properly varied!');
+        }
 
         // Show sample speed calculations for first few points
-        console.log('Sample max speeds for first 5 points:');
+        console.log('\nSample max speeds for first 5 points:');
         for (let i = 0; i < Math.min(5, correctedPath.getPointCount()); i++) {
             const point = correctedPath.getPointData(i);
+            const speedMs = correctedPath.getSpeedMax(i);
+            const speedKmh = speedMs * 3.6;
+            const radius = point.radius;
             console.log(
-                `Point ${i}: max speed = ${correctedPath.getSpeedMax(i).toFixed(2)} m/s (${(correctedPath.getSpeedMax(i) * 3.6).toFixed(1)} km/h), radius = ${point.radius.toFixed(1)}m`
+                `Point ${i}: ${speedMs.toFixed(2)} m/s (${speedKmh.toFixed(1)} km/h), radius = ${radius.toFixed(1)}m`
             );
         }
 

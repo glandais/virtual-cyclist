@@ -97,6 +97,16 @@ export class Cyclist implements ICyclist {
     }
 
     /**
+     * Get the maximum lean angle in radians.
+     * Provides direct radian access for physics calculations.
+     *
+     * @returns Maximum lean angle in radians
+     */
+    getMaxAngleRad(): number {
+        return (this.maxAngleDeg * Math.PI) / 180.0;
+    }
+
+    /**
      * Get maximum braking deceleration in SI units.
      * Converts from g-force units to meters per second squared
      * for use in physics calculations.
