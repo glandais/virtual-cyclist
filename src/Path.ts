@@ -105,7 +105,7 @@ export class Path {
     /**
      * Gets a field value for a specific point.
      */
-    private getField(pointIndex: number, field: PointField): number {
+    public getField(pointIndex: number, field: PointField): number {
         const { chunkIndex, fieldOffset } = this.getOffset(pointIndex, field);
         return this.chunks[chunkIndex][fieldOffset];
     }
@@ -113,7 +113,7 @@ export class Path {
     /**
      * Sets a field value for a specific point.
      */
-    private setField(pointIndex: number, field: PointField, value: number): void {
+    public setField(pointIndex: number, field: PointField, value: number): void {
         const { chunkIndex, fieldOffset } = this.getOffset(pointIndex, field);
         this.chunks[chunkIndex][fieldOffset] = value;
     }
@@ -689,5 +689,103 @@ export class Path {
      */
     public arePointsEnhanced(): boolean {
         return this.pointsEnhanced;
+    }
+
+    /**
+     * Get all cumulative distances as an array for efficient binary search.
+     * This is used by VirtualizeService for GPS waypoint alignment.
+     *
+     * @returns Array of cumulative distances for all points
+     */
+    public getAllDistances(): Float64Array {
+        const distances = new Float64Array(this.pointCount);
+        for (let i = 0; i < this.pointCount; i++) {
+            distances[i] = this.getDistance(i);
+        }
+        return distances;
+    }
+
+    /**
+     * Interpolates a new point between two existing points.
+     *
+     * Uses linear interpolation for all numeric fields:
+     * - result = p1 + (p2 - p1) × coef
+     *
+     * **NaN Handling (STRICT):**
+     * - If either p1 or p2 value is NaN, result is NaN
+     * - This ensures data integrity for incomplete GPS data
+     *
+     * @param index1 Index of first point
+     * @param index2 Index of second point
+     * @param coef Interpolation coefficient (0 = p1, 1 = p2, 0.5 = midpoint)
+     * @returns Interpolated point
+     */
+    public interpolatePoint(index1: number, index2: number, coef: number): Point {
+        const p1 = this.getPointData(index1);
+        const p2 = this.getPointData(index2);
+
+        // Helper function for strict NaN handling
+        const interpolateValue = (v1: number, v2: number): number => {
+            if (isNaN(v1) || isNaN(v2)) {
+                return NaN;
+            }
+            return v1 + (v2 - v1) * coef;
+        };
+
+        return {
+            // Spatial & Navigation
+            lat: interpolateValue(p1.lat, p2.lat),
+            lon: interpolateValue(p1.lon, p2.lon),
+            ele: interpolateValue(p1.ele, p2.ele),
+            bearing: interpolateValue(p1.bearing, p2.bearing),
+            dist: interpolateValue(p1.dist, p2.dist),
+            radius: interpolateValue(p1.radius, p2.radius),
+
+            // Temporal
+            time: interpolateValue(p1.time, p2.time),
+            elapsed: interpolateValue(p1.elapsed, p2.elapsed),
+
+            // Physics & Power
+            power: interpolateValue(p1.power, p2.power),
+            pCyclistRaw: interpolateValue(p1.pCyclistRaw, p2.pCyclistRaw),
+            pCyclistWheel: interpolateValue(p1.pCyclistWheel, p2.pCyclistWheel),
+            pCyclistOptimalPower: interpolateValue(
+                p1.pCyclistOptimalPower,
+                p2.pCyclistOptimalPower
+            ),
+            pCyclistCurrentSpeed: interpolateValue(
+                p1.pCyclistCurrentSpeed,
+                p2.pCyclistCurrentSpeed
+            ),
+            pCyclistOptimalSpeed: interpolateValue(
+                p1.pCyclistOptimalSpeed,
+                p2.pCyclistOptimalSpeed
+            ),
+            pAero: interpolateValue(p1.pAero, p2.pAero),
+            pGravity: interpolateValue(p1.pGravity, p2.pGravity),
+            pRollingResistance: interpolateValue(p1.pRollingResistance, p2.pRollingResistance),
+            pWheelBearings: interpolateValue(p1.pWheelBearings, p2.pWheelBearings),
+            pPowerFromAcc: interpolateValue(p1.pPowerFromAcc, p2.pPowerFromAcc),
+            pPowerWheelFromAcc: interpolateValue(p1.pPowerWheelFromAcc, p2.pPowerWheelFromAcc),
+            aeroCoef: interpolateValue(p1.aeroCoef, p2.aeroCoef),
+            grade: interpolateValue(p1.grade, p2.grade),
+
+            // Speed & Motion
+            speed: interpolateValue(p1.speed, p2.speed),
+            speedMax: interpolateValue(p1.speedMax, p2.speedMax),
+            speedMaxIncline: interpolateValue(p1.speedMaxIncline, p2.speedMaxIncline),
+            virtSpeedCurrent: interpolateValue(p1.virtSpeedCurrent, p2.virtSpeedCurrent),
+
+            // Environmental
+            temperature: interpolateValue(p1.temperature, p2.temperature),
+            windSpeed: interpolateValue(p1.windSpeed, p2.windSpeed),
+            windDirection: interpolateValue(p1.windDirection, p2.windDirection),
+            windBearing: interpolateValue(p1.windBearing, p2.windBearing),
+            windAlpha: interpolateValue(p1.windAlpha, p2.windAlpha),
+
+            // Physiological
+            heartRate: interpolateValue(p1.heartRate, p2.heartRate),
+            cadence: interpolateValue(p1.cadence, p2.cadence),
+        };
     }
 }

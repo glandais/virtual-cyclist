@@ -2,8 +2,6 @@ import { MaxSpeedComputer } from '../../src/physics/MaxSpeedComputer';
 import { Path } from '../../src/Path';
 import { Cyclist } from '../../src/Cyclist';
 import { Bike } from '../../src/Bike';
-import { EMPTY_POINT } from '../../src/types';
-import { toRadians } from '../../src/constants';
 import { GPXParser } from '../../src';
 import { join } from 'path';
 import { readFileSync } from 'fs';

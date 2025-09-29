@@ -1,4 +1,8 @@
 import { Path } from './Path';
+import { AeroProvider } from './physics/power/aero/aero/AeroProvider';
+import { WindProvider } from './physics/power/aero/wind/WindProvider';
+import { CyclistPowerProvider } from './physics/power/cyclist/CyclistPowerProvider';
+import { OptimalSpeeds } from './physics/power/cyclist/OptimalSpeeds';
 
 /**
  * Enum defining the index of each field in the chunked array storage.
@@ -218,6 +222,22 @@ export interface Course {
     readonly path: Path;
     readonly bike: Bike;
     readonly cyclist: Cyclist;
+}
+
+export interface CoursePhysicsInput extends Course {
+    /** Air density in kg/m³ (default: 1.225 at sea level, 15°C) */
+    readonly rho: number;
+    /** Aerodynamic coefficient provider */
+    readonly aeroProvider: AeroProvider;
+    /** Wind conditions provider */
+    readonly windProvider: WindProvider;
+    /** Cyclist power output provider */
+    readonly cyclistPowerProvider: CyclistPowerProvider;
+}
+
+export interface CoursePhysics extends CoursePhysicsInput {
+    /** Pre-computed optimal speeds lookup table (set during virtualization) */
+    readonly optimalSpeeds: OptimalSpeeds;
 }
 
 /**
