@@ -1,5 +1,6 @@
 import { Path } from '../src/Path';
 import { PointField, Point } from '../src/types';
+import { toRadians } from '../src/constants';
 
 describe('Path', () => {
     let pathData: Path;
@@ -30,8 +31,8 @@ describe('Path', () => {
     describe('single point operations', () => {
         const samplePoint: Point = {
             // Spatial & Navigation
-            lat: 48.8566,
-            lon: 2.3522,
+            lat: toRadians(48.8566),
+            lon: toRadians(2.3522),
             ele: 35,
             bearing: 45.5,
             dist: 1234.5,
@@ -200,8 +201,8 @@ describe('Path', () => {
             const points: Point[] = [];
             for (let i = 0; i < 5; i++) {
                 points.push({
-                    lat: 48.8566 + i * 0.001,
-                    lon: 2.3522 + i * 0.001,
+                    lat: toRadians(48.8566 + i * 0.001),
+                    lon: toRadians(2.3522 + i * 0.001),
                     ele: 35 + i,
                     bearing: 45.5 + i,
                     dist: 1234.5 + i * 100,
@@ -261,8 +262,8 @@ describe('Path', () => {
             const pointsToAdd = initialCapacity + 100;
             for (let i = 0; i < pointsToAdd; i++) {
                 pathData.addPoint({
-                    lat: 48.8566 + i * 0.001,
-                    lon: 2.3522 + i * 0.001,
+                    lat: toRadians(48.8566 + i * 0.001),
+                    lon: toRadians(2.3522 + i * 0.001),
                     ele: 35,
                     bearing: 0,
                     dist: i,
@@ -304,8 +305,8 @@ describe('Path', () => {
             expect(finalMemInfo.chunksCount).toBeGreaterThan(initialMemInfo.chunksCount);
 
             // Verify we can still access all points correctly
-            expect(pathData.getLatitude(0)).toBe(48.8566);
-            expect(pathData.getLatitude(pointsToAdd - 1)).toBe(48.8566 + (pointsToAdd - 1) * 0.001);
+            expect(pathData.getLatitude(0)).toBe(toRadians(48.8566));
+            expect(pathData.getLatitude(pointsToAdd - 1)).toBe(toRadians(48.8566 + (pointsToAdd - 1) * 0.001));
         });
     });
 
@@ -314,8 +315,8 @@ describe('Path', () => {
             // Add test data
             for (let i = 0; i < 10; i++) {
                 pathData.addPoint({
-                    lat: 48.8566 + i * 0.001,
-                    lon: 2.3522 + i * 0.001,
+                    lat: toRadians(48.8566 + i * 0.001),
+                    lon: toRadians(2.3522 + i * 0.001),
                     ele: 35 + i,
                     bearing: 0,
                     dist: i * 100,
@@ -355,11 +356,11 @@ describe('Path', () => {
             const range = pathData.getPointRange(2, 3);
             expect(range).toHaveLength(3);
 
-            expect(range[0].lat).toBe(48.8566 + 2 * 0.001);
+            expect(range[0].lat).toBe(toRadians(48.8566 + 2 * 0.001));
             expect(range[0].power).toBe(252);
-            expect(range[1].lat).toBe(48.8566 + 3 * 0.001);
+            expect(range[1].lat).toBe(toRadians(48.8566 + 3 * 0.001));
             expect(range[1].power).toBe(253);
-            expect(range[2].lat).toBe(48.8566 + 4 * 0.001);
+            expect(range[2].lat).toBe(toRadians(48.8566 + 4 * 0.001));
             expect(range[2].power).toBe(254);
         });
 
@@ -368,7 +369,7 @@ describe('Path', () => {
             expect(allPoints).toHaveLength(10);
 
             for (let i = 0; i < allPoints.length; i++) {
-                expect(allPoints[i].lat).toBe(48.8566 + i * 0.001);
+                expect(allPoints[i].lat).toBe(toRadians(48.8566 + i * 0.001));
                 expect(allPoints[i].power).toBe(250 + i);
             }
         });
@@ -381,8 +382,8 @@ describe('Path', () => {
             expect(coords).toHaveLength(10);
 
             for (let i = 0; i < coords.length; i++) {
-                expect(coords[i].latitude).toBe(48.8566 + i * 0.001);
-                expect(coords[i].longitude).toBe(2.3522 + i * 0.001);
+                expect(coords[i].latitude).toBeCloseTo(48.8566 + i * 0.001, 10);
+                expect(coords[i].longitude).toBeCloseTo(2.3522 + i * 0.001, 10);
                 expect(coords[i].elevation).toBe(35 + i);
             }
         });
@@ -453,8 +454,8 @@ describe('Path', () => {
             expect(() => pathData.getLatitude(0)).toThrow('Point index 0 out of bounds');
 
             pathData.addPoint({
-                lat: 48.8566,
-                lon: 2.3522,
+                lat: toRadians(48.8566),
+                lon: toRadians(2.3522),
                 ele: 35,
                 bearing: 0,
                 dist: 0,
@@ -498,8 +499,8 @@ describe('Path', () => {
 
         it('should throw error for invalid range in getPointRange', () => {
             pathData.addPoint({
-                lat: 48.8566,
-                lon: 2.3522,
+                lat: toRadians(48.8566),
+                lon: toRadians(2.3522),
                 ele: 35,
                 bearing: 0,
                 dist: 0,
@@ -574,8 +575,8 @@ describe('Path', () => {
             // Add many points
             for (let i = 0; i < pointCount; i++) {
                 pathData.addPoint({
-                    lat: 48.8566 + i * 0.0001,
-                    lon: 2.3522 + i * 0.0001,
+                    lat: toRadians(48.8566 + i * 0.0001),
+                    lon: toRadians(2.3522 + i * 0.0001),
                     ele: 35 + (i % 100),
                     bearing: (i * 7) % 360,
                     dist: i * 10,
