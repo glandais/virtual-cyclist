@@ -1,3 +1,3 @@
 export { MaxSpeedComputer } from './MaxSpeedComputer';
-export { PowerComputer } from './power';
-export type { PowerProvider, PowerProviderId } from './power';
+export * from './power';
+export { VirtualizeService } from './VirtualizeService';

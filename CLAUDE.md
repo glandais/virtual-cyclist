@@ -138,7 +138,7 @@ class PowerComputerExtended extends PowerComputer {
 **Comprehensive Mocking Pattern**:
 
 ```typescript
-jest.mock('../../src/elevation/ElevationProcessor');
+jest.mock('@/elevation/ElevationProcessor');
 const MockedElevationProcessor = ElevationProcessor as jest.MockedClass<typeof ElevationProcessor>;
 ```
 

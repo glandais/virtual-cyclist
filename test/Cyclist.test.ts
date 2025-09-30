@@ -1,14 +1,14 @@
-import { Cyclist } from '../src/Cyclist';
 import {
     DEFAULT_CYCLIST_MASS_KG,
     DEFAULT_CYCLIST_POWER_W,
-    DEFAULT_MAX_BRAKE_G,
     DEFAULT_DRAG_COEFFICIENT,
     DEFAULT_FRONTAL_AREA,
+    DEFAULT_MAX_BRAKE_G,
     DEFAULT_MAX_LEAN_ANGLE_DEG,
     DEFAULT_MAX_SPEED_KMH,
     G,
-} from '../src/constants';
+} from '@/constants/';
+import { Cyclist } from '@/types/models/';
 
 describe('Cyclist', () => {
     describe('constructor', () => {

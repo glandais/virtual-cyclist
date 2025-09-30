@@ -1,6 +1,6 @@
-import { Course, CoursePhysicsInput, PointField } from '../../../types';
-import { PowerProvider, PowerProviderId } from '../PowerProvider';
-import { Path } from '../../../Path';
+import { PowerProvider, PowerProviderId } from '@/physics/power/';
+import { Course, CoursePhysicsInput } from '@/types/course/';
+import { Path, PointField } from '@/types/path/';
 
 /**
  * Provides wheel bearings friction power calculations for virtual cycling.

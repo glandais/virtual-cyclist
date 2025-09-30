@@ -1,5 +1,5 @@
-import { PointField, Point, FIELDS_PER_POINT } from './types';
-import { toDegrees } from './constants';
+import { toDegrees } from '@/utils/';
+import { FIELDS_PER_POINT, Point, PointField } from './Point';
 
 /**
  * High-performance chunked storage for GPS path data with 33 properties per point.
@@ -28,7 +28,6 @@ export class Path {
     private maxLat = -Number.MAX_VALUE;
     private minLon = Number.MAX_VALUE;
     private maxLon = -Number.MAX_VALUE;
-    private pointsEnhanced = false;
 
     constructor(public name: string) {
         // Pre-allocate initial chunks for better performance
@@ -460,7 +459,6 @@ export class Path {
         this.maxLat = -Number.MAX_VALUE;
         this.minLon = Number.MAX_VALUE;
         this.maxLon = -Number.MAX_VALUE;
-        this.pointsEnhanced = false;
     }
 
     /**
@@ -493,9 +491,9 @@ export class Path {
     /**
      * Compute derived arrays and statistics from GPS track data.
      * Calculates distances, elevations, grades, speeds, and bearings.
-     * Based on Java computeArrays() method from gpx2web project.
+     * Based on Java computeDerivedData() method from gpx2web project.
      */
-    public computeArrays(): void {
+    public computeDerivedData(): void {
         // Reset statistics
         this.totalDistance = 0;
         this.timeStart = 0;
@@ -508,7 +506,6 @@ export class Path {
         this.minLon = Number.MAX_VALUE;
         this.maxLon = -Number.MAX_VALUE;
         if (this.pointCount === 0) {
-            this.pointsEnhanced = false;
             return;
         }
         this.timeStart = this.getTime(0);
@@ -603,8 +600,6 @@ export class Path {
                 // Keep existing speed if any
             }
         }
-
-        this.pointsEnhanced = true;
     }
 
     /**
@@ -612,9 +607,6 @@ export class Path {
      * @returns Total distance in meters
      */
     public getTotalDistance(): number {
-        if (!this.pointsEnhanced) {
-            this.computeArrays();
-        }
         return this.totalDistance;
     }
 
@@ -623,9 +615,6 @@ export class Path {
      * @returns Minimum elevation in meters
      */
     public getMinElevation(): number {
-        if (!this.pointsEnhanced) {
-            this.computeArrays();
-        }
         return this.minElevation === Number.MAX_VALUE ? 0 : this.minElevation;
     }
 
@@ -634,9 +623,6 @@ export class Path {
      * @returns Maximum elevation in meters
      */
     public getMaxElevation(): number {
-        if (!this.pointsEnhanced) {
-            this.computeArrays();
-        }
         return this.maxElevation === -Number.MAX_VALUE ? 0 : this.maxElevation;
     }
 
@@ -645,9 +631,6 @@ export class Path {
      * @returns Total elevation gain in meters
      */
     public getTotalElevationGain(): number {
-        if (!this.pointsEnhanced) {
-            this.computeArrays();
-        }
         return this.totalElevationGain;
     }
 
@@ -656,9 +639,6 @@ export class Path {
      * @returns Total elevation loss in meters (negative value)
      */
     public getTotalElevationLoss(): number {
-        if (!this.pointsEnhanced) {
-            this.computeArrays();
-        }
         return this.totalElevationLoss;
     }
 
@@ -672,23 +652,12 @@ export class Path {
         minLon: number;
         maxLon: number;
     } {
-        if (!this.pointsEnhanced) {
-            this.computeArrays();
-        }
         return {
             minLat: this.minLat === Number.MAX_VALUE ? 0 : this.minLat,
             maxLat: this.maxLat === -Number.MAX_VALUE ? 0 : this.maxLat,
             minLon: this.minLon === Number.MAX_VALUE ? 0 : this.minLon,
             maxLon: this.maxLon === -Number.MAX_VALUE ? 0 : this.maxLon,
         };
-    }
-
-    /**
-     * Check if arrays have been computed.
-     * @returns True if computeArrays() has been called
-     */
-    public arePointsEnhanced(): boolean {
-        return this.pointsEnhanced;
     }
 
     /**
@@ -788,4 +757,12 @@ export class Path {
             cadence: interpolateValue(p1.cadence, p2.cadence),
         };
     }
+}
+
+/**
+ * Complete GPX document structure
+ */
+export interface Paths {
+    name?: string;
+    tracks: Path[];
 }

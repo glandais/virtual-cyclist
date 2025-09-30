@@ -1,2 +1,2 @@
-export { PointPerSecond } from './PointPerSecond';
 export { DouglasPeucker } from './DouglasPeucker';
+export { PointPerSecond } from './PointPerSecond';

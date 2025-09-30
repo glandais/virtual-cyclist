@@ -1,10 +1,12 @@
-import { CoursePhysicsInput, EMPTY_POINT, PointField } from '../../../types';
-import { Path } from '../../../Path';
-import { PowerProvider } from '../PowerProvider';
-import { wheelBearingsPowerProvider } from '../rolling/WheelBearingsPowerProvider';
-import { rollingResistancePowerProvider } from '../rolling/RollingResistancePowerProvider';
-import { gravPowerProvider } from '../grav/GravPowerProvider';
-import { aeroPowerProvider } from '../aero/AeroPowerProvider';
+import { PowerProvider } from '@/physics/power/';
+import { aeroPowerProvider } from '@/physics/power/aero/';
+import { gravPowerProvider } from '@/physics/power/grav/';
+import {
+    rollingResistancePowerProvider,
+    wheelBearingsPowerProvider,
+} from '@/physics/power/rolling/';
+import { CoursePhysicsInput } from '@/types/course/';
+import { EMPTY_POINT, Path, PointField } from '@/types/path/';
 
 /**
  * Service for calculating optimal cycling speed given power and terrain conditions.

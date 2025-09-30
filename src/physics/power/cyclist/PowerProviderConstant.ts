@@ -1,7 +1,7 @@
-import { CoursePhysics } from '../../../types';
-import { Path } from '../../../Path';
-import { CyclistPowerProviderBase } from './CyclistPowerProviderBase';
+import { CoursePhysics } from '@/types/course/';
+import { Path } from '@/types/path/';
 import { CyclistPowerProvider } from './CyclistPowerProvider';
+import { CyclistPowerProviderBase } from './CyclistPowerProviderBase';
 
 /**
  * Cyclist power provider with constant power output.

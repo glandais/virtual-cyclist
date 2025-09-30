@@ -1,5 +1,5 @@
-import { CoursePhysics, PointField } from '../../../types';
-import { Path } from '../../../Path';
+import { CoursePhysics } from '@/types/course/';
+import { Path, PointField } from '@/types/path/';
 import { CyclistPowerProvider } from './CyclistPowerProvider';
 
 /**

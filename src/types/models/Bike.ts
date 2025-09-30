@@ -1,10 +1,10 @@
 import {
     DEFAULT_CRR,
+    DEFAULT_DRIVETRAIN_EFFICIENCY,
     DEFAULT_INERTIA_FRONT,
     DEFAULT_INERTIA_REAR,
     DEFAULT_WHEEL_RADIUS,
-    DEFAULT_DRIVETRAIN_EFFICIENCY,
-} from './constants';
+} from '@/constants/';
 
 /**
  * Bike class implementing the Bike interface with utility methods.

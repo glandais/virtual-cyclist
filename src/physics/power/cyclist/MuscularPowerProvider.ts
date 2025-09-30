@@ -1,6 +1,6 @@
-import { CoursePhysics, PointField } from '../../../types';
-import { PowerProvider, PowerProviderId } from '../PowerProvider';
-import { Path } from '../../../Path';
+import { PowerProvider, PowerProviderId } from '@/physics/power/';
+import { CoursePhysics } from '@/types/course/';
+import { Path, PointField } from '@/types/path/';
 
 /**
  * Power provider for cyclist muscular power with drivetrain efficiency.

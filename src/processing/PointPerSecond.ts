@@ -1,6 +1,4 @@
-import { Path } from '../Path';
-import { Point } from '../types';
-import { Paths } from '../types';
+import { Path, Paths, Point } from '@/types/path/';
 
 /**
  * Service for resampling GPS tracks to ensure one point per second.
@@ -155,7 +153,7 @@ export class PointPerSecond {
                 newPath.addPoint(updatedPoint);
             }
         }
-
+        newPath.computeDerivedData();
         return newPath;
     }
 }

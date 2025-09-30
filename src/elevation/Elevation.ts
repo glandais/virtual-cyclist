@@ -1,7 +1,7 @@
-import { Path } from '../Path';
-import { EMPTY_POINT } from '../types';
 import ElevationProvider, { Coordinates, CoordinatesElevation } from '@glandais/elevation';
-import { toRadians } from '../constants';
+
+import { EMPTY_POINT, Path } from '@/types/path/';
+import { toRadians } from '@/utils/';
 
 const elevationProvider = new ElevationProvider();
 
@@ -30,7 +30,7 @@ export class Elevation {
                 ele: coord.elevation,
             });
         }
-
+        result.computeDerivedData();
         return result;
     }
 }

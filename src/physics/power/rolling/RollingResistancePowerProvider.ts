@@ -1,7 +1,7 @@
-import { Course, CoursePhysicsInput, PointField } from '../../../types';
-import { G } from '../../../constants';
-import { PowerProvider, PowerProviderId } from '../PowerProvider';
-import { Path } from '../../../Path';
+import { G } from '@/constants/';
+import { PowerProvider, PowerProviderId } from '@/physics/power/';
+import { Course, CoursePhysicsInput } from '@/types/course/';
+import { Path, PointField } from '@/types/path/';
 
 /**
  * Provides rolling resistance power calculations for virtual cycling.

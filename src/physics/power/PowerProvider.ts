@@ -1,4 +1,4 @@
-import { Path } from '../../Path';
+import { Path } from '@/types/path/';
 
 export type PowerProviderId = 'cyclist' | 'rolling_resistance' | 'bearings' | 'aero' | 'gravity';
 

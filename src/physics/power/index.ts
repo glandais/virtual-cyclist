@@ -1,12 +1,6 @@
-export type { PowerProviderId, PowerProvider } from './PowerProvider';
+export * from './aero';
+export * from './cyclist';
+export * from './grav';
 export { PowerComputer } from './PowerComputer';
-export { aeroPowerProvider } from './aero';
-export { rollingResistancePowerProvider, wheelBearingsPowerProvider } from './rolling';
-export { gravPowerProvider } from './grav';
-export {
-    muscularPowerProvider,
-    OptimalSpeedService,
-    OptimalSpeeds,
-    powerProviderConstant,
-} from './cyclist';
-export type { CyclistPowerProvider } from './cyclist';
+export type { PowerProvider, PowerProviderId } from './PowerProvider';
+export * from './rolling';

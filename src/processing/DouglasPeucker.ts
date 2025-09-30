@@ -1,5 +1,4 @@
-import { Point } from '../types';
-import { Path } from '../Path';
+import { Path, Point } from '@/types/path/';
 import { EcefConverter } from './EcefConverter';
 
 /**
@@ -40,6 +39,7 @@ export class DouglasPeucker {
         // Always include last point
         simplified.addPoint(path.getPointData(lastIndex));
 
+        simplified.computeDerivedData();
         return simplified;
     }
 

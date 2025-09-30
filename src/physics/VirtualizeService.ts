@@ -1,8 +1,8 @@
-import { CoursePhysics, CoursePhysicsInput } from '../types';
-import { Path } from '../Path';
-import { PowerComputer } from './power/PowerComputer';
-import { OptimalSpeeds } from './power/cyclist/OptimalSpeeds';
-import { MINIMAL_SPEED, DT } from '../constants';
+import { DT, MINIMAL_SPEED } from '@/constants/';
+import { PowerComputer } from '@/physics/power/';
+import { OptimalSpeeds } from '@/physics/power/cyclist/';
+import { CoursePhysics, CoursePhysicsInput } from '@/types/course/';
+import { Path } from '@/types/path/';
 
 /**
  * Main simulation service for virtualizing GPS routes with physics-based cycling.
@@ -70,7 +70,7 @@ export class VirtualizeService {
         let currentPoint = inputPath.getPointData(0);
         let currentDist = 0;
         let currentSpeed = MINIMAL_SPEED;
-        let currentTime = inputPath.getTime(0);
+        let currentTime = new Date().getTime();
         const startTime = currentTime;
 
         // Add first point
@@ -161,7 +161,7 @@ export class VirtualizeService {
             // Set power on current point
             newPath.setField(i, 8, cyclistPower); // PointField.POWER = 8
         }
-
+        newPath.computeDerivedData();
         return newPath;
     }
 

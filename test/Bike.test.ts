@@ -1,11 +1,11 @@
-import { Bike } from '../src/Bike';
 import {
     DEFAULT_CRR,
+    DEFAULT_DRIVETRAIN_EFFICIENCY,
     DEFAULT_INERTIA_FRONT,
     DEFAULT_INERTIA_REAR,
     DEFAULT_WHEEL_RADIUS,
-    DEFAULT_DRIVETRAIN_EFFICIENCY,
-} from '../src/constants';
+} from '@/constants/';
+import { Bike } from '@/types/models/';
 
 describe('Bike', () => {
     describe('constructor', () => {

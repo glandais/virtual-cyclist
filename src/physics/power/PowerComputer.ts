@@ -1,12 +1,11 @@
-import { Course, CoursePhysics, PointField } from '../../types';
-import { Path } from '../../Path';
-import { MINIMAL_SPEED, DT } from '../../constants';
+import { DT, MINIMAL_SPEED } from '@/constants/';
+import { Course, CoursePhysics } from '@/types/course/';
+import { Path, PointField } from '@/types/path/';
+import { aeroPowerProvider } from './aero';
+import { muscularPowerProvider } from './cyclist';
+import { gravPowerProvider } from './grav';
 import { PowerProvider } from './PowerProvider';
-import { wheelBearingsPowerProvider } from './rolling/WheelBearingsPowerProvider';
-import { rollingResistancePowerProvider } from './rolling/RollingResistancePowerProvider';
-import { muscularPowerProvider } from './cyclist/MuscularPowerProvider';
-import { aeroPowerProvider } from './aero/AeroPowerProvider';
-import { gravPowerProvider } from './grav/GravPowerProvider';
+import { rollingResistancePowerProvider, wheelBearingsPowerProvider } from './rolling';
 
 /**
  * Core power computation engine for virtual cycling simulations.

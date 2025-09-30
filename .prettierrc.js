@@ -1,4 +1,7 @@
 module.exports = {
+    // Plugins
+    plugins: ['prettier-plugin-organize-imports'],
+
     // Basic formatting
     semi: true,
     trailingComma: 'es5',

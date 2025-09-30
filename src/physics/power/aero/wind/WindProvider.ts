@@ -1,5 +1,5 @@
-import { Course } from '../../../../types';
-import { Path } from '../../../../Path';
+import { Course } from '@/types/course/';
+import { Path } from '@/types/path/';
 import { Wind } from './Wind';
 
 /**

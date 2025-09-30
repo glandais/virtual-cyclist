@@ -1,7 +1,7 @@
-import { CoursePhysicsInput } from '../../../types';
-import { OptimalSpeedService } from './OptimalSpeedService';
+import { createLogger, Logger, LogLevel } from '@/utils/';
 
-import { createLogger, Logger, LogLevel } from '../../../utils';
+import { CoursePhysicsInput } from '@/types/course/';
+import { OptimalSpeedService } from './OptimalSpeedService';
 
 const logger: Logger = createLogger('physics/power/cyclist/OptimalSpeeds');
 

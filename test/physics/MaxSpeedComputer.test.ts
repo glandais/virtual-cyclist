@@ -1,10 +1,10 @@
-import { MaxSpeedComputer } from '../../src/physics/MaxSpeedComputer';
-import { Path } from '../../src/Path';
-import { Cyclist } from '../../src/Cyclist';
-import { Bike } from '../../src/Bike';
-import { GPXParser } from '../../src';
-import { join } from 'path';
 import { readFileSync } from 'fs';
+import { join } from 'path';
+
+import { GPXParser } from '@/gpx/';
+import { MaxSpeedComputer } from '@/physics/';
+import { Bike, Cyclist } from '@/types/models/';
+import { Path } from '@/types/path/';
 
 interface TestCourse {
     path: Path;
@@ -29,7 +29,7 @@ describe('MaxSpeedComputer', () => {
         }
 
         path = GPXParser.parse(gpx).tracks[0];
-        path.computeArrays();
+        path.computeDerivedData();
         cyclist = Cyclist.getDefault();
         bike = Bike.getDefault();
         course = { path, cyclist, bike };

@@ -1,4 +1,4 @@
-import { Vector3D } from '../../src/utils/Vector3D';
+import { Vector3D } from '@/utils/';
 
 describe('Vector3D', () => {
     describe('constructor', () => {
