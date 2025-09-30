@@ -32,6 +32,7 @@
         "dev:watch": "vite build --watch --mode info",
         "dev:serve": "serve . -l 3000",
         "build": "vite build",
+        "build:dev": "vite build --mode development",
         "check": "npm run format && npm run lint:fix && npm run lint && npm run typecheck && npm run test && npm run build",
         "test": "jest",
         "test:watch": "jest --watch",

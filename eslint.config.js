@@ -16,6 +16,7 @@ module.exports = [
             ecmaVersion: 2021,
             sourceType: 'script',
             globals: {
+                __DEV__: 'readonly',
                 // Node.js globals
                 module: 'readonly',
                 require: 'readonly',
