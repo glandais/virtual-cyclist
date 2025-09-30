@@ -15,7 +15,12 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": true,
-        "baseUrl": "."
+        "baseUrl": "src",
+        "paths": {
+            "@": ["index.ts"],
+            "@/*": ["*"],
+            "#/*": ["../test/*"]
+        }
     },
     "include": ["src/**/*", "test/**/*"],
     "exclude": ["node_modules", "dist"]

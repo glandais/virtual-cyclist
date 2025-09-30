@@ -1,6 +1,6 @@
-import { FIRST_ECCENTRICITY_SQUARED, SEMI_MAJOR_AXIS } from '../constants';
-import { Point } from '../types';
-import { Vector3D } from '../utils';
+import { FIRST_ECCENTRICITY_SQUARED, SEMI_MAJOR_AXIS } from '@/constants/';
+import { Point } from '@/types/path/';
+import { Vector3D } from '@/utils/';
 
 /**
  * ECEF (Earth-Centered, Earth-Fixed) coordinate converter

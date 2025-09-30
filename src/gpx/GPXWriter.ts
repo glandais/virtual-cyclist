@@ -1,7 +1,6 @@
+import { Path, Paths, Point } from '@/types/path/';
+import { toDegrees } from '@/utils/';
 import { KNOWN_NAMESPACES, NAMESPACE_PREFIXES } from './types';
-import { Path } from '../Path';
-import { Paths, Point } from '../types';
-import { toDegrees } from '../constants';
 
 /**
  * Writer for GPX files with namespace-aware extension generation.

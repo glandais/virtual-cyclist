@@ -1,7 +1,8 @@
-import { CoursePhysicsInput, PointField } from '../../../types';
-import { PowerProvider, PowerProviderId } from '../PowerProvider';
-import { Path } from '../../../Path';
-import { Wind } from './wind/Wind';
+import { PowerProvider, PowerProviderId } from '@/physics/power/';
+
+import { CoursePhysicsInput } from '@/types/course/';
+import { Path, PointField } from '@/types/path/';
+import { Wind } from './wind';
 
 /**
  * Provides aerodynamic drag power calculations for virtual cycling.

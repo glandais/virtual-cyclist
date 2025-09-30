@@ -2,9 +2,9 @@
 (global as any).__DEV__ = true;
 
 // Global mock for Logger to silence console output during tests
-// Only applies to imports from '../src/utils/Logger' and '../src/utils'
+// Only applies to imports from '@/index/utils/Logger' and '@/index/utils'
 // The Logger.test.ts file will override this mock for its own testing
-jest.mock('../src/utils/Logger', () => ({
+jest.mock('@/utils/Logger', () => ({
     createLogger: jest.fn(() => ({
         trace: jest.fn(),
         debug: jest.fn(),

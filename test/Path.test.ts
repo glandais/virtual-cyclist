@@ -1,6 +1,5 @@
-import { Path } from '../src/Path';
-import { PointField, Point } from '../src/types';
-import { toRadians } from '../src/constants';
+import { Path, Point, PointField } from '@/types/path/';
+import { toRadians } from '@/utils/';
 
 describe('Path', () => {
     let pathData: Path;
@@ -616,10 +615,10 @@ describe('Path', () => {
         });
     });
 
-    describe('computeArrays method', () => {
+    describe('computeDerivedData method', () => {
         it('should handle empty path correctly', () => {
             // Test early return for empty path
-            expect(() => pathData.computeArrays()).not.toThrow();
+            expect(() => pathData.computeDerivedData()).not.toThrow();
             expect(pathData.getTotalDistance()).toBe(0);
             expect(pathData.getMinElevation()).toBe(0);
             expect(pathData.getMaxElevation()).toBe(0);
@@ -700,7 +699,7 @@ describe('Path', () => {
                 cadence: 0,
             });
 
-            pathData.computeArrays();
+            pathData.computeDerivedData();
 
             // Speed calculation should trigger the code path (actual value depends on algorithm)
             expect(pathData.getSpeed(0)).toBeGreaterThan(0);
@@ -825,6 +824,7 @@ describe('Path', () => {
         });
 
         it('should calculate elevation statistics', () => {
+            pathData.computeDerivedData();
             expect(pathData.getMinElevation()).toBe(80);
             expect(pathData.getMaxElevation()).toBe(150);
             expect(pathData.getTotalElevationGain()).toBeGreaterThan(0);
@@ -833,57 +833,8 @@ describe('Path', () => {
         });
 
         it('should calculate distance statistics', () => {
+            pathData.computeDerivedData();
             expect(pathData.getTotalDistance()).toBeGreaterThan(0);
-        });
-
-        it('should trigger computeArrays in elevation methods when not enhanced', () => {
-            // Create a new path without calling computeArrays first
-            const freshPath = new Path('new');
-            freshPath.addPoint({
-                lat: toRadians(45.0),
-                lon: toRadians(2.0),
-                ele: 100,
-                bearing: 0,
-                dist: 0,
-                radius: 0,
-                time: Date.now(),
-                elapsed: 0,
-                power: 250,
-                pCyclistRaw: 240,
-                pCyclistWheel: 230,
-                pCyclistOptimalPower: 245,
-                pCyclistCurrentSpeed: 220,
-                pCyclistOptimalSpeed: 235,
-                pAero: -80,
-                pGravity: -20,
-                pRollingResistance: -15,
-                pWheelBearings: -5,
-                pPowerFromAcc: 10,
-                pPowerWheelFromAcc: 9,
-                aeroCoef: 0.7,
-                grade: 0.05,
-                speed: 15.5,
-                speedMax: 18.0,
-                speedMaxIncline: 16.0,
-                virtSpeedCurrent: 15.5,
-                temperature: 20,
-                windSpeed: 2.0,
-                windDirection: 180,
-                windBearing: 170,
-                windAlpha: 10,
-                heartRate: 150,
-                cadence: 90,
-            });
-
-            // These should trigger computeArrays internally (lines 647, 658)
-            expect(freshPath.arePointsEnhanced()).toBe(false);
-            const elevationGain = freshPath.getTotalElevationGain();
-            expect(elevationGain).toBeGreaterThanOrEqual(0);
-
-            // Reset enhancement status to test the other method
-            freshPath['pointsEnhanced'] = false;
-            const elevationLoss = freshPath.getTotalElevationLoss();
-            expect(elevationLoss).toBeLessThanOrEqual(0);
         });
     });
 
@@ -925,9 +876,8 @@ describe('Path', () => {
                 heartRate: 150,
                 cadence: 90,
             });
+            pathData.computeDerivedData();
 
-            // Test getBounds method (lines 673-681)
-            expect(pathData.arePointsEnhanced()).toBe(false);
             const bounds = pathData.getBounds();
             expect(bounds).toHaveProperty('minLat');
             expect(bounds).toHaveProperty('maxLat');
@@ -935,9 +885,6 @@ describe('Path', () => {
             expect(bounds).toHaveProperty('maxLon');
             expect(bounds.minLat).toBeCloseTo(toRadians(45.0), 5);
             expect(bounds.maxLat).toBeCloseTo(toRadians(45.0), 5);
-
-            // arePointsEnhanced should now return true after getBounds triggered computeArrays
-            expect(pathData.arePointsEnhanced()).toBe(true);
         });
     });
 
@@ -1062,10 +1009,9 @@ describe('Path', () => {
             });
 
             // This should trigger the while loop with multiple iterations of maxIndex++ (line 565)
-            testPath.computeArrays();
+            testPath.computeDerivedData();
 
             // Verify computation completed without errors
-            expect(testPath.arePointsEnhanced()).toBe(true);
             expect(testPath.length).toBe(6);
         });
     });

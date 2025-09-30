@@ -39,9 +39,6 @@ export const DT = 1.0;
  */
 export const SEMI_MAJOR_AXIS = 6378137.0;
 
-/** Mean radius in meters (used for distance calculations) */
-export const MEAN_RADIUS = 6371000;
-
 /**
  * WGS-84 first eccentricity squared (dimensionless)
  * Source: World Geodetic System 1984 specification
@@ -170,23 +167,3 @@ export const DEFAULT_FRONTAL_AREA = 0.5;
  * Reference: Used in cycling aerodynamics research (Martin et al.)
  */
 export const DEFAULT_AIR_DENSITY = 1.225;
-
-// ============================================================================
-// ANGLE CONVERSION UTILITIES
-// ============================================================================
-
-/**
- * Convert degrees to radians.
- *
- * @param degrees Angle in degrees
- * @returns Angle in radians
- */
-export const toRadians = (degrees: number): number => (degrees * Math.PI) / 180;
-
-/**
- * Convert radians to degrees.
- *
- * @param radians Angle in radians
- * @returns Angle in degrees
- */
-export const toDegrees = (radians: number): number => (radians * 180) / Math.PI;

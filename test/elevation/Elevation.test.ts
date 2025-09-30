@@ -1,6 +1,6 @@
-import { Elevation } from '../../src/elevation/Elevation';
-import { Path } from '../../src/Path';
-import { toRadians } from '../../src/constants';
+import { Elevation } from '@/elevation/';
+import { Path } from '@/types/path/';
+import { toRadians } from '@/utils/';
 
 describe('Elevation', () => {
     describe('fixElevation', () => {

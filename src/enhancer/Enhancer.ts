@@ -1,15 +1,14 @@
-import { Bike } from './Bike';
-import { DEFAULT_AIR_DENSITY } from './constants';
-import { Cyclist } from './Cyclist';
-import { Elevation } from './elevation';
-import { Path } from './Path';
-import { MaxSpeedComputer } from './physics';
-import { powerProviderConstant } from './physics/power';
-import { aeroProviderConstant, windProviderNone } from './physics/power/aero';
-import { VirtualizeService } from './physics/VirtualizeService';
-import { DouglasPeucker, PointPerSecond } from './processing';
-import { CoursePhysicsInput } from './types';
-import { createLogger, Logger, LogLevel } from './utils';
+import { DEFAULT_AIR_DENSITY } from '@/constants/';
+import { Elevation } from '@/elevation/';
+import { MaxSpeedComputer, VirtualizeService } from '@/physics/';
+import { aeroProviderConstant } from '@/physics/power/aero/aero/';
+import { windProviderNone } from '@/physics/power/aero/wind/';
+import { powerProviderConstant } from '@/physics/power/cyclist/';
+import { DouglasPeucker, PointPerSecond } from '@/processing/';
+import { CoursePhysicsInput } from '@/types/course/';
+import { Bike, Cyclist } from '@/types/models/';
+import { Path } from '@/types/path/';
+import { createLogger, Logger, LogLevel } from '@/utils/';
 
 const logger: Logger = createLogger('Enhancer');
 

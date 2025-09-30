@@ -1,5 +1,5 @@
-import { CoursePhysics } from '../../../types';
-import { Path } from '../../../Path';
+import { CoursePhysics } from '@/types/course/';
+import { Path } from '@/types/path/';
 
 /**
  * Interface for cyclist power output providers in virtual cycling simulations.

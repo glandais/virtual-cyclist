@@ -1,13 +1,13 @@
 import {
     DEFAULT_CYCLIST_MASS_KG,
     DEFAULT_CYCLIST_POWER_W,
-    DEFAULT_MAX_BRAKE_G,
     DEFAULT_DRAG_COEFFICIENT,
     DEFAULT_FRONTAL_AREA,
+    DEFAULT_MAX_BRAKE_G,
     DEFAULT_MAX_LEAN_ANGLE_DEG,
     DEFAULT_MAX_SPEED_KMH,
     G,
-} from './constants';
+} from '@/constants/';
 
 /**
  * Cyclist class implementing the Cyclist interface with utility methods.

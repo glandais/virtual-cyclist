@@ -1,8 +1,7 @@
-import { NamespaceResolver } from './NamespaceResolver';
+import { EMPTY_POINT, Path, Paths, Point, PointWritable } from '@/types/path/';
+import { toRadians } from '@/utils/';
 import { ExtensionParser } from './ExtensionParser';
-import { toRadians } from '../constants';
-import { EMPTY_POINT, Paths, Point, PointWritable } from '../types';
-import { Path } from '../Path';
+import { NamespaceResolver } from './NamespaceResolver';
 
 /**
  * Parser for GPX files with comprehensive namespace and extension support.
@@ -82,7 +81,7 @@ export class GPXParser {
         for (let i = 0; i < segmentElements.length; i++) {
             this.parseTrackSegment(track, segmentElements[i]);
         }
-
+        track.computeDerivedData();
         return track;
     }
 

@@ -1,6 +1,5 @@
-import { Path } from '../../../src/Path';
-import { EMPTY_POINT } from '../../../src/types';
-import { toRadians } from '../../../src/constants';
+import { EMPTY_POINT, Path } from '@/types/path/';
+import { toRadians } from '@/utils/';
 
 // Mock types for elevation provider
 export interface Coordinates {

@@ -259,9 +259,6 @@ class GPXDemoApp {
             // Parse GPX using VirtualCyclist GPXParser
             this.currentPath = window.VirtualCyclist.GPXParser.parse(gpxContent).tracks[0];
 
-            // Compute basic arrays (distances, bearings, etc.)
-            this.currentPath.computeArrays();
-
             // Update file info display
             this.updateFileInfo(filename);
 
@@ -275,7 +272,6 @@ class GPXDemoApp {
                 filename,
                 points: this.currentPath.getPointCount(),
                 distance: this.currentPath.getTotalDistance(),
-                enhanced: this.currentPath.arePointsEnhanced(),
             });
         } catch (error) {
             throw new Error('Failed to parse GPX: ' + error.message);
@@ -338,9 +334,6 @@ class GPXDemoApp {
             );
             this.currentPath = correctedPath;
 
-            // Compute basic arrays (distances, bearings, etc.)
-            this.currentPath.computeArrays();
-
             // Update file info and chart
             this.updateFileInfo('Corrected GPX');
             this.updateChart();
@@ -371,8 +364,7 @@ class GPXDemoApp {
             };
 
             // Compute maximum speeds
-            const maxSpeedComputer = new window.VirtualCyclist.MaxSpeedComputer();
-            maxSpeedComputer.computeMaxSpeeds(course);
+            window.VirtualCyclist.MaxSpeedComputer.computeMaxSpeeds(course);
 
             // Update chart with new speed data
             this.updateChart();
@@ -631,10 +623,6 @@ class GPXDemoApp {
                 <div class="stat-item">
                     <div class="stat-label">Selected Fields</div>
                     <div class="stat-value">${selectedCount}</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">Enhanced</div>
-                    <div class="stat-value">${this.currentPath.arePointsEnhanced() ? 'Yes' : 'No'}</div>
                 </div>
             </div>
         `;

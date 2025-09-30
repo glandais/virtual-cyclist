@@ -8,6 +8,8 @@ module.exports = {
     testPathIgnorePatterns: ['/node_modules/', '/test/browser/'],
     setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
     moduleNameMapper: {
+        '^@$': '<rootDir>/src/index.ts',
+        '^@/(.*)$': '<rootDir>/src/$1',
         '\\.(css|less|scss|sass)$': '<rootDir>/test/__mocks__/styleMock.js',
         '@glandais/elevation': '<rootDir>/test/__mocks__/@glandais/elevation.ts',
     },

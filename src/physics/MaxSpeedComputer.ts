@@ -1,8 +1,7 @@
-import { Vector3D } from '../utils';
-import { Cyclist } from '../Cyclist';
-import { Bike } from '../Bike';
-import { Path } from '../Path';
-import { G, CIRC } from '../constants';
+import { CIRC, G } from '@/constants/';
+import { Bike, Cyclist } from '@/types/models/';
+import { Path } from '@/types/path/';
+import { Vector3D } from '@/utils/';
 
 /**
  * Course configuration for MaxSpeedComputer using actual class instances
@@ -38,6 +37,7 @@ export class MaxSpeedComputer {
 
         // Second pass, reverse: max speed with braking constraints
         this.secondPass(course);
+        course.path.computeDerivedData();
     }
 
     /**
