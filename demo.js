@@ -390,7 +390,10 @@ class GPXDemoApp {
     async enhancePath() {
         if (this.isProcessing || !this.currentPath) return;
 
-        this.setProcessing(true, 'Enhancing path (elevation + speeds + virtualization + simplification)...');
+        this.setProcessing(
+            true,
+            'Enhancing path (elevation + speeds + virtualization + simplification)...'
+        );
 
         try {
             // Use VirtualCyclist Enhancer for full enhancement pipeline
