@@ -1,6 +1,10 @@
 import { CoursePhysicsInput } from '../../../types';
 import { OptimalSpeedService } from './OptimalSpeedService';
 
+import { createLogger, Logger, LogLevel } from '../../../utils';
+
+const logger: Logger = createLogger('physics/power/cyclist/OptimalSpeeds');
+
 /**
  * Helper class for managing discretized ranges with ratio-based indexing.
  *
@@ -87,10 +91,12 @@ export class OptimalSpeeds {
     constructor(course: CoursePhysicsInput) {
         this.speeds = new Map();
 
+        logger.timeLevel(LogLevel.INFO, 'compute');
         // Pre-compute for all bearing values
         OptimalSpeeds.bearingRatio.forValues((bearingIndex, bearing) => {
             this.speeds.set(bearingIndex, this.getOptimalSpeedsForBearing(course, bearing));
         });
+        logger.timeEndLevel(LogLevel.INFO, 'compute');
     }
 
     /**

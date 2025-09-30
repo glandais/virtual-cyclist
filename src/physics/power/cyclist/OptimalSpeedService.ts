@@ -37,8 +37,13 @@ export class OptimalSpeedService {
         aeroPowerProvider,
         gravPowerProvider,
     ];
+    private readonly path: Path;
 
-    private constructor() {}
+    private constructor() {
+        // Create a temporary single-point path for calculation
+        this.path = new Path('temp');
+        this.path.addPoint(EMPTY_POINT);
+    }
 
     /**
      * Calculates the optimal speed for given power, grade, and bearing.
@@ -53,10 +58,9 @@ export class OptimalSpeedService {
      * @returns Optimal speed in m/s
      */
     getSpeed(course: CoursePhysicsInput, grade: number, power: number, bearing: number): number {
-        // Create a temporary single-point path for calculation
-        const tempPath = new Path('temp');
-        tempPath.addPoint({ ...EMPTY_POINT, grade, bearing });
-        return this.getSpeedRecursive(tempPath, 0, course, power, 0.1, 30);
+        this.path.setGrade(0, grade);
+        this.path.setBearing(0, bearing);
+        return this.getSpeedRecursive(course, power, 0.1, 30);
     }
 
     /**
@@ -65,7 +69,6 @@ export class OptimalSpeedService {
      * Searches for speed where: -sum(resistance_powers) = cyclist_power
      *
      * @param path Temporary path with point to calculate
-     * @param pointIndex Index of the point (always 0 for temp path)
      * @param course Course configuration
      * @param power Target cyclist power in watts
      * @param min Minimum speed bound in m/s
@@ -73,8 +76,6 @@ export class OptimalSpeedService {
      * @returns Optimal speed in m/s
      */
     private getSpeedRecursive(
-        path: Path,
-        pointIndex: number,
         course: CoursePhysicsInput,
         power: number,
         min: number,
@@ -88,22 +89,22 @@ export class OptimalSpeedService {
         }
 
         // Set trial speed
-        path.setField(pointIndex, PointField.SPEED, average);
+        this.path.setField(0, PointField.SPEED, average);
 
         // Calculate total resistance power at this speed
         let pSum = 0.0;
         for (const powerProvider of this.powerProviders) {
-            pSum += powerProvider.getPowerW(course, path, pointIndex);
+            pSum += powerProvider.getPowerW(course, this.path, 0);
         }
 
         // Resistance powers are negative, so -pSum is the power needed
         // If needed power > available power, speed is too high
         if (-pSum > power) {
             // Need more power than available: search lower speeds
-            return this.getSpeedRecursive(path, pointIndex, course, power, min, average);
+            return this.getSpeedRecursive(course, power, min, average);
         } else {
             // Have excess power: search higher speeds
-            return this.getSpeedRecursive(path, pointIndex, course, power, average, max);
+            return this.getSpeedRecursive(course, power, average, max);
         }
     }
 }
