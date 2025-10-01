@@ -1,6 +1,7 @@
 import { muscularPowerProvider } from '@/physics/power/cyclist/';
+import { CoursePhysics } from '@/types/course/';
 import { Bike } from '@/types/models/';
-import { Path } from '@/types/path/';
+import { Path, Point } from '@/types/path/';
 
 describe('MuscularPowerProvider', () => {
     let path: Path;
@@ -25,14 +26,14 @@ describe('MuscularPowerProvider', () => {
             speed: 10,
             grade: 0,
             bearing: 0,
-        } as any);
+        } as Point);
 
-        const course: any = {
+        const course = {
             bike,
             cyclistPowerProvider: {
                 getPowerW: () => 250, // 250W muscular power
             },
-        };
+        } as unknown as CoursePhysics;
 
         const wheelPower = muscularPowerProvider.getPowerW(course, path, 0);
 
@@ -51,16 +52,16 @@ describe('MuscularPowerProvider', () => {
             speed: 10,
             grade: 0,
             bearing: 0,
-        } as any);
+        } as Point);
 
         const mockProvider = {
             getPowerW: jest.fn(() => 300),
         };
 
-        const course: any = {
+        const course = {
             bike,
             cyclistPowerProvider: mockProvider,
-        };
+        } as unknown as CoursePhysics;
 
         const wheelPower = muscularPowerProvider.getPowerW(course, path, 0);
 

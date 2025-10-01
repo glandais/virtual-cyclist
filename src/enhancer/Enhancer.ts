@@ -10,7 +10,7 @@ import { Bike, Cyclist } from '@/types/models/';
 import { Path } from '@/types/path/';
 import { createLogger, Logger, LogLevel } from '@/utils/';
 
-const logger: Logger = createLogger('Enhancer');
+const logger: Logger = createLogger('enhancer/Enhancer');
 
 export class Enhancer {
     public static getCourse(path: Path): CoursePhysicsInput {

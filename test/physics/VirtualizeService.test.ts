@@ -6,6 +6,7 @@ import { VirtualizeService } from '@/physics/';
 import { aeroProviderConstant } from '@/physics/power/aero/aero/';
 import { windProviderNone } from '@/physics/power/aero/wind/';
 import { powerProviderConstant } from '@/physics/power/cyclist/';
+import { CoursePhysicsInput, EMPTY_POINT, Path } from '@/types/';
 import { Bike, Cyclist } from '@/types/models/';
 
 describe('VirtualizeService', () => {
@@ -39,23 +40,21 @@ describe('VirtualizeService', () => {
     });
 
     test('should handle minimal single-point path', () => {
-        const courseInput: any = {
-            path: {
-                name: 'test',
-                getPointCount: () => 1,
-                getAllDistances: () => new Float64Array([0]),
-                getTotalDistance: () => 0,
-                getPointData: () => ({
-                    lat: 45.0,
-                    lon: 6.0,
-                    ele: 1000,
-                    time: Date.now(),
-                    dist: 0,
-                    speed: 10,
-                    grade: 0,
-                    bearing: 0,
-                }),
-            },
+        const path = new Path('test');
+        path.addPoint({
+            ...EMPTY_POINT,
+            lat: 45.0,
+            lon: 6.0,
+            ele: 1000,
+            time: Date.now(),
+            dist: 0,
+            speed: 10,
+            grade: 0,
+            bearing: 0,
+        });
+
+        const courseInput: CoursePhysicsInput = {
+            path,
             cyclist: Cyclist.getDefault(),
             bike: Bike.getDefault(),
             rho: 1.225,

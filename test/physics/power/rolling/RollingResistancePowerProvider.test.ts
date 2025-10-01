@@ -1,6 +1,7 @@
 import { rollingResistancePowerProvider } from '@/physics/power/rolling/';
+import { CoursePhysicsInput } from '@/types/course/';
 import { Bike, Cyclist } from '@/types/models/';
-import { Path, PointField } from '@/types/path/';
+import { Path, Point, PointField } from '@/types/path/';
 
 describe('RollingResistancePowerProvider', () => {
     let path: Path;
@@ -27,9 +28,9 @@ describe('RollingResistancePowerProvider', () => {
             speed: 10,
             grade: 0,
             bearing: 0,
-        } as any);
+        } as Point);
 
-        const course: any = { cyclist, bike };
+        const course = { cyclist, bike } as unknown as CoursePhysicsInput;
         const power = rollingResistancePowerProvider.getPowerW(course, path, 0);
 
         // P = -cos(atan(grade)) * m * g * v * crr
@@ -48,9 +49,9 @@ describe('RollingResistancePowerProvider', () => {
             speed: 5,
             grade: 0,
             bearing: 0,
-        } as any);
+        } as Point);
 
-        const course: any = { cyclist, bike };
+        const course = { cyclist, bike } as unknown as CoursePhysicsInput;
         const power5 = rollingResistancePowerProvider.getPowerW(course, path, 0);
 
         path.setField(0, PointField.SPEED, 10);
@@ -69,9 +70,9 @@ describe('RollingResistancePowerProvider', () => {
             speed: 10,
             grade: 0,
             bearing: 0,
-        } as any);
+        } as Point);
 
-        const course: any = { cyclist, bike };
+        const course = { cyclist, bike } as unknown as CoursePhysicsInput;
         const powerFlat = rollingResistancePowerProvider.getPowerW(course, path, 0);
 
         path.setField(0, PointField.GRADE, 0.5); // 50% grade for noticeable cosine effect
