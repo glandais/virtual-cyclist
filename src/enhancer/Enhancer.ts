@@ -13,7 +13,7 @@ import { createLogger, Logger, LogLevel } from '@/utils/';
 const logger: Logger = createLogger('enhancer/Enhancer');
 
 export class Enhancer {
-    public static getCourse(path: Path): CoursePhysicsInput {
+    public static getDefaultCourse(path: Path): CoursePhysicsInput {
         return {
             path,
             bike: Bike.getDefault(),
@@ -26,7 +26,7 @@ export class Enhancer {
     }
 
     public static async enhancePath(path: Path): Promise<Path> {
-        return this.enhance(this.getCourse(path));
+        return this.enhance(this.getDefaultCourse(path));
     }
 
     public static async enhance(course: CoursePhysicsInput): Promise<Path> {

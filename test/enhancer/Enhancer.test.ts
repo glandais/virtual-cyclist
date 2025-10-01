@@ -15,7 +15,7 @@ describe('Enhancer', () => {
 
     test('should create course with defaults', () => {
         const path = GPXParser.parse(simpleGPX).tracks[0];
-        const course = Enhancer.getCourse(path);
+        const course = Enhancer.getDefaultCourse(path);
 
         expect(course).toBeDefined();
         expect(course.path).toBe(path);
