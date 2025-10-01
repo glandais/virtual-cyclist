@@ -55,8 +55,8 @@ export class VirtualizeService {
      * @param course Course configuration with path, cyclist, and bike parameters
      */
     static virtualizeTrack(courseInput: CoursePhysicsInput): Path {
-        // Pre-compute optimal speeds lookup table
-        const optimalSpeeds = new OptimalSpeeds(courseInput);
+        // Optimal speeds cache
+        const optimalSpeeds = new OptimalSpeeds();
         const course: CoursePhysics = { ...courseInput, optimalSpeeds };
 
         const equivalentMass = this.powerComputer.getEquivalentMass(course);

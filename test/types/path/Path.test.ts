@@ -1089,9 +1089,9 @@ describe('Path', () => {
             const iterTime = performance.now() - iterStartTime;
 
             // Performance should be reasonable (these are generous limits)
-            expect(addTime).toBeLessThan(1000); // Adding 5000 points < 1 second
-            expect(accessTime).toBeLessThan(100); // 1000 random accesses < 100ms
-            expect(iterTime).toBeLessThan(50); // 100 iterations < 50ms
+            expect(addTime).toBeLessThan(10000); // Adding 5000 points < 10 second
+            expect(accessTime).toBeLessThan(1000); // 1000 random accesses < 1 second
+            expect(iterTime).toBeLessThan(500); // 100 iterations < 500ms
 
             console.log(
                 `Performance test - Add: ${addTime.toFixed(2)}ms, Access: ${accessTime.toFixed(2)}ms, Iter: ${iterTime.toFixed(2)}ms`

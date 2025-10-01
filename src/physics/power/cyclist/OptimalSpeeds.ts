@@ -1,4 +1,4 @@
-import { createLogger, Logger, LogLevel } from '@/utils/';
+import { createLogger, Logger } from '@/utils/';
 
 import { CoursePhysicsInput } from '@/types/course/';
 import { OptimalSpeedService } from './OptimalSpeedService';
@@ -49,6 +49,10 @@ class Ratio {
     }
 }
 
+const bearingCount = 12;
+const powerCount = 100;
+const gradeCount = 400;
+
 /**
  * Pre-computed lookup table for optimal cycling speeds.
  *
@@ -72,12 +76,13 @@ class Ratio {
  * @see OptimalSpeedService
  */
 export class OptimalSpeeds {
-    private static readonly bearingRatio = new Ratio(0, Math.PI, 12);
-    private static readonly powerRatio = new Ratio(0, 1000, 100);
-    private static readonly gradeRatio = new Ratio(-0.2, 0.2, 400);
+    private static readonly bearingRatio = new Ratio(0, Math.PI, bearingCount);
+    private static readonly powerRatio = new Ratio(0, 1000, powerCount);
+    private static readonly gradeRatio = new Ratio(-0.2, 0.2, gradeCount);
 
     // 3D lookup: bearing index -> power index -> grade index -> speed (m/s)
-    private readonly speeds: Map<number, Map<number, Map<number, number>>>;
+    private readonly data: Float64Array = new Float64Array(bearingCount * powerCount * gradeCount);
+    //private readonly speeds: Map<number, Map<number, Map<number, number>>>;
 
     /**
      * Constructs and pre-computes the optimal speed lookup table.
@@ -86,53 +91,13 @@ export class OptimalSpeeds {
      * by calling OptimalSpeedService.getSpeed() for every combination
      * of bearing, power, and grade values in the discretized grid.
      *
-     * @param course Course configuration with cyclist and bike parameters
      */
-    constructor(course: CoursePhysicsInput) {
-        this.speeds = new Map();
-
-        logger.timeLevel(LogLevel.INFO, 'compute');
-        // Pre-compute for all bearing values
-        OptimalSpeeds.bearingRatio.forValues((bearingIndex, bearing) => {
-            this.speeds.set(bearingIndex, this.getOptimalSpeedsForBearing(course, bearing));
-        });
-        logger.timeEndLevel(LogLevel.INFO, 'compute');
+    constructor() {
+        this.data.fill(NaN);
     }
 
-    /**
-     * Computes optimal speeds for all power and grade combinations at a given bearing.
-     */
-    private getOptimalSpeedsForBearing(
-        course: CoursePhysicsInput,
-        bearing: number
-    ): Map<number, Map<number, number>> {
-        const powerMap = new Map<number, Map<number, number>>();
-
-        OptimalSpeeds.powerRatio.forValues((powerIndex, power) => {
-            powerMap.set(powerIndex, this.getOptimalSpeedsForPower(course, bearing, power));
-        });
-
-        return powerMap;
-    }
-
-    /**
-     * Computes optimal speeds for all grade values at a given bearing and power.
-     */
-    private getOptimalSpeedsForPower(
-        course: CoursePhysicsInput,
-        bearing: number,
-        power: number
-    ): Map<number, number> {
-        const gradeMap = new Map<number, number>();
-
-        OptimalSpeeds.gradeRatio.forValues((gradeIndex, grade) => {
-            gradeMap.set(
-                gradeIndex,
-                OptimalSpeedService.INSTANCE.getSpeed(course, grade, power, bearing)
-            );
-        });
-
-        return gradeMap;
+    private getIndex(bearingIndex: number, powerIndex: number, gradeIndex: number) {
+        return bearingIndex * (powerCount * gradeCount) + powerIndex * gradeCount + gradeIndex;
     }
 
     /**
@@ -141,31 +106,26 @@ export class OptimalSpeeds {
      * Uses nearest-neighbor lookup (no interpolation) for simplicity and speed.
      * The grid resolution is fine enough that interpolation provides minimal benefit.
      *
+     * @param course Course configuration with cyclist and bike parameters
      * @param power Cyclist power output in watts (clamped to 0-1000W)
      * @param grade Road gradient (dimensionless, clamped to -0.2 to 0.2)
      * @param bearing Direction of travel in radians (clamped to 0-π)
      * @returns Optimal speed in m/s
      */
-    getOptimalSpeed(power: number, grade: number, bearing: number): number {
+    getOptimalSpeed(
+        course: CoursePhysicsInput,
+        power: number,
+        grade: number,
+        bearing: number
+    ): number {
         const bearingIndex = OptimalSpeeds.bearingRatio.getIndex(bearing);
         const powerIndex = OptimalSpeeds.powerRatio.getIndex(power);
         const gradeIndex = OptimalSpeeds.gradeRatio.getIndex(grade);
 
-        const powerMap = this.speeds.get(bearingIndex);
-        if (!powerMap) {
-            throw new Error(`No speeds found for bearing index ${bearingIndex}`);
+        const index = this.getIndex(bearingIndex, powerIndex, gradeIndex);
+        if (isNaN(this.data[index])) {
+            this.data[index] = OptimalSpeedService.INSTANCE.getSpeed(course, grade, power, bearing);
         }
-
-        const gradeMap = powerMap.get(powerIndex);
-        if (!gradeMap) {
-            throw new Error(`No speeds found for power index ${powerIndex}`);
-        }
-
-        const speed = gradeMap.get(gradeIndex);
-        if (speed === undefined) {
-            throw new Error(`No speed found for grade index ${gradeIndex}`);
-        }
-
-        return speed;
+        return this.data[index];
     }
 }

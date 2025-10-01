@@ -134,7 +134,12 @@ export abstract class CyclistPowerProviderBase implements CyclistPowerProvider {
         // Calculate optimal speed for this power
         const grade = path.getGrade(pointIndex);
         const bearing = path.getBearing(pointIndex);
-        const optimalSpeed = course.optimalSpeeds.getOptimalSpeed(optimalPower, grade, bearing);
+        const optimalSpeed = course.optimalSpeeds.getOptimalSpeed(
+            course,
+            optimalPower,
+            grade,
+            bearing
+        );
 
         path.setField(pointIndex, PointField.P_CYCLIST_OPTIMAL_SPEED, optimalSpeed);
 
