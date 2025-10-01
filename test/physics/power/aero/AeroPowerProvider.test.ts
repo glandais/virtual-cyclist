@@ -1,5 +1,6 @@
 import { aeroPowerProvider } from '@/physics/power/aero/';
-import { Path, PointField } from '@/types/path/';
+import { CoursePhysicsInput } from '@/types/course/';
+import { Path, Point, PointField } from '@/types/path/';
 
 describe('AeroPowerProvider', () => {
     let path: Path;
@@ -22,16 +23,16 @@ describe('AeroPowerProvider', () => {
             speed: 10,
             grade: 0,
             bearing: 0,
-        } as any);
+        } as Point);
 
-        const course: any = {
+        const course = {
             aeroProvider: {
                 getAeroCoef: () => 0.175, // Default aero coefficient
             },
             windProvider: {
                 getWind: () => ({ windSpeed: 0, windDirection: 0 }),
             },
-        };
+        } as unknown as CoursePhysicsInput;
 
         const power = aeroPowerProvider.getPowerW(course, path, 0);
 
@@ -51,12 +52,12 @@ describe('AeroPowerProvider', () => {
             speed: 5,
             grade: 0,
             bearing: 0,
-        } as any);
+        } as Point);
 
-        const course: any = {
+        const course = {
             aeroProvider: { getAeroCoef: () => 0.175 },
             windProvider: { getWind: () => ({ windSpeed: 0, windDirection: 0 }) },
-        };
+        } as unknown as CoursePhysicsInput;
 
         const power5 = aeroPowerProvider.getPowerW(course, path, 0);
 
@@ -77,9 +78,9 @@ describe('AeroPowerProvider', () => {
             speed: 10,
             grade: 0,
             bearing: 0, // Heading east (0 radians)
-        } as any);
+        } as Point);
 
-        const course: any = {
+        const course = {
             aeroProvider: { getAeroCoef: () => 0.175 },
             windProvider: {
                 getWind: () => ({
@@ -87,7 +88,7 @@ describe('AeroPowerProvider', () => {
                     windDirection: 0, // From north (straight headwind)
                 }),
             },
-        };
+        } as unknown as CoursePhysicsInput;
 
         const powerWithWind = aeroPowerProvider.getPowerW(course, path, 0);
 
@@ -105,9 +106,9 @@ describe('AeroPowerProvider', () => {
             speed: 10,
             grade: 0,
             bearing: 0,
-        } as any);
+        } as Point);
 
-        const course: any = {
+        const course = {
             aeroProvider: { getAeroCoef: () => 0.175 },
             windProvider: {
                 getWind: () => ({
@@ -115,7 +116,7 @@ describe('AeroPowerProvider', () => {
                     windDirection: Math.PI, // From south (tailwind)
                 }),
             },
-        };
+        } as unknown as CoursePhysicsInput;
 
         const powerWithTailwind = aeroPowerProvider.getPowerW(course, path, 0);
 

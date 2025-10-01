@@ -1,6 +1,7 @@
 import { gravPowerProvider } from '@/physics/power/grav/';
+import { CoursePhysicsInput } from '@/types/course/';
 import { Cyclist } from '@/types/models/';
-import { Path, PointField } from '@/types/path/';
+import { Path, Point, PointField } from '@/types/path/';
 
 describe('GravPowerProvider', () => {
     let path: Path;
@@ -26,9 +27,9 @@ describe('GravPowerProvider', () => {
             speed: 10,
             grade: 0.05, // 5% climb
             bearing: 0,
-        } as any);
+        } as Point);
 
-        const course: any = { cyclist };
+        const course = { cyclist } as unknown as CoursePhysicsInput;
         const power = gravPowerProvider.getPowerW(course, path, 0);
 
         // P = -m * g * v * sin(atan(grade))
@@ -48,9 +49,9 @@ describe('GravPowerProvider', () => {
             speed: 10,
             grade: -0.05,
             bearing: 0,
-        } as any);
+        } as Point);
 
-        const course: any = { cyclist };
+        const course = { cyclist } as unknown as CoursePhysicsInput;
         const power = gravPowerProvider.getPowerW(course, path, 0);
 
         expect(power).toBeGreaterThan(0); // Assistive when descending
@@ -67,9 +68,9 @@ describe('GravPowerProvider', () => {
             speed: 10,
             grade: 0,
             bearing: 0,
-        } as any);
+        } as Point);
 
-        const course: any = { cyclist };
+        const course = { cyclist } as unknown as CoursePhysicsInput;
         const power = gravPowerProvider.getPowerW(course, path, 0);
 
         expect(power).toBeCloseTo(0, 1);
@@ -85,9 +86,9 @@ describe('GravPowerProvider', () => {
             speed: 5,
             grade: 0.1, // 10% grade
             bearing: 0,
-        } as any);
+        } as Point);
 
-        const course: any = { cyclist };
+        const course = { cyclist } as unknown as CoursePhysicsInput;
         const power5 = gravPowerProvider.getPowerW(course, path, 0);
 
         // Double speed should double power

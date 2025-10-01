@@ -1,5 +1,6 @@
 import { wheelBearingsPowerProvider } from '@/physics/power/rolling/';
-import { Path, PointField } from '@/types/path/';
+import { CoursePhysicsInput } from '@/types/course/';
+import { EMPTY_POINT, Path, Point, PointField } from '@/types/path/';
 
 describe('WheelBearingsPowerProvider', () => {
     let path: Path;
@@ -14,6 +15,7 @@ describe('WheelBearingsPowerProvider', () => {
 
     test('should calculate bearing friction (always negative)', () => {
         path.addPoint({
+            ...EMPTY_POINT,
             lat: 45.0,
             lon: 6.0,
             ele: 1000,
@@ -22,9 +24,9 @@ describe('WheelBearingsPowerProvider', () => {
             speed: 10,
             grade: 0,
             bearing: 0,
-        } as any);
+        });
 
-        const power = wheelBearingsPowerProvider.getPowerW({} as any, path, 0);
+        const power = wheelBearingsPowerProvider.getPowerW({} as CoursePhysicsInput, path, 0);
 
         // P = -speed * (91 + 8.7 * speed) / 1000
         // P = -10 * (91 + 8.7 * 10) / 1000 = -10 * 178 / 1000 = -1.78W
@@ -42,12 +44,12 @@ describe('WheelBearingsPowerProvider', () => {
             speed: 5,
             grade: 0,
             bearing: 0,
-        } as any);
+        } as Point);
 
-        const power5 = wheelBearingsPowerProvider.getPowerW({} as any, path, 0);
+        const power5 = wheelBearingsPowerProvider.getPowerW({} as CoursePhysicsInput, path, 0);
 
         path.setField(0, PointField.SPEED, 10);
-        const power10 = wheelBearingsPowerProvider.getPowerW({} as any, path, 0);
+        const power10 = wheelBearingsPowerProvider.getPowerW({} as CoursePhysicsInput, path, 0);
 
         // Should be more than double (quadratic component)
         expect(power10 / power5).toBeGreaterThan(2);
@@ -64,9 +66,9 @@ describe('WheelBearingsPowerProvider', () => {
             speed: 0,
             grade: 0,
             bearing: 0,
-        } as any);
+        } as Point);
 
-        const power = wheelBearingsPowerProvider.getPowerW({} as any, path, 0);
+        const power = wheelBearingsPowerProvider.getPowerW({} as CoursePhysicsInput, path, 0);
 
         expect(power).toBeCloseTo(0, 5); // Handle -0 vs 0
     });

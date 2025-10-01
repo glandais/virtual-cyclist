@@ -1,5 +1,8 @@
 import { DT } from '@/constants/';
 import { PowerComputer } from '@/physics/power/';
+import { AeroProvider } from '@/physics/power/aero/aero/';
+import { WindProvider } from '@/physics/power/aero/wind/';
+import { CyclistPowerProvider, OptimalSpeeds } from '@/physics/power/cyclist/';
 import { CoursePhysics } from '@/types/course/';
 import { Bike, Cyclist } from '@/types/models/';
 import { Path, Point } from '@/types/path/';
@@ -56,10 +59,10 @@ describe('PowerComputer', () => {
                 cyclist,
                 bike,
                 rho: 1.225,
-                cyclistPowerProvider: null as any,
-                aeroProvider: null as any,
-                windProvider: null as any,
-                optimalSpeeds: null as any,
+                cyclistPowerProvider: null as unknown as CyclistPowerProvider,
+                aeroProvider: null as unknown as AeroProvider,
+                windProvider: null as unknown as WindProvider,
+                optimalSpeeds: null as unknown as OptimalSpeeds,
             };
 
             const equivalentMass = computer.callGetEquivalentMass(course);
@@ -84,10 +87,10 @@ describe('PowerComputer', () => {
                 cyclist,
                 bike: customBike,
                 rho: 1.225,
-                cyclistPowerProvider: null as any,
-                aeroProvider: null as any,
-                windProvider: null as any,
-                optimalSpeeds: null as any,
+                cyclistPowerProvider: null as unknown as CyclistPowerProvider,
+                aeroProvider: null as unknown as AeroProvider,
+                windProvider: null as unknown as WindProvider,
+                optimalSpeeds: null as unknown as OptimalSpeeds,
             };
 
             const equivalentMass = computer.callGetEquivalentMass(course);
@@ -234,7 +237,7 @@ describe('PowerComputer', () => {
             path.computeDerivedData();
 
             // Simplified course setup - power should include all providers
-            const course: any = {
+            const course = {
                 path,
                 cyclist,
                 bike,
@@ -247,7 +250,7 @@ describe('PowerComputer', () => {
                 windProvider: {
                     getWind: () => ({ windSpeed: 0, windDirection: 0 }),
                 },
-            };
+            } as Partial<CoursePhysics> as CoursePhysics;
 
             const powerWithCyclist = computer.getNewPower(course, path, 0, true);
             const powerWithoutCyclist = computer.getNewPower(course, path, 0, false);
@@ -289,13 +292,13 @@ describe('PowerComputer', () => {
 
             path.computeDerivedData();
 
-            const course: any = {
+            const course = {
                 path,
                 cyclist,
                 bike,
                 aeroProvider: { getAeroCoef: () => 0.175 },
                 windProvider: { getWind: () => ({ windSpeed: 0, windDirection: 0 }) },
-            };
+            } as Partial<CoursePhysics> as CoursePhysics;
 
             const equivalentMass = 80.244;
             const cyclistPower = computer.computeCyclistPower(course, path, equivalentMass, 0, 1);
@@ -335,13 +338,13 @@ describe('PowerComputer', () => {
 
             path.computeDerivedData();
 
-            const course: any = {
+            const course = {
                 path,
                 cyclist,
                 bike,
                 aeroProvider: { getAeroCoef: () => 0.175 },
                 windProvider: { getWind: () => ({ windSpeed: 0, windDirection: 0 }) },
-            };
+            } as Partial<CoursePhysics> as CoursePhysics;
 
             const equivalentMass = 80.244;
             const cyclistPower = computer.computeCyclistPower(course, path, equivalentMass, 0, 1);

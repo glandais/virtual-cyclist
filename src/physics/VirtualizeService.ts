@@ -3,6 +3,9 @@ import { PowerComputer } from '@/physics/power/';
 import { OptimalSpeeds } from '@/physics/power/cyclist/';
 import { CoursePhysics, CoursePhysicsInput } from '@/types/course/';
 import { Path } from '@/types/path/';
+import { createLogger, Logger } from '@/utils/';
+
+const logger: Logger = createLogger('physics/VirtualService');
 
 /**
  * Main simulation service for virtualizing GPS routes with physics-based cycling.
@@ -141,10 +144,8 @@ export class VirtualizeService {
             });
 
             // Safety check to avoid infinite loop
-            if (newPath.length > inputPath.length * 10) {
-                console.warn(
-                    'VirtualizeService: Simulation exceeded 10x original points, stopping'
-                );
+            if (newPath.length > 100000) {
+                logger.warn('VirtualizeService: Simulation exceeded 10x original points, stopping');
                 break;
             }
         }

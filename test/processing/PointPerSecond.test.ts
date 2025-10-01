@@ -1,5 +1,5 @@
 import { PointPerSecond } from '@/processing/';
-import { Path } from '@/types/path/';
+import { Path, Point } from '@/types/path/';
 
 describe('PointPerSecond', () => {
     test('should handle empty path', () => {
@@ -23,7 +23,7 @@ describe('PointPerSecond', () => {
             speed: 10,
             grade: 0,
             bearing: 0,
-        } as any);
+        } as Point);
 
         path.addPoint({
             lat: 45.001,
@@ -34,7 +34,7 @@ describe('PointPerSecond', () => {
             speed: 10,
             grade: 0,
             bearing: 0,
-        } as any);
+        } as Point);
 
         path.addPoint({
             lat: 45.002,
@@ -45,7 +45,7 @@ describe('PointPerSecond', () => {
             speed: 10,
             grade: 0,
             bearing: 0,
-        } as any);
+        } as Point);
 
         const result = PointPerSecond.computeOnePointPerSecond(path);
 
@@ -66,7 +66,7 @@ describe('PointPerSecond', () => {
             speed: 10,
             grade: 0,
             bearing: 0,
-        } as any);
+        } as Point);
 
         path.addPoint({
             lat: 45.002,
@@ -77,7 +77,7 @@ describe('PointPerSecond', () => {
             speed: 10,
             grade: 0,
             bearing: 0,
-        } as any);
+        } as Point);
 
         const result = PointPerSecond.computeOnePointPerSecond(path);
 

@@ -1,5 +1,5 @@
 import { DouglasPeucker } from '@/processing/';
-import { Path } from '@/types/path/';
+import { Path, Point } from '@/types/path/';
 
 describe('DouglasPeucker', () => {
     test('should return path unchanged with < 2 points', () => {
@@ -13,7 +13,7 @@ describe('DouglasPeucker', () => {
             speed: 0,
             grade: 0,
             bearing: 0,
-        } as any);
+        } as Point);
 
         const simplified = DouglasPeucker.simplify(path, 10);
 
@@ -35,7 +35,7 @@ describe('DouglasPeucker', () => {
                 speed: 10,
                 grade: 0,
                 bearing: 0,
-            } as any);
+            } as Point);
         }
 
         const simplified = DouglasPeucker.simplify(path, 100, 1); // 100m tolerance, no elevation exaggeration
@@ -58,7 +58,7 @@ describe('DouglasPeucker', () => {
             speed: 10,
             grade: 0,
             bearing: 0,
-        } as any);
+        } as Point);
         path.addPoint({
             lat: 45.001,
             lon: 6.0,
@@ -68,7 +68,7 @@ describe('DouglasPeucker', () => {
             speed: 10,
             grade: 0.5,
             bearing: 0,
-        } as any);
+        } as Point);
         path.addPoint({
             lat: 45.002,
             lon: 6.0,
@@ -78,7 +78,7 @@ describe('DouglasPeucker', () => {
             speed: 10,
             grade: 0.5,
             bearing: 0,
-        } as any); // Peak
+        } as Point); // Peak
         path.addPoint({
             lat: 45.003,
             lon: 6.0,
@@ -88,7 +88,7 @@ describe('DouglasPeucker', () => {
             speed: 10,
             grade: -0.5,
             bearing: 0,
-        } as any);
+        } as Point);
         path.addPoint({
             lat: 45.004,
             lon: 6.0,
@@ -98,7 +98,7 @@ describe('DouglasPeucker', () => {
             speed: 10,
             grade: -0.5,
             bearing: 0,
-        } as any);
+        } as Point);
 
         const simplified = DouglasPeucker.simplify(path, 10, 3); // Elevation exaggerated
 
@@ -120,7 +120,7 @@ describe('DouglasPeucker', () => {
                 speed: 10,
                 grade: 0.1,
                 bearing: 0,
-            } as any);
+            } as Point);
         }
 
         const simplified1 = DouglasPeucker.simplify(path, 5, 1);
