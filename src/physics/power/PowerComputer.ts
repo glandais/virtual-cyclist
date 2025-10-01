@@ -66,7 +66,7 @@ export class PowerComputer {
         gravPowerProvider,
     ];
 
-    private constructor() {}
+    protected constructor() {}
 
     /**
      * Calculates the net power at a specific point.
