@@ -1,4 +1,4 @@
-import { Path, Point, PointField } from '@/types/path/';
+import { EMPTY_POINT, Path, Point } from '@/types/path/';
 import { toRadians } from '@/utils/';
 
 describe('Path', () => {
@@ -29,6 +29,7 @@ describe('Path', () => {
 
     describe('single point operations', () => {
         const samplePoint: Point = {
+            ...EMPTY_POINT,
             // Spatial & Navigation
             lat: toRadians(48.8566),
             lon: toRadians(2.3522),
@@ -46,8 +47,6 @@ describe('Path', () => {
             pCyclistRaw: 240,
             pCyclistWheel: 230,
             pCyclistOptimalPower: 245,
-            pCyclistCurrentSpeed: 220,
-            pCyclistOptimalSpeed: 235,
             pAero: -80,
             pGravity: -20,
             pRollingResistance: -15,
@@ -200,6 +199,7 @@ describe('Path', () => {
             const points: Point[] = [];
             for (let i = 0; i < 5; i++) {
                 points.push({
+                    ...EMPTY_POINT,
                     lat: toRadians(48.8566 + i * 0.001),
                     lon: toRadians(2.3522 + i * 0.001),
                     ele: 35 + i,
@@ -212,8 +212,6 @@ describe('Path', () => {
                     pCyclistRaw: 240 + i,
                     pCyclistWheel: 230 + i,
                     pCyclistOptimalPower: 245 + i,
-                    pCyclistCurrentSpeed: 220 + i,
-                    pCyclistOptimalSpeed: 235 + i,
                     pAero: -80 - i,
                     pGravity: -20 - i,
                     pRollingResistance: -15 - i,
@@ -261,6 +259,7 @@ describe('Path', () => {
             const pointsToAdd = initialCapacity + 100;
             for (let i = 0; i < pointsToAdd; i++) {
                 pathData.addPoint({
+                    ...EMPTY_POINT,
                     lat: toRadians(48.8566 + i * 0.001),
                     lon: toRadians(2.3522 + i * 0.001),
                     ele: 35,
@@ -273,8 +272,7 @@ describe('Path', () => {
                     pCyclistRaw: 240,
                     pCyclistWheel: 230,
                     pCyclistOptimalPower: 245,
-                    pCyclistCurrentSpeed: 220,
-                    pCyclistOptimalSpeed: 235,
+
                     pAero: -80,
                     pGravity: -20,
                     pRollingResistance: -15,
@@ -316,6 +314,7 @@ describe('Path', () => {
             // Add test data
             for (let i = 0; i < 10; i++) {
                 pathData.addPoint({
+                    ...EMPTY_POINT,
                     lat: toRadians(48.8566 + i * 0.001),
                     lon: toRadians(2.3522 + i * 0.001),
                     ele: 35 + i,
@@ -328,8 +327,6 @@ describe('Path', () => {
                     pCyclistRaw: 240,
                     pCyclistWheel: 230,
                     pCyclistOptimalPower: 245,
-                    pCyclistCurrentSpeed: 220,
-                    pCyclistOptimalSpeed: 235,
                     pAero: -80,
                     pGravity: -20,
                     pRollingResistance: -15,
@@ -402,6 +399,7 @@ describe('Path', () => {
             const pointsToAdd = 5000; // Force multiple chunks
             for (let i = 0; i < pointsToAdd; i++) {
                 pathData.addPoint({
+                    ...EMPTY_POINT,
                     lat: 48.8566,
                     lon: 2.3522,
                     ele: 35,
@@ -414,8 +412,6 @@ describe('Path', () => {
                     pCyclistRaw: 240,
                     pCyclistWheel: 230,
                     pCyclistOptimalPower: 245,
-                    pCyclistCurrentSpeed: 220,
-                    pCyclistOptimalSpeed: 235,
                     pAero: -80,
                     pGravity: -20,
                     pRollingResistance: -15,
@@ -455,6 +451,7 @@ describe('Path', () => {
             expect(() => pathData.getLatitude(0)).toThrow('Point index 0 out of bounds');
 
             pathData.addPoint({
+                ...EMPTY_POINT,
                 lat: toRadians(48.8566),
                 lon: toRadians(2.3522),
                 ele: 35,
@@ -467,8 +464,6 @@ describe('Path', () => {
                 pCyclistRaw: 240,
                 pCyclistWheel: 230,
                 pCyclistOptimalPower: 245,
-                pCyclistCurrentSpeed: 220,
-                pCyclistOptimalSpeed: 235,
                 pAero: -80,
                 pGravity: -20,
                 pRollingResistance: -15,
@@ -500,6 +495,7 @@ describe('Path', () => {
 
         it('should throw error for invalid range in getPointRange', () => {
             pathData.addPoint({
+                ...EMPTY_POINT,
                 lat: toRadians(48.8566),
                 lon: toRadians(2.3522),
                 ele: 35,
@@ -512,8 +508,6 @@ describe('Path', () => {
                 pCyclistRaw: 240,
                 pCyclistWheel: 230,
                 pCyclistOptimalPower: 245,
-                pCyclistCurrentSpeed: 220,
-                pCyclistOptimalSpeed: 235,
                 pAero: -80,
                 pGravity: -20,
                 pRollingResistance: -15,
@@ -543,35 +537,11 @@ describe('Path', () => {
         });
     });
 
-    describe('PointField enum values', () => {
-        it('should have correct field indices', () => {
-            expect(PointField.LAT).toBe(0);
-            expect(PointField.LON).toBe(1);
-            expect(PointField.ELE).toBe(2);
-            expect(PointField.TIME).toBe(6);
-            expect(PointField.POWER).toBe(8);
-            expect(PointField.SPEED).toBe(22);
-            expect(PointField.TEMPERATURE).toBe(26);
-            expect(PointField.HEART_RATE).toBe(31);
-            expect(PointField.CADENCE).toBe(32);
-        });
-
-        it('should have exactly 33 fields', () => {
-            const fieldValues = Object.values(PointField).filter(v => typeof v === 'number');
-            expect(fieldValues).toHaveLength(33);
-
-            // Check they are sequential from 0 to 32
-            const sortedValues = fieldValues.sort((a, b) => a - b);
-            for (let i = 0; i < 33; i++) {
-                expect(sortedValues[i]).toBe(i);
-            }
-        });
-    });
-
     describe('field accessor methods', () => {
         beforeEach(() => {
             // Add a test point with known values
             pathData.addPoint({
+                ...EMPTY_POINT,
                 lat: toRadians(48.8566),
                 lon: toRadians(2.3522),
                 ele: 35,
@@ -584,8 +554,6 @@ describe('Path', () => {
                 pCyclistRaw: 240,
                 pCyclistWheel: 230,
                 pCyclistOptimalPower: 245,
-                pCyclistCurrentSpeed: 220,
-                pCyclistOptimalSpeed: 235,
                 pAero: -80,
                 pGravity: -20,
                 pRollingResistance: -15,
@@ -628,6 +596,7 @@ describe('Path', () => {
             // Add points with time and distance differences to trigger speed calculation
             const baseTime = Date.now();
             pathData.addPoint({
+                ...EMPTY_POINT,
                 lat: toRadians(45.0),
                 lon: toRadians(2.0),
                 ele: 100,
@@ -640,8 +609,6 @@ describe('Path', () => {
                 pCyclistRaw: 0,
                 pCyclistWheel: 0,
                 pCyclistOptimalPower: 0,
-                pCyclistCurrentSpeed: 0,
-                pCyclistOptimalSpeed: 0,
                 pAero: 0,
                 pGravity: 0,
                 pRollingResistance: 0,
@@ -664,6 +631,7 @@ describe('Path', () => {
             });
 
             pathData.addPoint({
+                ...EMPTY_POINT,
                 lat: toRadians(45.001),
                 lon: toRadians(2.001),
                 ele: 105,
@@ -676,8 +644,6 @@ describe('Path', () => {
                 pCyclistRaw: 0,
                 pCyclistWheel: 0,
                 pCyclistOptimalPower: 0,
-                pCyclistCurrentSpeed: 0,
-                pCyclistOptimalSpeed: 0,
                 pAero: 0,
                 pGravity: 0,
                 pRollingResistance: 0,
@@ -712,6 +678,7 @@ describe('Path', () => {
         beforeEach(() => {
             // Add test points with varying elevations
             pathData.addPoint({
+                ...EMPTY_POINT,
                 lat: toRadians(45.0),
                 lon: toRadians(2.0),
                 ele: 100,
@@ -724,8 +691,6 @@ describe('Path', () => {
                 pCyclistRaw: 240,
                 pCyclistWheel: 230,
                 pCyclistOptimalPower: 245,
-                pCyclistCurrentSpeed: 220,
-                pCyclistOptimalSpeed: 235,
                 pAero: -80,
                 pGravity: -20,
                 pRollingResistance: -15,
@@ -748,6 +713,7 @@ describe('Path', () => {
             });
 
             const p = {
+                ...EMPTY_POINT,
                 lat: toRadians(45.001),
                 lon: toRadians(2.001),
                 ele: 150, // Higher elevation
@@ -760,8 +726,6 @@ describe('Path', () => {
                 pCyclistRaw: 240,
                 pCyclistWheel: 230,
                 pCyclistOptimalPower: 245,
-                pCyclistCurrentSpeed: 220,
-                pCyclistOptimalSpeed: 235,
                 pAero: -80,
                 pGravity: -20,
                 pRollingResistance: -15,
@@ -787,6 +751,7 @@ describe('Path', () => {
             pathData.addPoint(p);
 
             pathData.addPoint({
+                ...EMPTY_POINT,
                 lat: toRadians(45.002),
                 lon: toRadians(2.002),
                 ele: 80, // Lower elevation
@@ -799,8 +764,6 @@ describe('Path', () => {
                 pCyclistRaw: 240,
                 pCyclistWheel: 230,
                 pCyclistOptimalPower: 245,
-                pCyclistCurrentSpeed: 220,
-                pCyclistOptimalSpeed: 235,
                 pAero: -80,
                 pGravity: -20,
                 pRollingResistance: -15,
@@ -842,6 +805,7 @@ describe('Path', () => {
         it('should return bounds and check enhancement status', () => {
             // Add points to create bounds
             pathData.addPoint({
+                ...EMPTY_POINT,
                 lat: toRadians(45.0),
                 lon: toRadians(2.0),
                 ele: 100,
@@ -854,8 +818,6 @@ describe('Path', () => {
                 pCyclistRaw: 240,
                 pCyclistWheel: 230,
                 pCyclistOptimalPower: 245,
-                pCyclistCurrentSpeed: 220,
-                pCyclistOptimalSpeed: 235,
                 pAero: -80,
                 pGravity: -20,
                 pRollingResistance: -15,
@@ -897,6 +859,7 @@ describe('Path', () => {
 
             // Add first point
             testPath.addPoint({
+                ...EMPTY_POINT,
                 lat: toRadians(45.0),
                 lon: toRadians(2.0),
                 ele: 100,
@@ -909,8 +872,6 @@ describe('Path', () => {
                 pCyclistRaw: 0,
                 pCyclistWheel: 0,
                 pCyclistOptimalPower: 0,
-                pCyclistCurrentSpeed: 0,
-                pCyclistOptimalSpeed: 0,
                 pAero: 0,
                 pGravity: 0,
                 pRollingResistance: 0,
@@ -935,6 +896,7 @@ describe('Path', () => {
             // Add multiple consecutive points with identical distances (to trigger maxIndex++ loop)
             for (let i = 1; i <= 4; i++) {
                 testPath.addPoint({
+                    ...EMPTY_POINT,
                     lat: toRadians(45.0 + i * 0.0001),
                     lon: toRadians(2.0 + i * 0.0001),
                     ele: 100,
@@ -947,8 +909,6 @@ describe('Path', () => {
                     pCyclistRaw: 0,
                     pCyclistWheel: 0,
                     pCyclistOptimalPower: 0,
-                    pCyclistCurrentSpeed: 0,
-                    pCyclistOptimalSpeed: 0,
                     pAero: 0,
                     pGravity: 0,
                     pRollingResistance: 0,
@@ -973,6 +933,7 @@ describe('Path', () => {
 
             // Add a final point with significantly different distance
             testPath.addPoint({
+                ...EMPTY_POINT,
                 lat: toRadians(45.01),
                 lon: toRadians(2.01),
                 ele: 110,
@@ -985,8 +946,6 @@ describe('Path', () => {
                 pCyclistRaw: 0,
                 pCyclistWheel: 0,
                 pCyclistOptimalPower: 0,
-                pCyclistCurrentSpeed: 0,
-                pCyclistOptimalSpeed: 0,
                 pAero: 0,
                 pGravity: 0,
                 pRollingResistance: 0,
@@ -1024,6 +983,7 @@ describe('Path', () => {
             // Add many points
             for (let i = 0; i < pointCount; i++) {
                 pathData.addPoint({
+                    ...EMPTY_POINT,
                     lat: toRadians(48.8566 + i * 0.0001),
                     lon: toRadians(2.3522 + i * 0.0001),
                     ele: 35 + (i % 100),
@@ -1036,8 +996,6 @@ describe('Path', () => {
                     pCyclistRaw: 240,
                     pCyclistWheel: 230,
                     pCyclistOptimalPower: 245,
-                    pCyclistCurrentSpeed: 220,
-                    pCyclistOptimalSpeed: 235,
                     pAero: -80,
                     pGravity: -20,
                     pRollingResistance: -15,

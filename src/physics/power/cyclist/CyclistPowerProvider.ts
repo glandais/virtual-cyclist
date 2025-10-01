@@ -1,5 +1,4 @@
-import { CoursePhysics } from '@/types/course/';
-import { Path } from '@/types/path/';
+import { PowerProvider } from '@/physics/power/';
 
 /**
  * Interface for cyclist power output providers in virtual cycling simulations.
@@ -20,21 +19,4 @@ import { Path } from '@/types/path/';
  * @see MuscularPowerProvider
  * @see CyclistPowerProviderBase
  */
-export interface CyclistPowerProvider {
-    /**
-     * Gets the cyclist's power output at a specific location on the course.
-     *
-     * This is the raw muscular power before drivetrain efficiency losses.
-     * The value may vary based on:
-     * - Course conditions (grade, speed requirements)
-     * - Elapsed time (fatigue effects)
-     * - Existing data (if using measured power)
-     * - Training zones or intervals
-     *
-     * @param course The course configuration with cyclist parameters
-     * @param path The path containing point data
-     * @param pointIndex The index of the current point
-     * @returns Cyclist power output in watts (positive value)
-     */
-    getPowerW(course: CoursePhysics, path: Path, pointIndex: number): number;
-}
+export interface CyclistPowerProvider extends PowerProvider {}

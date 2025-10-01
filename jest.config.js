@@ -9,6 +9,7 @@ module.exports = {
         '/coverage/',
         '/src/utils/Logger.ts',
         '/demo/',
+        '/src/codegen/',
     ],
     testMatch: ['**/test/**/*.test.ts', '**/__tests__/**/*.test.ts'],
     testPathIgnorePatterns: ['/node_modules/', '/test/browser/'],

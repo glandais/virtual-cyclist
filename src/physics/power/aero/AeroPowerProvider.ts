@@ -1,6 +1,6 @@
-import { PowerProvider, PowerProviderId } from '@/physics/power/';
+import { PowerProvider } from '@/physics/power/';
 
-import { CoursePhysicsInput } from '@/types/course/';
+import { CoursePhysics } from '@/types/course/';
 import { Path, PointField } from '@/types/path/';
 import { Wind } from './wind';
 
@@ -29,16 +29,7 @@ import { Wind } from './wind';
  * @see PowerProvider
  * @see https://www.sheldonbrown.com/isvan/Power%20Management%20for%20Lightweight%20Vehicles.pdf
  */
-class AeroPowerProvider implements PowerProvider<CoursePhysicsInput> {
-    /**
-     * Returns the power provider identifier.
-     *
-     * @returns The unique ID for this power provider
-     */
-    getId(): PowerProviderId {
-        return 'aero';
-    }
-
+class AeroPowerProvider implements PowerProvider {
     /**
      * Calculates the aerodynamic drag power at a specific location.
      *
@@ -53,7 +44,7 @@ class AeroPowerProvider implements PowerProvider<CoursePhysicsInput> {
      * @param pointIndex The index of the current point
      * @returns Aerodynamic drag power in watts (negative for resistance)
      */
-    getPowerW(course: CoursePhysicsInput, path: Path, pointIndex: number): number {
+    getPowerW(course: CoursePhysics, path: Path, pointIndex: number): number {
         const aeroCoef = course.aeroProvider.getAeroCoef(course, path, pointIndex);
         path.setField(pointIndex, PointField.AERO_COEF, aeroCoef);
 
@@ -147,4 +138,4 @@ class AeroPowerProvider implements PowerProvider<CoursePhysicsInput> {
     }
 }
 
-export const aeroPowerProvider: PowerProvider<CoursePhysicsInput> = new AeroPowerProvider();
+export const aeroPowerProvider: PowerProvider = new AeroPowerProvider();

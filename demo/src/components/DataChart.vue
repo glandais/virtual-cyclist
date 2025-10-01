@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Path } from '@lib/types';
+import type { Path, PointFieldName } from '@lib/types';
 import { onMounted, ref, toRef } from 'vue';
 import { useChart } from '~/composables/useChart';
 
 const props = defineProps<{
     currentPath: Path | null;
-    selectedFields: Set<string>;
+    selectedFields: Set<PointFieldName>;
 }>();
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);

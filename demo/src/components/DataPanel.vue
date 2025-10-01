@@ -1,15 +1,16 @@
 <script setup lang="ts">
+import type { PointFieldName } from '@lib/types';
 import { fieldConfig } from '~/config/fieldConfig';
 
 const props = defineProps<{
-    selectedFields: Set<string>;
+    selectedFields: Set<PointFieldName>;
 }>();
 
 const emit = defineEmits<{
-    'update:selectedFields': [fields: Set<string>];
+    'update:selectedFields': [fields: Set<PointFieldName>];
 }>();
 
-const toggleField = (fieldKey: string) => {
+const toggleField = (fieldKey: PointFieldName) => {
     const newSet = new Set(props.selectedFields);
     if (newSet.has(fieldKey)) {
         newSet.delete(fieldKey);
@@ -39,11 +40,11 @@ const toggleField = (fieldKey: string) => {
                         <input
                             :id="`field-${fieldKey}`"
                             type="checkbox"
-                            :checked="selectedFields.has(fieldKey as string)"
-                            @change="toggleField(fieldKey as string)"
+                            :checked="selectedFields.has(fieldKey)"
+                            @change="toggleField(fieldKey)"
                         />
-                        <label :for="`field-${fieldKey}`">{{ field.label }}</label>
-                        <span class="field-unit">{{ field.unit }}</span>
+                        <label :for="`field-${fieldKey}`">{{ field!.label }}</label>
+                        <span class="field-unit">{{ field!.unit }}</span>
                     </div>
                 </div>
             </div>

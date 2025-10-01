@@ -1,5 +1,5 @@
 import { gravPowerProvider } from '@/physics/power/grav/';
-import { CoursePhysicsInput } from '@/types/course/';
+import { CoursePhysics } from '@/types/course/';
 import { Cyclist } from '@/types/models/';
 import { Path, Point, PointField } from '@/types/path/';
 
@@ -10,10 +10,6 @@ describe('GravPowerProvider', () => {
     beforeEach(() => {
         cyclist = Cyclist.getDefault();
         path = new Path('test-path');
-    });
-
-    test('should return gravity provider ID', () => {
-        expect(gravPowerProvider.getId()).toBe('gravity');
     });
 
     test('should calculate climbing power (negative, resistive)', () => {
@@ -29,7 +25,7 @@ describe('GravPowerProvider', () => {
             bearing: 0,
         } as Point);
 
-        const course = { cyclist } as unknown as CoursePhysicsInput;
+        const course = { cyclist } as unknown as CoursePhysics;
         const power = gravPowerProvider.getPowerW(course, path, 0);
 
         // P = -m * g * v * sin(atan(grade))
@@ -51,7 +47,7 @@ describe('GravPowerProvider', () => {
             bearing: 0,
         } as Point);
 
-        const course = { cyclist } as unknown as CoursePhysicsInput;
+        const course = { cyclist } as unknown as CoursePhysics;
         const power = gravPowerProvider.getPowerW(course, path, 0);
 
         expect(power).toBeGreaterThan(0); // Assistive when descending
@@ -70,7 +66,7 @@ describe('GravPowerProvider', () => {
             bearing: 0,
         } as Point);
 
-        const course = { cyclist } as unknown as CoursePhysicsInput;
+        const course = { cyclist } as unknown as CoursePhysics;
         const power = gravPowerProvider.getPowerW(course, path, 0);
 
         expect(power).toBeCloseTo(0, 1);
@@ -88,7 +84,7 @@ describe('GravPowerProvider', () => {
             bearing: 0,
         } as Point);
 
-        const course = { cyclist } as unknown as CoursePhysicsInput;
+        const course = { cyclist } as unknown as CoursePhysics;
         const power5 = gravPowerProvider.getPowerW(course, path, 0);
 
         // Double speed should double power

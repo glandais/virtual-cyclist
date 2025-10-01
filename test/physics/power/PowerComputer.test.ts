@@ -1,8 +1,9 @@
 import { DT } from '@/constants/';
 import { PowerComputer } from '@/physics/power/';
 import { AeroProvider } from '@/physics/power/aero/aero/';
+import { rhoProviderDefault } from '@/physics/power/aero/rho/';
 import { WindProvider } from '@/physics/power/aero/wind/';
-import { CyclistPowerProvider, OptimalSpeeds } from '@/physics/power/cyclist/';
+import { CyclistPowerProvider } from '@/physics/power/cyclist/';
 import { CoursePhysics } from '@/types/course/';
 import { Bike, Cyclist } from '@/types/models/';
 import { Path, Point } from '@/types/path/';
@@ -37,6 +38,10 @@ class PowerComputerExtended extends PowerComputer {
     public callGetEquivalentMass(course: CoursePhysics): number {
         return this.getEquivalentMass(course);
     }
+
+    public callGetTotPower(equivalentMass: number, s1: number, s2: number, dt: number): number {
+        return this.getTotPower(equivalentMass, s1, s2, dt);
+    }
 }
 
 describe('PowerComputer', () => {
@@ -58,11 +63,10 @@ describe('PowerComputer', () => {
                 path,
                 cyclist,
                 bike,
-                rho: 1.225,
+                rhoProvider: rhoProviderDefault,
                 cyclistPowerProvider: null as unknown as CyclistPowerProvider,
                 aeroProvider: null as unknown as AeroProvider,
                 windProvider: null as unknown as WindProvider,
-                optimalSpeeds: null as unknown as OptimalSpeeds,
             };
 
             const equivalentMass = computer.callGetEquivalentMass(course);
@@ -86,11 +90,10 @@ describe('PowerComputer', () => {
                 path,
                 cyclist,
                 bike: customBike,
-                rho: 1.225,
+                rhoProvider: rhoProviderDefault,
                 cyclistPowerProvider: null as unknown as CyclistPowerProvider,
                 aeroProvider: null as unknown as AeroProvider,
                 windProvider: null as unknown as WindProvider,
-                optimalSpeeds: null as unknown as OptimalSpeeds,
             };
 
             const equivalentMass = computer.callGetEquivalentMass(course);
@@ -361,7 +364,7 @@ describe('PowerComputer', () => {
             const s2 = 12; // 12 m/s
             const dt = 2; // 2 seconds
 
-            const power = computer.getTotPower(mass, s1, s2, dt);
+            const power = computer.callGetTotPower(mass, s1, s2, dt);
 
             // P = 0.5 * M * (v2² - v1²) / dt
             // P = 0.5 * 80 * (144 - 100) / 2 = 0.5 * 80 * 44 / 2 = 880W
@@ -374,7 +377,7 @@ describe('PowerComputer', () => {
             const s2 = 10;
             const dt = 2;
 
-            const power = computer.getTotPower(mass, s1, s2, dt);
+            const power = computer.callGetTotPower(mass, s1, s2, dt);
 
             // Negative power for deceleration
             expect(power).toBeCloseTo(-880, 1);
@@ -386,7 +389,7 @@ describe('PowerComputer', () => {
             const s2 = 10;
             const dt = 1;
 
-            const power = computer.getTotPower(mass, s1, s2, dt);
+            const power = computer.callGetTotPower(mass, s1, s2, dt);
 
             expect(power).toBe(0);
         });

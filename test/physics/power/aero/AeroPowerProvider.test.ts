@@ -1,5 +1,5 @@
 import { aeroPowerProvider } from '@/physics/power/aero/';
-import { CoursePhysicsInput } from '@/types/course/';
+import { CoursePhysics } from '@/types/course/';
 import { Path, Point, PointField } from '@/types/path/';
 
 describe('AeroPowerProvider', () => {
@@ -7,10 +7,6 @@ describe('AeroPowerProvider', () => {
 
     beforeEach(() => {
         path = new Path('test-path');
-    });
-
-    test('should return aero provider ID', () => {
-        expect(aeroPowerProvider.getId()).toBe('aero');
     });
 
     test('should calculate aero drag without wind (cubic relationship)', () => {
@@ -32,7 +28,7 @@ describe('AeroPowerProvider', () => {
             windProvider: {
                 getWind: () => ({ windSpeed: 0, windDirection: 0 }),
             },
-        } as unknown as CoursePhysicsInput;
+        } as unknown as CoursePhysics;
 
         const power = aeroPowerProvider.getPowerW(course, path, 0);
 
@@ -57,7 +53,7 @@ describe('AeroPowerProvider', () => {
         const course = {
             aeroProvider: { getAeroCoef: () => 0.175 },
             windProvider: { getWind: () => ({ windSpeed: 0, windDirection: 0 }) },
-        } as unknown as CoursePhysicsInput;
+        } as unknown as CoursePhysics;
 
         const power5 = aeroPowerProvider.getPowerW(course, path, 0);
 
@@ -88,7 +84,7 @@ describe('AeroPowerProvider', () => {
                     windDirection: 0, // From north (straight headwind)
                 }),
             },
-        } as unknown as CoursePhysicsInput;
+        } as unknown as CoursePhysics;
 
         const powerWithWind = aeroPowerProvider.getPowerW(course, path, 0);
 
@@ -116,7 +112,7 @@ describe('AeroPowerProvider', () => {
                     windDirection: Math.PI, // From south (tailwind)
                 }),
             },
-        } as unknown as CoursePhysicsInput;
+        } as unknown as CoursePhysics;
 
         const powerWithTailwind = aeroPowerProvider.getPowerW(course, path, 0);
 
