@@ -4,9 +4,10 @@ import { join } from 'path';
 import { GPXParser } from '@/gpx/';
 import { VirtualizeService } from '@/physics/';
 import { aeroProviderConstant } from '@/physics/power/aero/aero/';
+import { rhoProviderDefault } from '@/physics/power/aero/rho/';
 import { windProviderNone } from '@/physics/power/aero/wind/';
 import { powerProviderConstant } from '@/physics/power/cyclist/';
-import { CoursePhysicsInput, EMPTY_POINT, Path } from '@/types/';
+import { CoursePhysics, EMPTY_POINT, Path } from '@/types/';
 import { Bike, Cyclist } from '@/types/models/';
 
 describe('VirtualizeService', () => {
@@ -21,7 +22,7 @@ describe('VirtualizeService', () => {
             path,
             cyclist: Cyclist.getDefault(),
             bike: Bike.getDefault(),
-            rho: 1.225,
+            rhoProvider: rhoProviderDefault,
             cyclistPowerProvider: powerProviderConstant,
             aeroProvider: aeroProviderConstant,
             windProvider: windProviderNone,
@@ -53,11 +54,11 @@ describe('VirtualizeService', () => {
             bearing: 0,
         });
 
-        const courseInput: CoursePhysicsInput = {
+        const courseInput: CoursePhysics = {
             path,
             cyclist: Cyclist.getDefault(),
             bike: Bike.getDefault(),
-            rho: 1.225,
+            rhoProvider: rhoProviderDefault,
             cyclistPowerProvider: powerProviderConstant,
             aeroProvider: aeroProviderConstant,
             windProvider: windProviderNone,

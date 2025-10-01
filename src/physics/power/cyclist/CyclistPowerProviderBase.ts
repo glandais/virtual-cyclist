@@ -1,3 +1,4 @@
+import { PowerComputer } from '@/physics/power/';
 import { CoursePhysics } from '@/types/course/';
 import { Path, PointField } from '@/types/path/';
 import { CyclistPowerProvider } from './CyclistPowerProvider';
@@ -127,47 +128,42 @@ export abstract class CyclistPowerProviderBase implements CyclistPowerProvider {
                     harmonic.amp * optimalPower * Math.cos(harmonic.freq * x - harmonic.d);
             }
         }
-
         // Store debug value
         path.setField(pointIndex, PointField.P_CYCLIST_OPTIMAL_POWER, optimalPower);
 
-        // Calculate optimal speed for this power
-        const grade = path.getGrade(pointIndex);
-        const bearing = path.getBearing(pointIndex);
-        const optimalSpeed = course.optimalSpeeds.getOptimalSpeed(
-            course,
-            optimalPower,
-            grade,
-            bearing
+        return this.getRealOptimalPower(course, path, pointIndex, optimalPower);
+    }
+
+    protected getRealOptimalPower(
+        course: CoursePhysics,
+        path: Path,
+        pointIndex: number,
+        optimalPower: number
+    ): number {
+        const powerNeeded = Math.max(
+            0,
+            -PowerComputer.INSTANCE.getNewPower(course, path, pointIndex, false)
         );
-
-        path.setField(pointIndex, PointField.P_CYCLIST_OPTIMAL_SPEED, optimalSpeed);
-
-        // Calculate tolerance bounds
-        const minOptimalSpeed = optimalSpeed * (1 - CyclistPowerProviderBase.TOLERANCE);
-        const maxOptimalSpeed = optimalSpeed * (1 + CyclistPowerProviderBase.TOLERANCE);
-
-        const currentSpeed = path.getSpeed(pointIndex);
-        path.setField(pointIndex, PointField.P_CYCLIST_CURRENT_SPEED, currentSpeed);
-
+        const minOptimalPower = optimalPower * (1 - CyclistPowerProviderBase.TOLERANCE);
+        const maxOptimalPower = optimalPower * (1 + CyclistPowerProviderBase.TOLERANCE);
         // Adjust power based on speed
-        if (minOptimalSpeed <= currentSpeed && currentSpeed <= maxOptimalSpeed) {
+        if (minOptimalPower <= powerNeeded && powerNeeded <= maxOptimalPower) {
             // Within tolerance: use optimal power
             return optimalPower;
-        } else if (currentSpeed <= minOptimalSpeed) {
+        } else if (powerNeeded < minOptimalPower) {
             // Too slow: increase power linearly up to MAX_MULTIPLIER
             // At 0 speed: MAX_MULTIPLIER × power
             // At minOptimalSpeed: 1.0 × power
             return (
                 optimalPower * CyclistPowerProviderBase.MAX_MULTIPLIER -
-                (currentSpeed / minOptimalSpeed) *
+                (powerNeeded / minOptimalPower) *
                     optimalPower *
                     (CyclistPowerProviderBase.MAX_MULTIPLIER - 1.0)
             );
         } else {
             // Too fast: reduce power linearly down to 0
-            const diffSpeed = currentSpeed - maxOptimalSpeed;
-            const coef = Math.min(1.0, Math.max(0.0, diffSpeed / maxOptimalSpeed));
+            const diffPower = powerNeeded - maxOptimalPower;
+            const coef = Math.min(1.0, Math.max(0.0, diffPower / maxOptimalPower));
             return optimalPower - coef * optimalPower;
         }
     }

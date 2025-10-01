@@ -1,6 +1,6 @@
 import { G } from '@/constants/';
-import { PowerProvider, PowerProviderId } from '@/physics/power/';
-import { Course, CoursePhysicsInput } from '@/types/course/';
+import { PowerProvider } from '@/physics/power/';
+import { Course } from '@/types/course/';
 import { Path, PointField } from '@/types/path/';
 
 /**
@@ -28,16 +28,7 @@ import { Path, PointField } from '@/types/path/';
  * @see PowerProvider
  * @see Martin, J.C., et al. (1998). "Validation of a mathematical model for road cycling power."
  */
-class GravPowerProvider implements PowerProvider<CoursePhysicsInput> {
-    /**
-     * Returns the power provider identifier.
-     *
-     * @returns The unique ID for this power provider
-     */
-    getId(): PowerProviderId {
-        return 'gravity';
-    }
-
+class GravPowerProvider implements PowerProvider {
     /**
      * Calculates the gravitational power at a specific location.
      *
@@ -73,4 +64,4 @@ class GravPowerProvider implements PowerProvider<CoursePhysicsInput> {
     }
 }
 
-export const gravPowerProvider: PowerProvider<CoursePhysicsInput> = new GravPowerProvider();
+export const gravPowerProvider: PowerProvider = new GravPowerProvider();

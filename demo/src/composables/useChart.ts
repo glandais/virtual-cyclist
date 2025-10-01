@@ -1,5 +1,5 @@
-import type { Path } from '@lib/types';
-import { PointField } from '@lib/types';
+import type { Path, PointFieldName } from '@lib/types';
+import { fieldToPointField, PointField } from '@lib/types';
 import {
     CategoryScale,
     Chart,
@@ -33,32 +33,9 @@ Chart.register(
 export function useChart(
     canvasRef: Ref<HTMLCanvasElement | null>,
     currentPath: Ref<Path | null>,
-    selectedFields: Ref<Set<string>>
+    selectedFields: Ref<Set<PointFieldName>>
 ) {
     const chartInstance = shallowRef<Chart | null>(null);
-
-    const fieldToPointField: Record<string, PointField> = {
-        ele: PointField.ELE,
-        dist: PointField.DIST,
-        radius: PointField.RADIUS,
-        grade: PointField.GRADE,
-        speed: PointField.SPEED,
-        speedMax: PointField.SPEED_MAX,
-        speedMaxIncline: PointField.SPEED_MAX_INCLINE,
-        virtSpeedCurrent: PointField.VIRT_SPEED_CURRENT,
-        power: PointField.POWER,
-        pCyclistRaw: PointField.P_CYCLIST_RAW,
-        pCyclistWheel: PointField.P_CYCLIST_WHEEL,
-        pAero: PointField.P_AERO,
-        pGravity: PointField.P_GRAVITY,
-        pRollingResistance: PointField.P_ROLLING_RESISTANCE,
-        temperature: PointField.TEMPERATURE,
-        windSpeed: PointField.WIND_SPEED,
-        windDirection: PointField.WIND_DIRECTION,
-        windBearing: PointField.WIND_BEARING,
-        heartRate: PointField.HEART_RATE,
-        cadence: PointField.CADENCE,
-    };
 
     const createChart = () => {
         if (!canvasRef.value) {

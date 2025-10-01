@@ -99,9 +99,43 @@ body {
     display: block;
 }
 
+.file-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 0.5rem;
+    padding: 0.25rem 0;
+    transition: opacity 0.2s;
+}
+
+.file-info-header:hover {
+    opacity: 0.8;
+}
+
 .file-info h4 {
     color: #0c5460;
-    margin-bottom: 0.5rem;
+    margin: 0;
+}
+
+.toggle-button {
+    background: none;
+    border: none;
+    color: #0c5460;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    transition: transform 0.3s;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toggle-button:hover {
+    transform: scale(1.2);
 }
 
 .file-info .info-grid {
@@ -225,10 +259,19 @@ body {
     min-height: 1.2rem;
 }
 
+/* Chart Controls */
+.chart-controls {
+    padding: 1rem 2rem;
+    background: white;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: flex-end;
+}
+
 /* Data Selection Panel */
 .data-panel {
     padding: 2rem;
-    background: #f8f9fa;
+    background: white;
 }
 
 .data-panel h3 {
@@ -504,4 +547,25 @@ body {
 }
 .mt-3 {
     margin-top: 1.5rem;
+}
+
+/* Expand/Collapse Transition */
+.expand-enter-active,
+.expand-leave-active {
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.expand-enter-from,
+.expand-leave-to {
+    opacity: 0;
+    max-height: 0;
+    margin-top: 0;
+}
+
+.expand-enter-to,
+.expand-leave-from {
+    opacity: 1;
+    max-height: 500px;
+    margin-top: 0.5rem;
 }

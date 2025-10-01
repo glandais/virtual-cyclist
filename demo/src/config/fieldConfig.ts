@@ -1,6 +1,6 @@
-import type { FieldConfig } from '../types';
+import type { CategoryConfig } from '~/types';
 
-export const fieldConfig: FieldConfig = {
+export const fieldConfig: Record<string, CategoryConfig> = {
     elevation: {
         name: '🏔️ Elevation & Terrain',
         axis: 'elevation',
@@ -8,7 +8,14 @@ export const fieldConfig: FieldConfig = {
         unit: 'm',
         fields: {
             ele: { label: 'Elevation', unit: 'm' },
-            dist: { label: 'Distance', unit: 'm' },
+        },
+    },
+    radius: {
+        name: 'Radius',
+        axis: 'radius',
+        color: '#8b5a3c',
+        unit: 'm',
+        fields: {
             radius: { label: 'Turn Radius', unit: 'm' },
         },
     },
@@ -30,21 +37,32 @@ export const fieldConfig: FieldConfig = {
             speed: { label: 'Current Speed', unit: 'm/s' },
             speedMax: { label: 'Max Speed', unit: 'm/s' },
             speedMaxIncline: { label: 'Max Speed (Incline)', unit: 'm/s' },
-            virtSpeedCurrent: { label: 'Virtual Speed', unit: 'm/s' },
         },
     },
-    power: {
-        name: '⚡ Power & Physics',
+    powerPhysics: {
+        name: '⚡ Power Physics',
         axis: 'power',
         color: '#e74c3c',
         unit: 'W',
         fields: {
             power: { label: 'Total Power', unit: 'W' },
-            pCyclistRaw: { label: 'Cyclist Power (Raw)', unit: 'W' },
-            pCyclistWheel: { label: 'Cyclist Power (Wheel)', unit: 'W' },
             pAero: { label: 'Aerodynamic Power', unit: 'W' },
             pGravity: { label: 'Gravity Power', unit: 'W' },
             pRollingResistance: { label: 'Rolling Resistance', unit: 'W' },
+            pWheelBearings: { label: 'Wheel bearings Resistance', unit: 'W' },
+        },
+    },
+    powerCyclist: {
+        name: '⚡ Power Cyclist',
+        axis: 'power',
+        color: '#e74c3c',
+        unit: 'W',
+        fields: {
+            pCyclistRaw: { label: 'Cyclist Power (Raw)', unit: 'W' },
+            pCyclistWheel: { label: 'Cyclist Power (Wheel)', unit: 'W' },
+            pCyclistOptimalPower: { label: 'Cyclist Optimal Power', unit: 'W' },
+            pPowerFromAcc: { label: 'Power from acceleration', unit: 'W' },
+            pPowerWheelFromAcc: { label: 'Wheel power from acceleration', unit: 'W' },
         },
     },
     environmental: {

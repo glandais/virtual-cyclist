@@ -4,7 +4,6 @@ import { Path, PointField } from '@/types/path/';
 import { aeroPowerProvider } from './aero';
 import { muscularPowerProvider } from './cyclist';
 import { gravPowerProvider } from './grav';
-import { PowerProvider } from './PowerProvider';
 import { rollingResistancePowerProvider, wheelBearingsPowerProvider } from './rolling';
 
 /**
@@ -58,13 +57,6 @@ import { rollingResistancePowerProvider, wheelBearingsPowerProvider } from './ro
  */
 export class PowerComputer {
     static INSTANCE: PowerComputer = new PowerComputer();
-    private readonly providers: PowerProvider<CoursePhysics>[] = [
-        wheelBearingsPowerProvider,
-        rollingResistancePowerProvider,
-        muscularPowerProvider,
-        aeroPowerProvider,
-        gravPowerProvider,
-    ];
 
     protected constructor() {}
 
@@ -87,11 +79,12 @@ export class PowerComputer {
         withCyclist: boolean
     ): number {
         let pSum = 0;
-        for (const provider of this.providers) {
-            if (withCyclist || provider.getId() !== 'cyclist') {
-                const w = provider.getPowerW(course, path, pointIndex);
-                pSum += w;
-            }
+        pSum += wheelBearingsPowerProvider.getPowerW(course, path, pointIndex);
+        pSum += rollingResistancePowerProvider.getPowerW(course, path, pointIndex);
+        pSum += aeroPowerProvider.getPowerW(course, path, pointIndex);
+        pSum += gravPowerProvider.getPowerW(course, path, pointIndex);
+        if (withCyclist) {
+            pSum += muscularPowerProvider.getPowerW(course, path, pointIndex);
         }
         return pSum;
     }
@@ -225,7 +218,7 @@ export class PowerComputer {
      * @param dt Time step in seconds
      * @returns Power in watts
      */
-    getTotPower(equivalentMass: number, s1: number, s2: number, dt: number): number {
+    protected getTotPower(equivalentMass: number, s1: number, s2: number, dt: number): number {
         return (0.5 * equivalentMass * (s2 * s2 - s1 * s1)) / dt;
     }
 
@@ -237,7 +230,7 @@ export class PowerComputer {
      * @param pointIndex2 Index of second point
      * @returns Time difference in seconds
      */
-    private getDtBetweenPoints(path: Path, pointIndex1: number, pointIndex2: number): number {
+    protected getDtBetweenPoints(path: Path, pointIndex1: number, pointIndex2: number): number {
         const time1 = path.getTime(pointIndex1);
         const time2 = path.getTime(pointIndex2);
         return (time2 - time1) / 1000.0; // Convert ms to seconds

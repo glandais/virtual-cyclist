@@ -1,5 +1,5 @@
-import { PowerProvider, PowerProviderId } from '@/physics/power/';
-import { Course, CoursePhysicsInput } from '@/types/course/';
+import { PowerProvider } from '@/physics/power/';
+import { Course } from '@/types/course/';
 import { Path, PointField } from '@/types/path/';
 
 /**
@@ -27,16 +27,7 @@ import { Path, PointField } from '@/types/path/';
  * @see PowerProvider
  * @see https://www.sheldonbrown.com/brandt/rolling-resistance.html
  */
-class WheelBearingsPowerProvider implements PowerProvider<CoursePhysicsInput> {
-    /**
-     * Returns the power provider identifier.
-     *
-     * @returns The unique ID for this power provider
-     */
-    getId(): PowerProviderId {
-        return 'bearings';
-    }
-
+class WheelBearingsPowerProvider implements PowerProvider {
     /**
      * Calculates the wheel bearings friction power at a specific location.
      *
@@ -67,5 +58,4 @@ class WheelBearingsPowerProvider implements PowerProvider<CoursePhysicsInput> {
     }
 }
 
-export const wheelBearingsPowerProvider: PowerProvider<CoursePhysicsInput> =
-    new WheelBearingsPowerProvider();
+export const wheelBearingsPowerProvider: PowerProvider = new WheelBearingsPowerProvider();

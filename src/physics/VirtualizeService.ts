@@ -1,8 +1,7 @@
 import { DT, MINIMAL_SPEED } from '@/constants/';
 import { PowerComputer } from '@/physics/power/';
-import { OptimalSpeeds } from '@/physics/power/cyclist/';
-import { CoursePhysics, CoursePhysicsInput } from '@/types/course/';
-import { Path } from '@/types/path/';
+import { CoursePhysics } from '@/types/course/';
+import { Path, PointField } from '@/types/path/';
 import { createLogger, Logger } from '@/utils/';
 
 const logger: Logger = createLogger('physics/VirtualService');
@@ -54,11 +53,7 @@ export class VirtualizeService {
      *
      * @param course Course configuration with path, cyclist, and bike parameters
      */
-    static virtualizeTrack(courseInput: CoursePhysicsInput): Path {
-        // Optimal speeds cache
-        const optimalSpeeds = new OptimalSpeeds();
-        const course: CoursePhysics = { ...courseInput, optimalSpeeds };
-
+    static virtualizeTrack(course: CoursePhysics): Path {
         const equivalentMass = this.powerComputer.getEquivalentMass(course);
 
         const newPath = new Path(course.path.name);
@@ -160,7 +155,7 @@ export class VirtualizeService {
                 i + 1
             );
             // Set power on current point
-            newPath.setField(i, 8, cyclistPower); // PointField.POWER = 8
+            newPath.setField(i, PointField.POWER, cyclistPower); // PointField.POWER = 8
         }
         newPath.computeDerivedData();
         return newPath;

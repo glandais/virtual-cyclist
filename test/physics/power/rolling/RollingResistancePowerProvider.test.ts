@@ -1,5 +1,5 @@
 import { rollingResistancePowerProvider } from '@/physics/power/rolling/';
-import { CoursePhysicsInput } from '@/types/course/';
+import { CoursePhysics } from '@/types/course/';
 import { Bike, Cyclist } from '@/types/models/';
 import { Path, Point, PointField } from '@/types/path/';
 
@@ -14,10 +14,6 @@ describe('RollingResistancePowerProvider', () => {
         path = new Path('test-path');
     });
 
-    test('should return rolling resistance provider ID', () => {
-        expect(rollingResistancePowerProvider.getId()).toBe('rolling_resistance');
-    });
-
     test('should calculate rolling resistance (always negative)', () => {
         path.addPoint({
             lat: 45.0,
@@ -30,7 +26,7 @@ describe('RollingResistancePowerProvider', () => {
             bearing: 0,
         } as Point);
 
-        const course = { cyclist, bike } as unknown as CoursePhysicsInput;
+        const course = { cyclist, bike } as unknown as CoursePhysics;
         const power = rollingResistancePowerProvider.getPowerW(course, path, 0);
 
         // P = -cos(atan(grade)) * m * g * v * crr
@@ -51,7 +47,7 @@ describe('RollingResistancePowerProvider', () => {
             bearing: 0,
         } as Point);
 
-        const course = { cyclist, bike } as unknown as CoursePhysicsInput;
+        const course = { cyclist, bike } as unknown as CoursePhysics;
         const power5 = rollingResistancePowerProvider.getPowerW(course, path, 0);
 
         path.setField(0, PointField.SPEED, 10);
@@ -72,7 +68,7 @@ describe('RollingResistancePowerProvider', () => {
             bearing: 0,
         } as Point);
 
-        const course = { cyclist, bike } as unknown as CoursePhysicsInput;
+        const course = { cyclist, bike } as unknown as CoursePhysics;
         const powerFlat = rollingResistancePowerProvider.getPowerW(course, path, 0);
 
         path.setField(0, PointField.GRADE, 0.5); // 50% grade for noticeable cosine effect

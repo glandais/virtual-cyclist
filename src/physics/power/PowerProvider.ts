@@ -1,9 +1,6 @@
+import { CoursePhysics } from '@/types/course/';
 import { Path } from '@/types/path/';
 
-export type PowerProviderId = 'cyclist' | 'rolling_resistance' | 'bearings' | 'aero' | 'gravity';
-
-export interface PowerProvider<C> {
-    getPowerW(course: C, path: Path, pointIndex: number): number;
-
-    getId(): PowerProviderId;
+export interface PowerProvider {
+    getPowerW(course: CoursePhysics, path: Path, pointIndex: number): number;
 }

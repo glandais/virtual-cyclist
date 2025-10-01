@@ -28,6 +28,159 @@ npm run test:watch     # Run tests in watch mode
 npm run test:coverage  # Run tests with coverage report
 ```
 
+### Code Generation
+
+```bash
+npm run generate:point # Generate Point.ts and Path.ts accessor methods
+```
+
+## Code Generation System
+
+This project uses **automatic code generation** for Point and Path classes to maintain consistency across 33 data fields. The generator ensures that adding or removing fields is safe and synchronized across all related code.
+
+### Architecture
+
+**Single Source of Truth:**
+
+- `src/codegen/field-definitions.ts` - Defines all 33 fields with metadata
+- `scripts/generate-point-path.ts` - Generator script using direct TypeScript output
+- `src/types/path/Point.ts` - **AUTO-GENERATED** (⚠️ DO NOT EDIT MANUALLY)
+- `src/types/path/Path.ts` - Partially generated accessor methods
+
+**Generated Code:**
+
+1. **Point.ts** (fully generated):
+    - `PointField` enum with auto-incrementing indices
+    - `Point` interface with readonly properties
+    - `EMPTY_POINT` constant with NaN values
+    - `FIELDS_PER_POINT` constant
+
+2. **Path.ts** accessor methods (output for manual integration):
+    - Getter/setter methods for all fields
+    - `addPoint()` implementation
+    - `getPointData()` implementation
+    - `interpolatePoint()` implementation
+
+### How to Add/Remove Fields
+
+**Step 1: Update field definitions**
+
+Edit `src/codegen/field-definitions.ts`:
+
+```typescript
+{
+    name: 'MY_FIELD',           // Enum name (UPPER_SNAKE_CASE)
+    prop: 'myField',            // Property name (camelCase)
+    comment: 'My field description',
+    unit: 'meters',             // Optional unit for documentation
+    methodName: 'MyField',      // Optional: custom method name (e.g., getMyField)
+    getDegrees: true,           // Optional: generate getDegrees variant
+    setSpecial: 'date',         // Optional: special setter (Date | number)
+    getSpecial: 'date',         // Optional: special getter (getAsDate)
+}
+```
+
+**Update the category count:**
+
+```typescript
+{
+    name: 'Speed & Motion',
+    count: 4,  // ← Update this when adding/removing fields
+    fields: [...]
+}
+```
+
+**Step 2: Run the generator**
+
+```bash
+npm run generate:point
+```
+
+This will:
+
+- Regenerate `Point.ts` completely
+- Output Path.ts methods to console for review
+- Run prettier formatting
+
+**Step 3: Update Path.ts manually**
+
+The generator outputs the Path.ts accessor methods to the console. You need to manually update Path.ts with:
+
+- New getter/setter methods
+- Updated `addPoint()` method
+- Updated `getPointData()` method
+- Updated `interpolatePoint()` method
+
+**Step 4: Run tests**
+
+```bash
+npm run typecheck  # Verify TypeScript compilation
+npm test           # Run all tests
+```
+
+### Field Definition Options
+
+**Basic field:**
+
+```typescript
+{
+    name: 'SPEED',
+    prop: 'speed',
+    comment: 'Current speed (m/s)',
+    unit: 'm/s',
+}
+```
+
+**Field with custom method name:**
+
+```typescript
+{
+    name: 'LAT',
+    prop: 'lat',
+    comment: 'Latitude (radians)',
+    methodName: 'Latitude',  // Generates getLatitude/setLatitude
+}
+```
+
+**Field with degree conversion:**
+
+```typescript
+{
+    name: 'LON',
+    prop: 'lon',
+    comment: 'Longitude (radians)',
+    getDegrees: true,  // Generates getLongitudeDeg()
+}
+```
+
+**Field with special handling:**
+
+```typescript
+{
+    name: 'TIME',
+    prop: 'time',
+    comment: 'Timestamp (ms since epoch)',
+    setSpecial: 'date',  // setTime(Date | number)
+    getSpecial: 'date',  // getTimeAsDate(): Date
+}
+```
+
+### Benefits of Code Generation
+
+✅ **Single source of truth** - All field metadata in one place
+✅ **Guaranteed synchronization** - Enum, interface, and constants always match
+✅ **Easy field management** - Add/remove fields by editing one definition
+✅ **Type safety** - TypeScript validates generated code
+✅ **Zero runtime overhead** - Pure compile-time generation
+✅ **Maintainability** - Reduces manual repetitive code by ~68%
+
+### Important Notes
+
+⚠️ **NEVER edit Point.ts manually** - It will be overwritten by the generator
+⚠️ **Always update field counts** - Mismatched counts will cause validation errors
+⚠️ **Run typecheck after generation** - Verify no TypeScript errors
+⚠️ **Update tests** - Add test cases for new fields in Path.test.ts
+
 ## Architecture
 
 ### Core Module Structure

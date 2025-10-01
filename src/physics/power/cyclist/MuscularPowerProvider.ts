@@ -1,4 +1,4 @@
-import { PowerProvider, PowerProviderId } from '@/physics/power/';
+import { PowerProvider } from '@/physics/power/';
 import { CoursePhysics } from '@/types/course/';
 import { Path, PointField } from '@/types/path/';
 
@@ -45,16 +45,7 @@ import { Path, PointField } from '@/types/path/';
  * @see PowerProvider
  * @see CyclistPowerProvider
  */
-class MuscularPowerProvider implements PowerProvider<CoursePhysics> {
-    /**
-     * Returns the power provider identifier.
-     *
-     * @returns The unique ID 'cyclist' for this power provider
-     */
-    getId(): PowerProviderId {
-        return 'cyclist';
-    }
-
+class MuscularPowerProvider implements PowerProvider {
     /**
      * Calculates the wheel power from muscular power with drivetrain efficiency.
      *
@@ -79,4 +70,4 @@ class MuscularPowerProvider implements PowerProvider<CoursePhysics> {
     }
 }
 
-export const muscularPowerProvider: PowerProvider<CoursePhysics> = new MuscularPowerProvider();
+export const muscularPowerProvider: PowerProvider = new MuscularPowerProvider();

@@ -1,4 +1,4 @@
-import type { Path } from '@lib/types';
+import type { Path, PointFieldName } from '@lib/types';
 
 export interface FieldDefinition {
     label: string;
@@ -10,20 +10,11 @@ export interface CategoryConfig {
     axis: string;
     color: string;
     unit: string;
-    fields: Record<string, FieldDefinition>;
-}
-
-export interface FieldConfig {
-    elevation: CategoryConfig;
-    grade: CategoryConfig;
-    speed: CategoryConfig;
-    power: CategoryConfig;
-    environmental: CategoryConfig;
-    physiological: CategoryConfig;
+    fields: { [K in PointFieldName]?: FieldDefinition };
 }
 
 export interface AppState {
     currentPath: Path | null;
     isProcessing: boolean;
-    selectedFields: Set<string>;
+    selectedFields: Set<PointFieldName>;
 }

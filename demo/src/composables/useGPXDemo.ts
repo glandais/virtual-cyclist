@@ -141,8 +141,7 @@ export function useGPXDemo(): {
         setProcessing(true, 'Enhancing path with virtual cyclist...');
 
         try {
-            const enhancedPath = await Enhancer.enhancePath(currentPath.value as Path);
-            currentPath.value = enhancedPath as Path;
+            currentPath.value = await Enhancer.enhancePath(currentPath.value);
 
             console.log('Path enhancement completed');
         } catch (error) {

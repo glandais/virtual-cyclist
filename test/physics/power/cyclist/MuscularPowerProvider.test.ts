@@ -12,10 +12,6 @@ describe('MuscularPowerProvider', () => {
         path = new Path('test-path');
     });
 
-    test('should return cyclist provider ID', () => {
-        expect(muscularPowerProvider.getId()).toBe('cyclist');
-    });
-
     test('should apply drivetrain efficiency', () => {
         path.addPoint({
             lat: 45.0,

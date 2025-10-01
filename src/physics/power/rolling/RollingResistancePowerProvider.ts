@@ -1,6 +1,6 @@
 import { G } from '@/constants/';
-import { PowerProvider, PowerProviderId } from '@/physics/power/';
-import { Course, CoursePhysicsInput } from '@/types/course/';
+import { PowerProvider } from '@/physics/power/';
+import { Course } from '@/types/course/';
 import { Path, PointField } from '@/types/path/';
 
 /**
@@ -24,16 +24,7 @@ import { Path, PointField } from '@/types/path/';
  * @see PowerProvider
  * @see https://www.sheldonbrown.com/brandt/rolling-resistance.html
  */
-class RollingResistancePowerProvider implements PowerProvider<CoursePhysicsInput> {
-    /**
-     * Returns the power provider identifier.
-     *
-     * @returns The unique ID for this power provider
-     */
-    getId(): PowerProviderId {
-        return 'rolling_resistance';
-    }
-
+class RollingResistancePowerProvider implements PowerProvider {
     /**
      * Calculates the rolling resistance power at a specific location.
      *
@@ -65,5 +56,4 @@ class RollingResistancePowerProvider implements PowerProvider<CoursePhysicsInput
     }
 }
 
-export const rollingResistancePowerProvider: PowerProvider<CoursePhysicsInput> =
-    new RollingResistancePowerProvider();
+export const rollingResistancePowerProvider: PowerProvider = new RollingResistancePowerProvider();

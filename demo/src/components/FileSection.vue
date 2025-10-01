@@ -15,6 +15,7 @@ const emit = defineEmits<{
 
 const selectedGPX = ref('');
 const fileInput = ref<HTMLInputElement | null>(null);
+const isFileInfoExpanded = ref(true);
 
 const onGPXChange = (event: Event) => {
     const target = event.target as HTMLSelectElement;
@@ -92,32 +93,39 @@ watch(
             </div>
         </div>
         <div v-if="fileInfo" id="file-info" class="file-info show">
-            <h4>📄 {{ fileName }}</h4>
-            <div class="info-grid">
-                <div class="info-item">
-                    <div class="label">Points</div>
-                    <div class="value">{{ fileInfo.pointCount.toLocaleString() }}</div>
-                </div>
-                <div class="info-item">
-                    <div class="label">Distance</div>
-                    <div class="value">{{ fileInfo.distance.toFixed(1) }} km</div>
-                </div>
-                <div class="info-item">
-                    <div class="label">Elevation Range</div>
-                    <div class="value">
-                        {{ fileInfo.minElevation.toFixed(0) }}m -
-                        {{ fileInfo.maxElevation.toFixed(0) }}m
+            <div class="file-info-header" @click="isFileInfoExpanded = !isFileInfoExpanded">
+                <h4>📄 {{ fileName }}</h4>
+                <button class="toggle-button" :class="{ collapsed: !isFileInfoExpanded }">
+                    {{ isFileInfoExpanded ? '▼' : '▶' }}
+                </button>
+            </div>
+            <Transition name="expand">
+                <div v-show="isFileInfoExpanded" class="info-grid">
+                    <div class="info-item">
+                        <div class="label">Points</div>
+                        <div class="value">{{ fileInfo.pointCount.toLocaleString() }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Distance</div>
+                        <div class="value">{{ fileInfo.distance.toFixed(1) }} km</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Elevation Range</div>
+                        <div class="value">
+                            {{ fileInfo.minElevation.toFixed(0) }}m -
+                            {{ fileInfo.maxElevation.toFixed(0) }}m
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Elevation Gain</div>
+                        <div class="value">{{ fileInfo.elevationGain.toFixed(0) }}m</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Elevation Loss</div>
+                        <div class="value">{{ fileInfo.elevationLoss.toFixed(0) }}m</div>
                     </div>
                 </div>
-                <div class="info-item">
-                    <div class="label">Elevation Gain</div>
-                    <div class="value">{{ fileInfo.elevationGain.toFixed(0) }}m</div>
-                </div>
-                <div class="info-item">
-                    <div class="label">Elevation Loss</div>
-                    <div class="value">{{ fileInfo.elevationLoss.toFixed(0) }}m</div>
-                </div>
-            </div>
+            </Transition>
         </div>
     </section>
 </template>

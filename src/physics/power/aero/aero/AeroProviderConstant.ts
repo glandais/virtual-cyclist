@@ -40,12 +40,13 @@ class AeroProviderConstant implements AeroProvider {
      * Calculates the constant aerodynamic coefficient.
      *
      * @param course The course configuration containing cyclist and environmental parameters
-     * @param _path The path containing point data (unused)
-     * @param _pointIndex The index of the current point (unused)
+     * @param path The path containing point data
+     * @param pointIndex The index of the current point
      * @returns Aerodynamic coefficient in kg/m
      */
-    getAeroCoef(course: CoursePhysics, _path: Path, _pointIndex: number): number {
-        return (course.cyclist.cd * course.cyclist.a * course.rho) / 2;
+    getAeroCoef(course: CoursePhysics, path: Path, pointIndex: number): number {
+        const rho = course.rhoProvider.getRho(course, path, pointIndex);
+        return (course.cyclist.cd * course.cyclist.a * rho) / 2;
     }
 }
 

@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import { PointFieldName } from '@/types';
 import { onMounted, ref } from 'vue';
 import ControlPanel from '~/components/ControlPanel.vue';
 import DataChart from '~/components/DataChart.vue';
 import DataPanel from '~/components/DataPanel.vue';
 import FileSection from '~/components/FileSection.vue';
+import Modal from '~/components/Modal.vue';
 import { useGPXDemo } from '~/composables/useGPXDemo';
 
-const selectedFields = ref(new Set<string>(['ele', 'speed']));
+const selectedFields = ref(new Set<PointFieldName>([PointFieldName.ele, PointFieldName.speed]));
+const isDataPanelOpen = ref(false);
 
 const {
     currentPath,
@@ -92,8 +95,17 @@ onMounted(() => {
             @enhance-path="onEnhancePath"
         />
 
-        <!-- Data Selection Panel -->
-        <DataPanel v-model:selected-fields="selectedFields" />
+        <!-- Configure Fields Button -->
+        <div class="chart-controls">
+            <button class="btn btn-secondary" @click="isDataPanelOpen = true">
+                ⚙️ Configure Fields
+            </button>
+        </div>
+
+        <!-- Data Selection Modal -->
+        <Modal :is-open="isDataPanelOpen" @close="isDataPanelOpen = false">
+            <DataPanel v-model:selected-fields="selectedFields" />
+        </Modal>
 
         <!-- Chart Section -->
         <DataChart :current-path="currentPath" :selected-fields="selectedFields" />

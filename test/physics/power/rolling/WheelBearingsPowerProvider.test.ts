@@ -1,5 +1,5 @@
 import { wheelBearingsPowerProvider } from '@/physics/power/rolling/';
-import { CoursePhysicsInput } from '@/types/course/';
+import { CoursePhysics } from '@/types/course/';
 import { EMPTY_POINT, Path, Point, PointField } from '@/types/path/';
 
 describe('WheelBearingsPowerProvider', () => {
@@ -7,10 +7,6 @@ describe('WheelBearingsPowerProvider', () => {
 
     beforeEach(() => {
         path = new Path('test-path');
-    });
-
-    test('should return wheel bearings provider ID', () => {
-        expect(wheelBearingsPowerProvider.getId()).toBe('bearings');
     });
 
     test('should calculate bearing friction (always negative)', () => {
@@ -26,7 +22,7 @@ describe('WheelBearingsPowerProvider', () => {
             bearing: 0,
         });
 
-        const power = wheelBearingsPowerProvider.getPowerW({} as CoursePhysicsInput, path, 0);
+        const power = wheelBearingsPowerProvider.getPowerW({} as CoursePhysics, path, 0);
 
         // P = -speed * (91 + 8.7 * speed) / 1000
         // P = -10 * (91 + 8.7 * 10) / 1000 = -10 * 178 / 1000 = -1.78W
@@ -46,10 +42,10 @@ describe('WheelBearingsPowerProvider', () => {
             bearing: 0,
         } as Point);
 
-        const power5 = wheelBearingsPowerProvider.getPowerW({} as CoursePhysicsInput, path, 0);
+        const power5 = wheelBearingsPowerProvider.getPowerW({} as CoursePhysics, path, 0);
 
         path.setField(0, PointField.SPEED, 10);
-        const power10 = wheelBearingsPowerProvider.getPowerW({} as CoursePhysicsInput, path, 0);
+        const power10 = wheelBearingsPowerProvider.getPowerW({} as CoursePhysics, path, 0);
 
         // Should be more than double (quadratic component)
         expect(power10 / power5).toBeGreaterThan(2);
@@ -68,7 +64,7 @@ describe('WheelBearingsPowerProvider', () => {
             bearing: 0,
         } as Point);
 
-        const power = wheelBearingsPowerProvider.getPowerW({} as CoursePhysicsInput, path, 0);
+        const power = wheelBearingsPowerProvider.getPowerW({} as CoursePhysics, path, 0);
 
         expect(power).toBeCloseTo(0, 5); // Handle -0 vs 0
     });
