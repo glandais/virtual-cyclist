@@ -33,15 +33,18 @@ jobs:
       - name: Build library
         run: npm run build
 
-      - name: Create static directory with demo files
+      - name: Install demo dependencies
+        run: cd demo && npm ci
+        env:
+          HUSKY: 0
+
+      - name: Build demo
+        run: npm run build:demo
+
+      - name: Create static directory with demo build
         run: |
           mkdir static
-          mkdir static/dist
-          cp index.html static/
-          cp demo.css static/
-          cp demo.js static/
-          cp -R gpx static/
-          cp -R dist static/
+          cp -R demo/dist/* static/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
