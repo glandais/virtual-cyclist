@@ -31,17 +31,26 @@
         "dev": "npm run build:dev && npm run dev:serve",
         "dev:watch": "vite build --watch --mode info",
         "dev:serve": "serve . -l 3000",
+        "dev:demo": "cd demo && npm run dev",
         "build": "vite build",
         "build:dev": "vite build --mode development",
-        "check": "npm run format && npm run lint:fix && npm run lint && npm run typecheck && npm run test && npm run build",
+        "build:demo": "cd demo && npm run build",
+        "check": "npm run format && npm run check:lib:noformat && npm run check:demo:noformat",
+        "check:lib": "npm run format && npm run check:lib:noformat",
+        "check:demo": "npm run format && npm run check:demo:noformat",
+        "check:lib:noformat": "npm run lint:fix && npm run lint && npm run typecheck && npm run test && npm run build",
+        "check:demo:noformat": "npm run lint:fix:demo && npm run lint:demo && npm run typecheck:demo && npm run build:demo",
         "test": "jest",
         "test:watch": "jest --watch",
         "test:coverage": "jest --coverage",
         "lint": "eslint src/ test/ --ext .ts",
         "lint:fix": "eslint src/ test/ --ext .ts --fix",
+        "lint:demo": "cd demo && npm run lint",
+        "lint:fix:demo": "cd demo && npm run lint:fix",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
         "typecheck": "tsc --noEmit",
+        "typecheck:demo": "cd demo && npm run typecheck",
         "semantic-release": "semantic-release",
         "prepare": "husky",
         "prepublishOnly": "npm run build"
@@ -104,7 +113,8 @@
         "typescript": "^5.9.2",
         "typescript-eslint": "^8.45.0",
         "vite": "^7.1.3",
-        "vite-plugin-dts": "^4.5.4"
+        "vite-plugin-dts": "^4.5.4",
+        "vue-tsc": "^3.1.0"
     },
     "dependencies": {
         "@glandais/elevation": "^3.0.1"
