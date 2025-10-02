@@ -1,6 +1,6 @@
 {
     "name": "@glandais/virtual-cyclist",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "description": "Virtual Cyclist",
     "sideEffects": false,
     "main": "./dist/index.umd.js",
