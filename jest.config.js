@@ -3,13 +3,24 @@ module.exports = {
     testEnvironment: 'jsdom',
     collectCoverage: true,
     coverageDirectory: 'coverage',
-    coveragePathIgnorePatterns: ['/node_modules/', '/test/', '/coverage/', '/src/utils/Logger.ts'],
+    coveragePathIgnorePatterns: [
+        '/node_modules/',
+        '/test/',
+        '/coverage/',
+        '/src/utils/Logger.ts',
+        '/demo/',
+        '/src/codegen/',
+    ],
     testMatch: ['**/test/**/*.test.ts', '**/__tests__/**/*.test.ts'],
     testPathIgnorePatterns: ['/node_modules/', '/test/browser/'],
     setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
     moduleNameMapper: {
+        '^@$': '<rootDir>/src/index.ts',
+        '^@/(.*)$': '<rootDir>/src/$1',
         '\\.(css|less|scss|sass)$': '<rootDir>/test/__mocks__/styleMock.js',
+        '@glandais/elevation': '<rootDir>/test/__mocks__/@glandais/elevation.ts',
     },
+    transformIgnorePatterns: ['node_modules/(?!(@glandais/elevation)/)'],
     coverageThreshold: {
         global: {
             branches: 80,

@@ -1,6 +1,6 @@
+import path, { resolve } from 'path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
-import { resolve } from 'path';
 
 export default defineConfig(({ mode }) => {
     // By default, 'npm run build' runs in production mode
@@ -10,8 +10,9 @@ export default defineConfig(({ mode }) => {
     return {
         plugins: [
             dts({
+                tsconfigPath: 'tsconfig.json',
                 insertTypesEntry: true,
-                rollupTypes: false,
+                rollupTypes: true,
                 copyDtsFiles: false,
                 entryRoot: 'src',
                 outDir: 'dist',
@@ -30,7 +31,7 @@ export default defineConfig(({ mode }) => {
             emptyOutDir: true,
             lib: {
                 entry: resolve(__dirname, 'src/index.ts'),
-                name: 'virtualcyclist',
+                name: 'VirtualCyclist',
                 formats: ['es', 'umd', 'iife'],
                 fileName: format => {
                     switch (format) {
@@ -44,6 +45,11 @@ export default defineConfig(({ mode }) => {
                             return `index.${format}.js`;
                     }
                 },
+            },
+        },
+        resolve: {
+            alias: {
+                '@': path.resolve(__dirname, 'src'),
             },
         },
     };

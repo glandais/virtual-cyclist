@@ -3,6 +3,69 @@ const tseslint = require('@typescript-eslint/eslint-plugin');
 const tsparser = require('@typescript-eslint/parser');
 const prettier = require('eslint-config-prettier');
 const prettierPlugin = require('eslint-plugin-prettier');
+const importPlugin = require('eslint-plugin-import');
+
+// ============================================================================
+// SHARED GLOBALS
+// ============================================================================
+
+const commonGlobals = {
+    __DEV__: 'readonly',
+};
+
+const nodeGlobals = {
+    module: 'readonly',
+    require: 'readonly',
+    process: 'readonly',
+    __dirname: 'readonly',
+    __filename: 'readonly',
+    global: 'readonly',
+};
+
+const browserGlobals = {
+    window: 'readonly',
+    document: 'readonly',
+    console: 'readonly',
+    DOMException: 'readonly',
+};
+
+const domXmlGlobals = {
+    Document: 'readonly',
+    Element: 'readonly',
+    NodeListOf: 'readonly',
+    DOMParser: 'readonly',
+    XMLSerializer: 'readonly',
+};
+
+const jestGlobals = {
+    describe: 'readonly',
+    it: 'readonly',
+    test: 'readonly',
+    expect: 'readonly',
+    beforeAll: 'readonly',
+    beforeEach: 'readonly',
+    afterAll: 'readonly',
+    afterEach: 'readonly',
+    jest: 'readonly',
+};
+
+// ============================================================================
+// SHARED RULES
+// ============================================================================
+
+const commonRules = {
+    'prettier/prettier': 'error',
+    'no-console': 'off',
+    'no-var': 'error',
+    'prefer-const': 'error',
+    eqeqeq: ['error', 'always'],
+    curly: ['error', 'all'],
+    'brace-style': ['error', '1tbs'],
+};
+
+// ============================================================================
+// CONFIGURATIONS
+// ============================================================================
 
 module.exports = [
     js.configs.recommended,
@@ -16,47 +79,19 @@ module.exports = [
             ecmaVersion: 2021,
             sourceType: 'script',
             globals: {
-                // Node.js globals
-                module: 'readonly',
-                require: 'readonly',
-                process: 'readonly',
-                __dirname: 'readonly',
-                __filename: 'readonly',
-                global: 'readonly',
-                // Browser globals
-                window: 'readonly',
-                document: 'readonly',
-                console: 'readonly',
-                fetch: 'readonly',
-                createImageBitmap: 'readonly',
-                DOMException: 'readonly',
-                AbortController: 'readonly',
-                setTimeout: 'readonly',
-                clearTimeout: 'readonly',
-                Blob: 'readonly',
-                HTMLCanvasElement: 'readonly',
-                // Jest globals
-                describe: 'readonly',
-                it: 'readonly',
-                test: 'readonly',
-                expect: 'readonly',
-                beforeEach: 'readonly',
-                afterEach: 'readonly',
-                jest: 'readonly',
+                ...commonGlobals,
+                ...nodeGlobals,
+                ...browserGlobals,
+                ...domXmlGlobals,
+                ...jestGlobals,
             },
         },
         plugins: {
             prettier: prettierPlugin,
         },
         rules: {
-            'prettier/prettier': 'error',
+            ...commonRules,
             'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-            'no-console': 'off',
-            'no-var': 'error',
-            'prefer-const': 'error',
-            eqeqeq: ['error', 'always'],
-            curly: ['error', 'all'],
-            'brace-style': ['error', '1tbs'],
         },
     },
     {
@@ -66,67 +101,74 @@ module.exports = [
             sourceType: 'module',
             parser: tsparser,
             globals: {
-                // Build-time constants
-                __DEV__: 'readonly',
-                __NODE__: 'readonly',
-                // Node.js globals
-                module: 'readonly',
-                require: 'readonly',
-                process: 'readonly',
-                __dirname: 'readonly',
-                __filename: 'readonly',
-                global: 'readonly',
-                // Browser globals
-                window: 'readonly',
-                document: 'readonly',
-                console: 'readonly',
+                ...commonGlobals,
+                ...nodeGlobals,
+                ...browserGlobals,
+                ...domXmlGlobals,
+                ...jestGlobals,
                 performance: 'readonly',
-                Date: 'readonly',
-                fetch: 'readonly',
-                createImageBitmap: 'readonly',
-                DOMException: 'readonly',
-                AbortController: 'readonly',
-                setTimeout: 'readonly',
-                clearTimeout: 'readonly',
-                Blob: 'readonly',
-                HTMLCanvasElement: 'readonly',
-                HTMLElement: 'readonly',
-                HTMLImageElement: 'readonly',
-                ImageBitmap: 'readonly',
-                AbortSignal: 'readonly',
-                CanvasRenderingContext2D: 'readonly',
-                ImageData: 'readonly',
-                Image: 'readonly',
-                Response: 'readonly',
-                URL: 'readonly',
-                Buffer: 'readonly',
-                // Jest globals
-                describe: 'readonly',
-                it: 'readonly',
-                test: 'readonly',
-                expect: 'readonly',
-                beforeEach: 'readonly',
-                afterEach: 'readonly',
-                jest: 'readonly',
             },
         },
         plugins: {
             '@typescript-eslint': tseslint,
             prettier: prettierPlugin,
+            import: importPlugin,
         },
         rules: {
-            'prettier/prettier': 'error',
+            ...commonRules,
             '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
             'no-unused-vars': 'off',
-            'no-console': 'off',
-            'no-var': 'error',
-            'prefer-const': 'error',
-            eqeqeq: ['error', 'always'],
-            curly: ['error', 'all'],
-            'brace-style': ['error', '1tbs'],
             '@typescript-eslint/explicit-function-return-type': 'off',
             '@typescript-eslint/no-explicit-any': 'warn',
             '@typescript-eslint/no-inferrable-types': 'off',
+            //'import/no-relative-parent-imports': 'error',
+            'no-restricted-imports': [
+                'error',
+                {
+                    patterns: [
+                        {
+                            regex: '^@$',
+                            message:
+                                'Importing from @ is not allowed. Use specific module paths like @/types/ or @/utils/ instead.',
+                        },
+                        {
+                            regex: '^@/(?!.*/$)',
+                            message:
+                                'Imports from @/ must end with a trailing slash (e.g., @/module/ not @/module)',
+                        },
+                        {
+                            regex: '^\\./.*/.*',
+                            message:
+                                'Relative imports (starting with .) are not allowed. Use @/ alias instead.',
+                        },
+                    ],
+                },
+            ],
+            'import/no-duplicates': 'error',
+        },
+        settings: {
+            'import/resolver': {
+                typescript: {
+                    project: './tsconfig.json',
+                },
+            },
+        },
+    },
+    {
+        files: ['**/index.ts'],
+        rules: {
+            'no-restricted-imports': [
+                'error',
+                {
+                    patterns: [
+                        {
+                            regex: '^(?!\\./[a-zA-Z0-9]+$.*)',
+                            message:
+                                'index.ts files can only import from sibling files using ./[a-zA-Z]+ pattern',
+                        },
+                    ],
+                },
+            ],
         },
     },
 ];
