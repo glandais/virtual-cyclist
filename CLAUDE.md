@@ -63,38 +63,44 @@ npm run generate         # Regenerate Point.ts and Path.ts from field definition
 ### Core Components
 
 **Path Data Structure** (`src/types/path/`)
+
 - `Point.ts` and `GeneratedPath.ts`: Auto-generated from field definitions
 - `Path.ts`: Extends GeneratedPath with computed statistics and GPS bounds
 - `AbstractPath.ts`: Base implementation for chunked array storage
 - Uses ECEF (Earth-Centered Earth-Fixed) coordinates for 3D calculations
 
 **Physics Engine** (`src/physics/`)
+
 - `MaxSpeedComputer.ts`: Two-pass algorithm for safe cycling speeds
-  - Forward pass: cornering limits using lean angle physics
-  - Reverse pass: braking constraints
+    - Forward pass: cornering limits using lean angle physics
+    - Reverse pass: braking constraints
 - `VirtualizeService.ts`: Simulates realistic cycling with power-based speed calculations
 - Power providers (`src/physics/power/`):
-  - Aerodynamics (drag, drafting, CdA)
-  - Rolling resistance (tire, surface type)
-  - Gravity (climbing/descending)
-  - Wheel bearings friction
+    - Aerodynamics (drag, drafting, CdA)
+    - Rolling resistance (tire, surface type)
+    - Gravity (climbing/descending)
+    - Wheel bearings friction
 
 **GPX Processing** (`src/gpx/`)
+
 - `GPXParser.ts`: Parse GPX XML files
 - `GPXWriter.ts`: Write GPX files with extensions
 - `ExtensionParser.ts`: Handle GPX extensions
 - Supports Garmin extensions for power, cadence, temperature
 
 **Path Processing** (`src/processing/`)
+
 - `DouglasPeucker.ts`: 3D simplification using ECEF coordinates
 - `EcefConverter.ts`: GPS ↔ ECEF transformations with elevation exaggeration
 - `PointPerSecond.ts`: Resample paths to 1Hz for simulation
 
 **Elevation** (`src/elevation/`)
+
 - Uses `@glandais/elevation` package (mocked in tests)
 - Elevation data fetching and interpolation
 
 **Models** (`src/types/models/`)
+
 - `Cyclist.ts`: Rider parameters (weight, max speed, power, lean angle)
 - `Bike.ts`: Equipment parameters (weight, CdA, rolling resistance)
 - `Course.ts`: Combines Path + Cyclist + Bike
@@ -102,17 +108,17 @@ npm run generate         # Regenerate Point.ts and Path.ts from field definition
 ### Module Path Aliases
 
 ```typescript
-import { something } from '@/types/path';  // src/types/path
-import { test } from '#/mocks/mock';       // test/mocks/mock
+import { something } from '@/types/path'; // src/types/path
+import { test } from '#/mocks/mock'; // test/mocks/mock
 ```
 
 ### Build System
 
 - **Vite** for bundling with multiple output formats:
-  - ES modules (`.esm.js`)
-  - UMD (`.umd.js`)
-  - IIFE minified (`.min.js`)
-  - Node.js CJS/ESM (`.node.js`, `.node.mjs`)
+    - ES modules (`.esm.js`)
+    - UMD (`.umd.js`)
+    - IIFE minified (`.min.js`)
+    - Node.js CJS/ESM (`.node.js`, `.node.mjs`)
 - TypeScript declaration files generated with `vite-plugin-dts`
 - Development vs Production builds controlled by `__DEV__` flag (see `vite.config.ts`)
 

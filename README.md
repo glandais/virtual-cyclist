@@ -10,14 +10,14 @@ A TypeScript library for realistic cycling simulations based on GPS data and phy
 - 📍 **GPX Parsing** - Read GPS tracks from Garmin, Strava, Amazfit, and other devices
 - 🏔️ **Elevation Correction** - Fix GPS elevation data using external elevation services
 - ⚡ **Physics-Based Speed Computation** - Calculate maximum safe speeds based on:
-  - Cornering physics (lean angle limits)
-  - Braking constraints (deceleration limits)
-  - Terrain and gradient
+    - Cornering physics (lean angle limits)
+    - Braking constraints (deceleration limits)
+    - Terrain and gradient
 - 🎮 **Virtual Cyclist Simulation** - Realistic cycling simulation with:
-  - Aerodynamic drag (air density, CdA, drafting)
-  - Rolling resistance (tire, surface type)
-  - Gravity effects (climbing/descending)
-  - Power-based speed calculations
+    - Aerodynamic drag (air density, CdA, drafting)
+    - Rolling resistance (tire, surface type)
+    - Gravity effects (climbing/descending)
+    - Power-based speed calculations
 - 🛠️ **Path Processing** - Douglas-Peucker simplification, resampling, ECEF coordinate transformations
 - 📊 **Multi-Format Support** - ES modules, UMD, IIFE, Node.js (CJS/ESM)
 
@@ -66,12 +66,12 @@ const result = GPXParser.parse(gpxXmlString);
 const path = result.tracks[0];
 
 // Access path data
-path.getPointCount();              // Number of points
-path.getTotalDistance();           // Total distance in meters
-path.getTotalElevationGain();      // Total climbing in meters
-path.getLatitudeDeg(index);        // Latitude in degrees
-path.getLongitudeDeg(index);       // Longitude in degrees
-path.getElevation(index);          // Elevation in meters
+path.getPointCount(); // Number of points
+path.getTotalDistance(); // Total distance in meters
+path.getTotalElevationGain(); // Total climbing in meters
+path.getLatitudeDeg(index); // Latitude in degrees
+path.getLongitudeDeg(index); // Longitude in degrees
+path.getElevation(index); // Elevation in meters
 ```
 
 ### Cyclist & Bike Models
@@ -88,14 +88,14 @@ const bike = Bike.getDefault();
 
 // Or customize
 const customCyclist = new Cyclist(
-    75,      // mass (kg) - cyclist + bike
-    300,     // power (watts)
-    false,   // harmonics
-    0.6,     // max brake (g)
-    0.7,     // drag coefficient
-    0.5,     // frontal area (m²)
-    35,      // max lean angle (degrees)
-    100      // max speed (km/h)
+    75, // mass (kg) - cyclist + bike
+    300, // power (watts)
+    false, // harmonics
+    0.6, // max brake (g)
+    0.7, // drag coefficient
+    0.5, // frontal area (m²)
+    35, // max lean angle (degrees)
+    100 // max speed (km/h)
 );
 ```
 
@@ -117,7 +117,9 @@ MaxSpeedComputer.computeMaxSpeeds({
 for (let i = 0; i < path.getPointCount(); i++) {
     const maxSpeed = path.getSpeedMax(i);
     const radius = path.getRadius(i);
-    console.log(`Point ${i}: max ${(maxSpeed * 3.6).toFixed(1)} km/h, radius ${radius.toFixed(1)}m`);
+    console.log(
+        `Point ${i}: max ${(maxSpeed * 3.6).toFixed(1)} km/h, radius ${radius.toFixed(1)}m`
+    );
 }
 ```
 
@@ -129,25 +131,25 @@ import {
     aeroProviderConstant,
     rhoProviderEstimate,
     windProviderNone,
-    powerProviderConstant
+    powerProviderConstant,
 } from '@glandais/virtual-cyclist';
 
 const simulatedPath = VirtualizeService.virtualizeTrack({
     path,
     cyclist: Cyclist.getDefault(),
     bike: Bike.getDefault(),
-    rhoProvider: rhoProviderEstimate,        // Air density
-    aeroProvider: aeroProviderConstant,      // Aerodynamics
-    windProvider: windProviderNone,          // Wind conditions
+    rhoProvider: rhoProviderEstimate, // Air density
+    aeroProvider: aeroProviderConstant, // Aerodynamics
+    windProvider: windProviderNone, // Wind conditions
     cyclistPowerProvider: powerProviderConstant, // Power output
 });
 
 // Get realistic speed and power at each point
 for (let i = 0; i < simulatedPath.getPointCount(); i++) {
     console.log({
-        speed: simulatedPath.getSpeed(i) * 3.6,      // km/h
-        power: simulatedPath.getPCyclistRaw(i),      // watts
-        time: simulatedPath.getElapsed(i),           // seconds
+        speed: simulatedPath.getSpeed(i) * 3.6, // km/h
+        power: simulatedPath.getPCyclistRaw(i), // watts
+        time: simulatedPath.getElapsed(i), // seconds
     });
 }
 ```
@@ -188,8 +190,8 @@ import { DouglasPeucker, PointPerSecond } from '@glandais/virtual-cyclist';
 // Simplify path using Douglas-Peucker algorithm (3D with ECEF)
 const simplified = DouglasPeucker.simplify(
     path,
-    10,  // tolerance in meters
-    3    // elevation exaggeration factor
+    10, // tolerance in meters
+    3 // elevation exaggeration factor
 );
 
 // Resample to 1 point per second
@@ -201,37 +203,47 @@ const resampled = PointPerSecond.computeOnePointPerSecond(path);
 Virtual Cyclist uses scientifically validated physics models:
 
 ### Aerodynamic Drag
+
 ```
 F_aero = 0.5 × ρ × CdA × v²
 ```
+
 - Air density (ρ) varies with temperature and altitude
 - CdA = drag coefficient × frontal area
 - Supports drafting effects
 
 ### Rolling Resistance
+
 ```
 F_rolling = Crr × N × cos(grade)
 ```
+
 - Tire coefficient (Crr) ~0.004 for road bikes
 - Normal force depends on mass and gradient
 
 ### Gravity
+
 ```
 F_gravity = m × g × sin(grade)
 ```
+
 - Positive when climbing, negative when descending
 
 ### Cornering Physics
+
 ```
 v_max = √(g × radius × tan(max_lean_angle))
 ```
+
 - Maximum lean angle: 35° (default)
 - Turning radius computed from GPS geometry
 
 ### Braking Constraints
+
 ```
 v_initial² = v_final² + 2 × a × distance
 ```
+
 - Maximum deceleration: 0.6g (default)
 - Ensures cyclist can brake safely
 
@@ -240,6 +252,7 @@ v_initial² = v_final² + 2 × a × distance
 An interactive Vue 3 demo is included at `demo/`:
 
 ### Features
+
 - 📁 Load sample GPX files or upload your own
 - 📈 Visualize elevation and speed profiles with Chart.js
 - 🔧 Apply elevation correction
@@ -268,23 +281,25 @@ The demo will be available at `http://localhost:5173` (or the port Vite assigns)
 ### Demo Screenshots
 
 The demo provides:
+
 1. **File Selection** - Choose from sample GPX files or upload your own
 2. **Control Panel** - Apply enhancement operations:
-   - Fix Elevation
-   - Compute Max Speeds
-   - Enhance Path (complete pipeline)
+    - Fix Elevation
+    - Compute Max Speeds
+    - Enhance Path (complete pipeline)
 3. **Interactive Charts** - Visualize:
-   - Elevation profile
-   - Speed (actual, max, optimal)
-   - Power output
-   - Heart rate
-   - Cadence
-   - Temperature
-   - And 30+ other data fields
+    - Elevation profile
+    - Speed (actual, max, optimal)
+    - Power output
+    - Heart rate
+    - Cadence
+    - Temperature
+    - And 30+ other data fields
 
 ### Sample GPX Files
 
 The demo includes sample tracks from various devices:
+
 - `sample.gpx` - General route
 - `stelvio.gpx` - Famous alpine descent
 - `amazfit.gpx` - Amazfit watch tracking
@@ -298,6 +313,7 @@ The demo includes sample tracks from various devices:
 ### Data Structure
 
 Virtual Cyclist uses **chunked array storage** for memory efficiency:
+
 - Each point stores 31 numeric fields in Float64Array
 - Fields include: lat, lon, elevation, speed, power, heart rate, cadence, etc.
 - Access via generated getter/setter methods
@@ -311,6 +327,7 @@ Virtual Cyclist uses **chunked array storage** for memory efficiency:
 ### Code Generation
 
 `Point.ts` and `GeneratedPath.ts` are auto-generated from field definitions:
+
 ```bash
 # Modify field definitions
 vim src/codegen/field-definitions.ts
