@@ -32,7 +32,7 @@ export class WindProviderConstant implements WindProvider {
      * @param wind The wind conditions to use throughout the route
      */
     constructor(wind: Wind) {
-        this.wind = wind;
+        this.wind = { ...wind };
     }
 
     /**

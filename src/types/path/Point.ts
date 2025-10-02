@@ -6,7 +6,7 @@
 /**
  * Enum defining the index of each field in the chunked array storage.
  * Based on PropertyKeys.java from gpx2web project.
- * Each point has exactly 31 numeric values stored contiguously.
+ * Each point has exactly 32 numeric values stored contiguously.
  */
 export enum PointField {
     // Spatial & Navigation (6 properties)
@@ -21,36 +21,37 @@ export enum PointField {
     TIME = 6, // Timestamp (ms since epoch)
     ELAPSED = 7, // Elapsed duration (ms)
 
-    // Physics & Power (12 properties)
+    // Physics & Power (13 properties)
     POWER = 8, // Total power (watts)
     P_CYCLIST_RAW = 9, // Raw cyclist power
     P_CYCLIST_WHEEL = 10, // Cyclist wheel power
     P_CYCLIST_OPTIMAL_POWER = 11, // Optimal power
-    P_AERO = 12, // Aerodynamic power
-    P_GRAVITY = 13, // Gravitational power
-    P_ROLLING_RESISTANCE = 14, // Rolling resistance power
-    P_WHEEL_BEARINGS = 15, // Wheel bearings power
-    P_POWER_FROM_ACC = 16, // Power from acceleration
-    P_POWER_WHEEL_FROM_ACC = 17, // Wheel power from acceleration
-    AERO_COEF = 18, // Aerodynamic coefficient
-    GRADE = 19, // Road grade/slope (%)
+    P_CYCLIST_POWER_NEEDED = 12, // Power needed
+    P_AERO = 13, // Aerodynamic power
+    P_GRAVITY = 14, // Gravitational power
+    P_ROLLING_RESISTANCE = 15, // Rolling resistance power
+    P_WHEEL_BEARINGS = 16, // Wheel bearings power
+    P_POWER_FROM_ACC = 17, // Power from acceleration
+    P_POWER_WHEEL_FROM_ACC = 18, // Wheel power from acceleration
+    AERO_COEF = 19, // Aerodynamic coefficient
+    GRADE = 20, // Road grade/slope (%)
 
     // Speed & Motion (4 properties)
-    SPEED = 20, // Current speed (m/s)
-    SPEED_MAX = 21, // Maximum speed (m/s)
-    SPEED_MAX_INCLINE = 22, // Max speed on incline (m/s)
-    VIRT_SPEED_CURRENT = 23, // Virtual current speed (m/s)
+    SPEED = 21, // Current speed (m/s)
+    SPEED_MAX = 22, // Maximum speed (m/s)
+    SPEED_MAX_INCLINE = 23, // Max speed on incline (m/s)
+    VIRT_SPEED_CURRENT = 24, // Virtual current speed (m/s)
 
     // Environmental (5 properties)
-    TEMPERATURE = 24, // Temperature (celsius)
-    WIND_SPEED = 25, // Wind speed (m/s)
-    WIND_DIRECTION = 26, // Wind direction (radians)
-    WIND_BEARING = 27, // Wind bearing (radians)
-    WIND_ALPHA = 28, // Wind angle (radians)
+    TEMPERATURE = 25, // Temperature (celsius)
+    WIND_SPEED = 26, // Wind speed (m/s)
+    WIND_DIRECTION = 27, // Wind direction (radians)
+    WIND_BEARING = 28, // Wind bearing (radians)
+    WIND_ALPHA = 29, // Wind angle (radians)
 
     // Physiological (2 properties)
-    HEART_RATE = 29, // Heart rate (bpm)
-    CADENCE = 30, // Pedaling cadence (rpm)
+    HEART_RATE = 30, // Heart rate (bpm)
+    CADENCE = 31, // Pedaling cadence (rpm)
 }
 
 export enum PointFieldName {
@@ -66,11 +67,12 @@ export enum PointFieldName {
     time = 'time', // Timestamp (ms since epoch)
     elapsed = 'elapsed', // Elapsed duration (ms)
 
-    // Physics & Power (12 properties)
+    // Physics & Power (13 properties)
     power = 'power', // Total power (watts)
     pCyclistRaw = 'pCyclistRaw', // Raw cyclist power
     pCyclistWheel = 'pCyclistWheel', // Cyclist wheel power
     pCyclistOptimalPower = 'pCyclistOptimalPower', // Optimal power
+    pCyclistPowerNeeded = 'pCyclistPowerNeeded', // Power needed
     pAero = 'pAero', // Aerodynamic power
     pGravity = 'pGravity', // Gravitational power
     pRollingResistance = 'pRollingResistance', // Rolling resistance power
@@ -111,11 +113,12 @@ export const fieldToPointField: Record<PointFieldName, PointField> = {
     time: PointField.TIME, // Timestamp (ms since epoch)
     elapsed: PointField.ELAPSED, // Elapsed duration (ms)
 
-    // Physics & Power (12 properties)
+    // Physics & Power (13 properties)
     power: PointField.POWER, // Total power (watts)
     pCyclistRaw: PointField.P_CYCLIST_RAW, // Raw cyclist power
     pCyclistWheel: PointField.P_CYCLIST_WHEEL, // Cyclist wheel power
     pCyclistOptimalPower: PointField.P_CYCLIST_OPTIMAL_POWER, // Optimal power
+    pCyclistPowerNeeded: PointField.P_CYCLIST_POWER_NEEDED, // Power needed
     pAero: PointField.P_AERO, // Aerodynamic power
     pGravity: PointField.P_GRAVITY, // Gravitational power
     pRollingResistance: PointField.P_ROLLING_RESISTANCE, // Rolling resistance power
@@ -146,10 +149,10 @@ export const fieldToPointField: Record<PointFieldName, PointField> = {
 /**
  * Total number of fields per point in the chunked storage.
  */
-export const FIELDS_PER_POINT = 31;
+export const FIELDS_PER_POINT = 32;
 
 /**
- * Interface representing a complete point with all 31 properties.
+ * Interface representing a complete point with all 32 properties.
  * All values are stored as numbers with appropriate unit conversions.
  *
  * Note: Angles are stored in RADIANS for efficient physics calculations.
@@ -172,6 +175,7 @@ export interface Point {
     readonly pCyclistRaw: number; // Raw cyclist power
     readonly pCyclistWheel: number; // Cyclist wheel power
     readonly pCyclistOptimalPower: number; // Optimal power
+    readonly pCyclistPowerNeeded: number; // Power needed
     readonly pAero: number; // Aerodynamic power
     readonly pGravity: number; // Gravitational power
     readonly pRollingResistance: number; // Rolling resistance power
@@ -221,6 +225,7 @@ export const EMPTY_POINT: Point = {
     pCyclistRaw: NaN,
     pCyclistWheel: NaN,
     pCyclistOptimalPower: NaN,
+    pCyclistPowerNeeded: NaN,
     pAero: NaN,
     pGravity: NaN,
     pRollingResistance: NaN,

@@ -1,12 +1,13 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
+import { DEFAULT_CYCLIST_POWER_W } from '@/constants/';
 import { GPXParser } from '@/gpx/';
 import { VirtualizeService } from '@/physics/';
 import { aeroProviderConstant } from '@/physics/power/aero/aero/';
 import { rhoProviderDefault } from '@/physics/power/aero/rho/';
 import { windProviderNone } from '@/physics/power/aero/wind/';
-import { powerProviderConstant } from '@/physics/power/cyclist/';
+import { PowerProviderConstant } from '@/physics/power/cyclist/';
 import { CoursePhysics, EMPTY_POINT, Path } from '@/types/';
 import { Bike, Cyclist } from '@/types/models/';
 
@@ -23,7 +24,7 @@ describe('VirtualizeService', () => {
             cyclist: Cyclist.getDefault(),
             bike: Bike.getDefault(),
             rhoProvider: rhoProviderDefault,
-            cyclistPowerProvider: powerProviderConstant,
+            cyclistPowerProvider: new PowerProviderConstant(DEFAULT_CYCLIST_POWER_W, false),
             aeroProvider: aeroProviderConstant,
             windProvider: windProviderNone,
         };
@@ -59,7 +60,7 @@ describe('VirtualizeService', () => {
             cyclist: Cyclist.getDefault(),
             bike: Bike.getDefault(),
             rhoProvider: rhoProviderDefault,
-            cyclistPowerProvider: powerProviderConstant,
+            cyclistPowerProvider: new PowerProviderConstant(DEFAULT_CYCLIST_POWER_W, false),
             aeroProvider: aeroProviderConstant,
             windProvider: windProviderNone,
         };

@@ -19,7 +19,6 @@ const handleBackdropClick = (event: Event) => {
         <Transition name="modal">
             <div v-if="isOpen" class="modal-backdrop" @click="handleBackdropClick">
                 <div class="modal-dialog">
-                    <button class="modal-close" @click="emit('close')" aria-label="Close">✕</button>
                     <slot />
                 </div>
             </div>
@@ -48,34 +47,9 @@ const handleBackdropClick = (event: Event) => {
     max-width: 900px;
     max-height: 90vh;
     width: 100%;
-    overflow-y: auto;
+    overflow: visible;
     position: relative;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-}
-
-.modal-close {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    width: 32px;
-    height: 32px;
-    border: none;
-    background: #f8f9fa;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 1.5rem;
-    color: #6c757d;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s;
-    z-index: 1;
-}
-
-.modal-close:hover {
-    background: #e9ecef;
-    color: #2c3e50;
-    transform: rotate(90deg);
 }
 
 /* Transition animations */

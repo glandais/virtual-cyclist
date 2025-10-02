@@ -29,7 +29,7 @@ body {
 .app-header {
     background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
     color: white;
-    padding: 2rem;
+    padding: 1.5rem;
     text-align: center;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
@@ -47,7 +47,7 @@ body {
 
 /* File Selection Section */
 .file-section {
-    padding: 2rem;
+    padding: 1.5rem;
     background: #f8f9fa;
     border-bottom: 1px solid #e9ecef;
 }
@@ -164,7 +164,7 @@ body {
 
 /* Control Panel */
 .control-panel {
-    padding: 1.5rem 2rem;
+    padding: 1rem 1.5rem;
     background: white;
     border-bottom: 1px solid #e9ecef;
 }
@@ -217,40 +217,25 @@ body {
 }
 
 .progress-container {
-    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 2rem;
 }
 
-.progress-bar {
-    height: 4px;
-    background: #e9ecef;
-    border-radius: 2px;
-    overflow: hidden;
-    margin-bottom: 0.5rem;
+.progress-spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid #e9ecef;
+    border-top-color: #3498db;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: none;
+    flex-shrink: 0;
 }
 
-.progress-bar::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, #3498db, #2ecc71);
-    transition: left 0.3s;
-}
-
-.progress-bar.active::before {
-    left: 0;
-    animation: progress-animation 2s infinite;
-}
-
-@keyframes progress-animation {
-    0% {
-        transform: translateX(-100%);
-    }
-    100% {
-        transform: translateX(300%);
-    }
+.progress-spinner.active {
+    display: block;
 }
 
 .status-text {
@@ -261,16 +246,27 @@ body {
 
 /* Chart Controls */
 .chart-controls {
-    padding: 1rem 2rem;
+    padding: 0.75rem 1.5rem;
     background: white;
     border-bottom: 1px solid #e9ecef;
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.chart-section.chart-maximized .chart-controls,
+.chart-section.chart-fullscreen .chart-controls {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Data Selection Panel */
 .data-panel {
-    padding: 2rem;
+    padding: 1.5rem;
     background: white;
 }
 
@@ -345,10 +341,32 @@ body {
 /* Chart Section */
 .chart-section {
     flex: 1;
-    padding: 2rem;
+    padding: 1.5rem;
     background: white;
     display: flex;
     flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+.chart-section.chart-maximized {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+    padding: 1rem;
+}
+
+.chart-section.chart-fullscreen {
+    padding: 1rem;
+    background: white;
+}
+
+.chart-section.chart-maximized .chart-container,
+.chart-section.chart-fullscreen .chart-container {
+    min-height: unset;
+    height: calc(100% - 60px);
 }
 
 .chart-container {

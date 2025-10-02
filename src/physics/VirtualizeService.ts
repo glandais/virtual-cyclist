@@ -155,7 +155,7 @@ export class VirtualizeService {
                 i + 1
             );
             // Set power on current point
-            newPath.setField(i, PointField.POWER, cyclistPower); // PointField.POWER = 8
+            newPath.setPower(i, cyclistPower);
         }
         newPath.computeDerivedData();
         return newPath;

@@ -49,7 +49,7 @@ class PowerProviderFromData implements CyclistPowerProvider {
      * @returns Power from point data in watts
      */
     getPowerW(_course: CoursePhysics, path: Path, pointIndex: number): number {
-        return path.getField(pointIndex, PointField.POWER);
+        return path.getPower(pointIndex);
     }
 }
 

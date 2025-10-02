@@ -64,21 +64,23 @@ export abstract class CyclistPowerProviderBase implements CyclistPowerProvider {
      * Uses crypto.getRandomValues() for secure random generation
      * (compatible with both browser and Node.js environments).
      */
-    constructor() {
+    constructor(readonly useHarmonics: boolean) {
         this.harmonics = [];
 
-        const randomArray = new Uint32Array(60); // 20 harmonics × 3 values each
-        for (let i = 0; i < randomArray.length; i++) {
-            randomArray[i] = Math.floor(Math.random() * 0xffffffff);
-        }
+        if (useHarmonics) {
+            const randomArray = new Uint32Array(60); // 20 harmonics × 3 values each
+            for (let i = 0; i < randomArray.length; i++) {
+                randomArray[i] = Math.floor(Math.random() * 0xffffffff);
+            }
 
-        // Convert random values to harmonics
-        for (let i = 0; i < 20; i++) {
-            const freq = 1.0 + (randomArray[i * 3] / 0xffffffff) * 9.0; // 1.0 to 10.0
-            const d = (randomArray[i * 3 + 1] / 0xffffffff) * Math.PI; // 0 to π
-            const amp = (randomArray[i * 3 + 2] / 0xffffffff) * 0.01; // 0 to 0.01
+            // Convert random values to harmonics
+            for (let i = 0; i < 20; i++) {
+                const freq = 1.0 + (randomArray[i * 3] / 0xffffffff) * 9.0; // 1.0 to 10.0
+                const d = (randomArray[i * 3 + 1] / 0xffffffff) * Math.PI; // 0 to π
+                const amp = (randomArray[i * 3 + 2] / 0xffffffff) * 0.01; // 0 to 0.01
 
-            this.harmonics.push({ freq, d, amp });
+                this.harmonics.push({ freq, d, amp });
+            }
         }
     }
 
@@ -119,7 +121,7 @@ export abstract class CyclistPowerProviderBase implements CyclistPowerProvider {
         let optimalPower = this.getOptimalPower(course, path, pointIndex);
 
         // Apply harmonic variations if enabled
-        if (course.cyclist.harmonics) {
+        if (this.useHarmonics) {
             const timeMs = path.getTime(pointIndex);
             const x = timeMs / 10000.0; // Convert to scaled time for harmonics
 
@@ -131,7 +133,8 @@ export abstract class CyclistPowerProviderBase implements CyclistPowerProvider {
         // Store debug value
         path.setField(pointIndex, PointField.P_CYCLIST_OPTIMAL_POWER, optimalPower);
 
-        return this.getRealOptimalPower(course, path, pointIndex, optimalPower);
+        return optimalPower;
+        // return this.getRealOptimalPower(course, path, pointIndex, optimalPower);
     }
 
     protected getRealOptimalPower(
@@ -140,10 +143,8 @@ export abstract class CyclistPowerProviderBase implements CyclistPowerProvider {
         pointIndex: number,
         optimalPower: number
     ): number {
-        const powerNeeded = Math.max(
-            0,
-            -PowerComputer.INSTANCE.getNewPower(course, path, pointIndex, false)
-        );
+        const powerNeeded = -PowerComputer.INSTANCE.getNewPower(course, path, pointIndex, false);
+        path.setField(pointIndex, PointField.P_CYCLIST_POWER_NEEDED, powerNeeded);
         const minOptimalPower = optimalPower * (1 - CyclistPowerProviderBase.TOLERANCE);
         const maxOptimalPower = optimalPower * (1 + CyclistPowerProviderBase.TOLERANCE);
         // Adjust power based on speed

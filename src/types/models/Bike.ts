@@ -6,6 +6,31 @@ import {
     DEFAULT_WHEEL_RADIUS,
 } from '@/constants/';
 
+export interface BikeProperties {
+    crr: number;
+    inertiaFront: number;
+    inertiaRear: number;
+    wheelRadius: number;
+    efficiency: number;
+}
+
+/**
+ * Default configuration represents:
+ * - Modern road bike with high-performance tires (Crr = 0.004)
+ * - Lightweight racing wheels with typical rotational inertia
+ * - Standard 700c wheel size (radius = 0.7m)
+ * - High-efficiency modern drivetrain (97.6% efficiency)
+ */
+export const getDefaultBikeProperties = (): BikeProperties => {
+    return {
+        crr: DEFAULT_CRR,
+        inertiaFront: DEFAULT_INERTIA_FRONT,
+        inertiaRear: DEFAULT_INERTIA_REAR,
+        wheelRadius: DEFAULT_WHEEL_RADIUS,
+        efficiency: DEFAULT_DRIVETRAIN_EFFICIENCY,
+    };
+};
+
 /**
  * Bike class implementing the Bike interface with utility methods.
  * Represents a bicycle with mechanical and physical characteristics
@@ -43,6 +68,16 @@ export class Bike {
         this.efficiency = efficiency;
     }
 
+    static getBike(properties: BikeProperties) {
+        return new Bike(
+            properties.crr,
+            properties.inertiaFront,
+            properties.inertiaRear,
+            properties.wheelRadius,
+            properties.efficiency
+        );
+    }
+
     /**
      * Create a bike with default parameters validated from cycling research.
      *
@@ -55,13 +90,7 @@ export class Bike {
      * @returns Bike instance with scientifically validated defaults
      */
     static getDefault(): Bike {
-        return new Bike(
-            DEFAULT_CRR,
-            DEFAULT_INERTIA_FRONT,
-            DEFAULT_INERTIA_REAR,
-            DEFAULT_WHEEL_RADIUS,
-            DEFAULT_DRIVETRAIN_EFFICIENCY
-        );
+        return this.getBike(getDefaultBikeProperties());
     }
 
     /**

@@ -135,6 +135,12 @@ export const FIELD_DEFINITIONS: FieldCategory[] = [
                 unit: 'watts',
             },
             {
+                name: 'P_CYCLIST_POWER_NEEDED',
+                prop: 'pCyclistPowerNeeded',
+                comment: 'Power needed',
+                unit: 'watts',
+            },
+            {
                 name: 'P_AERO',
                 prop: 'pAero',
                 comment: 'Aerodynamic power',

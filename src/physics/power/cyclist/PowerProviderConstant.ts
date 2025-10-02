@@ -1,6 +1,5 @@
 import { CoursePhysics } from '@/types/course/';
 import { Path } from '@/types/path/';
-import { CyclistPowerProvider } from './CyclistPowerProvider';
 import { CyclistPowerProviderBase } from './CyclistPowerProviderBase';
 
 /**
@@ -29,7 +28,14 @@ import { CyclistPowerProviderBase } from './CyclistPowerProviderBase';
  * @see CyclistPowerProviderBase
  * @see PowerProviderConstantWithTiring
  */
-class PowerProviderConstant extends CyclistPowerProviderBase {
+export class PowerProviderConstant extends CyclistPowerProviderBase {
+    constructor(
+        readonly power: number,
+        useHarmonics: boolean
+    ) {
+        super(useHarmonics);
+    }
+
     /**
      * Returns the constant power from cyclist configuration.
      *
@@ -38,9 +44,7 @@ class PowerProviderConstant extends CyclistPowerProviderBase {
      * @param _pointIndex Index of current point (unused)
      * @returns Cyclist's configured power output in watts
      */
-    protected getOptimalPower(course: CoursePhysics, _path: Path, _pointIndex: number): number {
-        return course.cyclist.power;
+    protected getOptimalPower(_course: CoursePhysics, _path: Path, _pointIndex: number): number {
+        return this.power;
     }
 }
-
-export const powerProviderConstant: CyclistPowerProvider = new PowerProviderConstant();

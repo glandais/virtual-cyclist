@@ -1,6 +1,5 @@
 import {
     DEFAULT_CYCLIST_MASS_KG,
-    DEFAULT_CYCLIST_POWER_W,
     DEFAULT_DRAG_COEFFICIENT,
     DEFAULT_FRONTAL_AREA,
     DEFAULT_MAX_BRAKE_G,
@@ -8,6 +7,37 @@ import {
     DEFAULT_MAX_SPEED_KMH,
     G,
 } from '@/constants/';
+
+export interface CyclistProperties {
+    mKg: number;
+    maxBrakeG: number;
+    cd: number;
+    a: number;
+    maxAngleDeg: number;
+    maxSpeedKmH: number;
+}
+
+/**
+ * Create cyclist properties validated from cycling research.
+ *
+ * Default configuration represents:
+ * - 80kg total system mass (recreational cyclist + road bike)
+ * - 280W sustainable power output (~3.5 W/kg FTP)
+ * - Conservative braking and handling limits for safety
+ * - Typical aerodynamic parameters for recreational cycling position
+ *
+ * @returns Cyclist instance with scientifically validated defaults
+ */
+export const getDefaultCyclistProperties = (): CyclistProperties => {
+    return {
+        mKg: DEFAULT_CYCLIST_MASS_KG,
+        maxBrakeG: DEFAULT_MAX_BRAKE_G,
+        cd: DEFAULT_DRAG_COEFFICIENT,
+        a: DEFAULT_FRONTAL_AREA,
+        maxAngleDeg: DEFAULT_MAX_LEAN_ANGLE_DEG,
+        maxSpeedKmH: DEFAULT_MAX_SPEED_KMH,
+    };
+};
 
 /**
  * Cyclist class implementing the Cyclist interface with utility methods.
@@ -18,8 +48,6 @@ import {
  */
 export class Cyclist {
     readonly mKg: number;
-    readonly power: number;
-    readonly harmonics: boolean;
     readonly maxBrakeG: number;
     readonly cd: number;
     readonly a: number;
@@ -30,8 +58,6 @@ export class Cyclist {
      * Create a new Cyclist instance.
      *
      * @param mKg Total mass of cyclist + bike system (kg)
-     * @param power Sustained power output capability (watts)
-     * @param harmonics Whether to use harmonic calculations
      * @param maxBrakeG Maximum braking deceleration (g-force units)
      * @param cd Aerodynamic drag coefficient (dimensionless)
      * @param a Frontal area for aerodynamic calculations (m²)
@@ -40,8 +66,6 @@ export class Cyclist {
      */
     constructor(
         mKg: number,
-        power: number,
-        harmonics: boolean,
         maxBrakeG: number,
         cd: number,
         a: number,
@@ -49,13 +73,22 @@ export class Cyclist {
         maxSpeedKmH: number
     ) {
         this.mKg = mKg;
-        this.power = power;
-        this.harmonics = harmonics;
         this.maxBrakeG = maxBrakeG;
         this.cd = cd;
         this.a = a;
         this.maxAngleDeg = maxAngleDeg;
         this.maxSpeedKmH = maxSpeedKmH;
+    }
+
+    static getCyclist(properties: CyclistProperties) {
+        return new Cyclist(
+            properties.mKg,
+            properties.maxBrakeG,
+            properties.cd,
+            properties.a,
+            properties.maxAngleDeg,
+            properties.maxSpeedKmH
+        );
     }
 
     /**
@@ -70,16 +103,7 @@ export class Cyclist {
      * @returns Cyclist instance with scientifically validated defaults
      */
     static getDefault(): Cyclist {
-        return new Cyclist(
-            DEFAULT_CYCLIST_MASS_KG,
-            DEFAULT_CYCLIST_POWER_W,
-            false, // harmonics - not a physical parameter
-            DEFAULT_MAX_BRAKE_G,
-            DEFAULT_DRAG_COEFFICIENT,
-            DEFAULT_FRONTAL_AREA,
-            DEFAULT_MAX_LEAN_ANGLE_DEG,
-            DEFAULT_MAX_SPEED_KMH
-        );
+        return this.getCyclist(getDefaultCyclistProperties());
     }
 
     /**
@@ -132,16 +156,6 @@ export class Cyclist {
     }
 
     /**
-     * Calculate power-to-weight ratio.
-     * Important metric for cycling performance, especially on climbs.
-     *
-     * @returns Power-to-weight ratio (W/kg)
-     */
-    getPowerToWeightRatio(): number {
-        return this.power / this.mKg;
-    }
-
-    /**
      * Calculate aerodynamic drag area (CdA).
      * Combined aerodynamic parameter used in drag force calculations.
      *
@@ -161,7 +175,6 @@ export class Cyclist {
     toString(): string {
         return `Cyclist {
             mass: ${this.mKg}kg,
-            power: ${this.power}W (${this.getPowerToWeightRatio().toFixed(1)} W/kg),
             CdA: ${this.getAerodynamicDragArea().toFixed(3)}m²,
             maxBrake: ${this.maxBrakeG}g (${this.getMaxBrakeMS2().toFixed(1)} m/s²),
             maxLean: ${this.maxAngleDeg}°,

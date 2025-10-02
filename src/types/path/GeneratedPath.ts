@@ -122,6 +122,14 @@ export abstract class GeneratedPath extends AbstractPath {
         super.setField(pointIndex, PointField.P_CYCLIST_OPTIMAL_POWER, value);
     }
 
+    getPCyclistPowerNeeded(pointIndex: number): number {
+        return super.getField(pointIndex, PointField.P_CYCLIST_POWER_NEEDED);
+    }
+
+    setPCyclistPowerNeeded(pointIndex: number, value: number): void {
+        super.setField(pointIndex, PointField.P_CYCLIST_POWER_NEEDED, value);
+    }
+
     getPAero(pointIndex: number): number {
         return super.getField(pointIndex, PointField.P_AERO);
     }
@@ -282,7 +290,7 @@ export abstract class GeneratedPath extends AbstractPath {
 
     /**
      * Adds a new point with the provided data.
-     * @param data Complete point data with all 31 properties
+     * @param data Complete point data with all 32 properties
      * @returns The index of the newly added point
      */
     addPoint(data: Point): number {
@@ -310,6 +318,7 @@ export abstract class GeneratedPath extends AbstractPath {
         this.setPCyclistRaw(pointIndex, data.pCyclistRaw);
         this.setPCyclistWheel(pointIndex, data.pCyclistWheel);
         this.setPCyclistOptimalPower(pointIndex, data.pCyclistOptimalPower);
+        this.setPCyclistPowerNeeded(pointIndex, data.pCyclistPowerNeeded);
         this.setPAero(pointIndex, data.pAero);
         this.setPGravity(pointIndex, data.pGravity);
         this.setPRollingResistance(pointIndex, data.pRollingResistance);
@@ -359,6 +368,7 @@ export abstract class GeneratedPath extends AbstractPath {
             pCyclistRaw: this.getPCyclistRaw(pointIndex),
             pCyclistWheel: this.getPCyclistWheel(pointIndex),
             pCyclistOptimalPower: this.getPCyclistOptimalPower(pointIndex),
+            pCyclistPowerNeeded: this.getPCyclistPowerNeeded(pointIndex),
             pAero: this.getPAero(pointIndex),
             pGravity: this.getPGravity(pointIndex),
             pRollingResistance: this.getPRollingResistance(pointIndex),
@@ -429,6 +439,11 @@ export abstract class GeneratedPath extends AbstractPath {
             pCyclistOptimalPower: this.interpolateValue(
                 p1.pCyclistOptimalPower,
                 p2.pCyclistOptimalPower,
+                coef
+            ),
+            pCyclistPowerNeeded: this.interpolateValue(
+                p1.pCyclistPowerNeeded,
+                p2.pCyclistPowerNeeded,
                 coef
             ),
             pAero: this.interpolateValue(p1.pAero, p2.pAero, coef),

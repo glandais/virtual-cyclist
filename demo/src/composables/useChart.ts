@@ -174,10 +174,10 @@ export function useChart(
             datasets.push({
                 label: fieldDef.label,
                 data,
-                borderColor: category.color,
-                backgroundColor: category.color + '33',
+                borderColor: fieldDef.color,
+                //backgroundColor: category.color + '33',
                 yAxisID: axisId,
-                tension: 0.1,
+                tension: 0,
                 pointRadius: 0,
                 borderWidth: 2,
             });

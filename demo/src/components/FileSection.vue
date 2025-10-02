@@ -102,27 +102,20 @@ watch(
             <Transition name="expand">
                 <div v-show="isFileInfoExpanded" class="info-grid">
                     <div class="info-item">
-                        <div class="label">Points</div>
-                        <div class="value">{{ fileInfo.pointCount.toLocaleString() }}</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="label">Distance</div>
-                        <div class="value">{{ fileInfo.distance.toFixed(1) }} km</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="label">Elevation Range</div>
+                        <div class="label">Info</div>
                         <div class="value">
-                            {{ fileInfo.minElevation.toFixed(0) }}m -
-                            {{ fileInfo.maxElevation.toFixed(0) }}m
+                            {{ fileInfo.pointCount.toLocaleString() }} /
+                            {{ fileInfo.distance.toFixed(1) }} km
                         </div>
                     </div>
                     <div class="info-item">
-                        <div class="label">Elevation Gain</div>
-                        <div class="value">{{ fileInfo.elevationGain.toFixed(0) }}m</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="label">Elevation Loss</div>
-                        <div class="value">{{ fileInfo.elevationLoss.toFixed(0) }}m</div>
+                        <div class="label">Elevation</div>
+                        <div class="value">
+                            +{{ fileInfo.elevationGain.toFixed(0) }}m /
+                            {{ fileInfo.elevationLoss.toFixed(0) }}m [{{
+                                fileInfo.minElevation.toFixed(0)
+                            }}, {{ fileInfo.maxElevation.toFixed(0) }}]m
+                        </div>
                     </div>
                 </div>
             </Transition>

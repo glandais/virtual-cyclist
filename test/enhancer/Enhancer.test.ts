@@ -28,7 +28,98 @@ describe('Enhancer', () => {
 
     test('should enhance path with full simulation', async () => {
         const path = GPXParser.parse(simpleGPX).tracks[0];
-        const result = await Enhancer.enhancePath(path);
+        const result = await Enhancer.enhanceCourseDefault(path);
+
+        expect(result).toBeDefined();
+        expect(result.getPointCount()).toBeGreaterThan(0);
+    });
+
+    test('should respect fixElevation option when disabled', async () => {
+        const path = GPXParser.parse(simpleGPX).tracks[0];
+        const course = Enhancer.getDefaultCourse(path);
+        const result = await Enhancer.enhanceCourse(course, { fixElevation: false });
+
+        expect(result).toBeDefined();
+        expect(result.getPointCount()).toBeGreaterThan(0);
+    });
+
+    test('should respect computeMaxSpeeds option when disabled', async () => {
+        const path = GPXParser.parse(simpleGPX).tracks[0];
+        const course = Enhancer.getDefaultCourse(path);
+        const result = await Enhancer.enhanceCourse(course, { computeMaxSpeeds: false });
+
+        expect(result).toBeDefined();
+        expect(result.getPointCount()).toBeGreaterThan(0);
+    });
+
+    test('should respect virtualizeTrack option when disabled', async () => {
+        const path = GPXParser.parse(simpleGPX).tracks[0];
+        const course = Enhancer.getDefaultCourse(path);
+        const result = await Enhancer.enhanceCourse(course, { virtualizeTrack: false });
+
+        expect(result).toBeDefined();
+        expect(result.getPointCount()).toBeGreaterThan(0);
+    });
+
+    test('should respect computeOnePointPerSecond option when disabled', async () => {
+        const path = GPXParser.parse(simpleGPX).tracks[0];
+        const course = Enhancer.getDefaultCourse(path);
+        const result = await Enhancer.enhanceCourse(course, {
+            computeOnePointPerSecond: false,
+        });
+
+        expect(result).toBeDefined();
+        expect(result.getPointCount()).toBeGreaterThan(0);
+    });
+
+    test('should respect simplifyPath.enable option when disabled', async () => {
+        const path = GPXParser.parse(simpleGPX).tracks[0];
+        const course = Enhancer.getDefaultCourse(path);
+        const result = await Enhancer.enhanceCourse(course, {
+            simplifyPath: { enable: false },
+        });
+
+        expect(result).toBeDefined();
+        expect(result.getPointCount()).toBeGreaterThan(0);
+    });
+
+    test('should use custom simplifyPath tolerance and zExaggeration', async () => {
+        const path = GPXParser.parse(simpleGPX).tracks[0];
+        const course = Enhancer.getDefaultCourse(path);
+        const result = await Enhancer.enhanceCourse(course, {
+            simplifyPath: {
+                enable: true,
+                tolerance: 5,
+                zExaggeration: 2,
+            },
+        });
+
+        expect(result).toBeDefined();
+        expect(result.getPointCount()).toBeGreaterThan(0);
+    });
+
+    test('should handle all options disabled', async () => {
+        const path = GPXParser.parse(simpleGPX).tracks[0];
+        const course = Enhancer.getDefaultCourse(path);
+        const result = await Enhancer.enhanceCourse(course, {
+            fixElevation: false,
+            computeMaxSpeeds: false,
+            virtualizeTrack: false,
+            computeOnePointPerSecond: false,
+            simplifyPath: { enable: false },
+        });
+
+        expect(result).toBeDefined();
+        expect(result.getPointCount()).toBeGreaterThan(0);
+    });
+
+    test('should handle partial options with defaults', async () => {
+        const path = GPXParser.parse(simpleGPX).tracks[0];
+        const course = Enhancer.getDefaultCourse(path);
+        const result = await Enhancer.enhanceCourse(course, {
+            virtualizeTrack: false,
+            simplifyPath: { tolerance: 15 },
+        });
 
         expect(result).toBeDefined();
         expect(result.getPointCount()).toBeGreaterThan(0);

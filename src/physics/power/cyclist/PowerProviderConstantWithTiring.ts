@@ -46,17 +46,18 @@ import { CyclistPowerProviderBase } from './CyclistPowerProviderBase';
  * @see CyclistPowerProviderBase
  */
 export class PowerProviderConstantWithTiring extends CyclistPowerProviderBase {
-    private readonly duration: number;
-
     /**
      * Creates a power provider with time-based fatigue.
      *
      * @param duration Duration in seconds after which power stabilizes at 50%
      *                 Typical values: 3600 (1hr), 7200 (2hr), 10800 (3hr)
      */
-    constructor(duration: number) {
-        super();
-        this.duration = duration;
+    constructor(
+        readonly power: number,
+        useHarmonicsIn: boolean,
+        readonly duration: number
+    ) {
+        super(useHarmonicsIn);
     }
 
     /**
@@ -72,8 +73,8 @@ export class PowerProviderConstantWithTiring extends CyclistPowerProviderBase {
      * @param pointIndex Index of current point
      * @returns Fatigue-adjusted power in watts
      */
-    protected getOptimalPower(course: CoursePhysics, path: Path, pointIndex: number): number {
-        const powerW = course.cyclist.power;
+    protected getOptimalPower(_course: CoursePhysics, path: Path, pointIndex: number): number {
+        const powerW = this.power;
         const elapsedSeconds = path.getElapsed(pointIndex) / 1000; // Convert ms to seconds
 
         // Calculate fatigue coefficient

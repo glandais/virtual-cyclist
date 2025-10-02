@@ -1,15 +1,42 @@
 <script setup lang="ts">
-import { PointFieldName } from '@/types';
-import { onMounted, ref } from 'vue';
+import { DEFAULT_CYCLIST_POWER_W } from '@/constants';
+import { EnhanceOptions, PointFieldName } from '@/types';
+import {
+    BikeProperties,
+    CyclistProperties,
+    getDefaultBikeProperties,
+    getDefaultCyclistProperties,
+} from '@lib/types/models';
+import { onMounted, Ref, ref } from 'vue';
+import ConfigModal from '~/components/ConfigModal.vue';
 import ControlPanel from '~/components/ControlPanel.vue';
 import DataChart from '~/components/DataChart.vue';
-import DataPanel from '~/components/DataPanel.vue';
 import FileSection from '~/components/FileSection.vue';
-import Modal from '~/components/Modal.vue';
 import { useGPXDemo } from '~/composables/useGPXDemo';
+import { PowerParams, PowerSourceType, WindDemo } from './types';
 
 const selectedFields = ref(new Set<PointFieldName>([PointFieldName.ele, PointFieldName.speed]));
-const isDataPanelOpen = ref(false);
+const isConfigOpen = ref(false);
+const bike: Ref<BikeProperties> = ref(getDefaultBikeProperties());
+const cyclist: Ref<CyclistProperties> = ref(getDefaultCyclistProperties());
+const wind: Ref<WindDemo> = ref({ windSpeed: 0, windDirection: 0 });
+const enhanceOptions: Ref<EnhanceOptions> = ref({
+    fixElevation: true,
+    computeMaxSpeeds: true,
+    virtualizeTrack: true,
+    computeOnePointPerSecond: true,
+    simplifyPath: {
+        enable: false,
+        tolerance: 10,
+        zExaggeration: 3,
+    },
+});
+const powerParams: Ref<PowerParams> = ref({
+    type: PowerSourceType.constant,
+    power: DEFAULT_CYCLIST_POWER_W,
+    useHarmonics: false,
+    tiringDuration: 3600,
+});
 
 const {
     currentPath,
@@ -18,10 +45,8 @@ const {
     fileName,
     loadGPXFile,
     handleFileUpload,
-    fixElevation,
-    computeMaxSpeeds,
     enhancePath,
-} = useGPXDemo();
+} = useGPXDemo(bike, cyclist, wind, enhanceOptions, powerParams);
 
 const onGPXSelect = async (url: string) => {
     try {
@@ -39,22 +64,6 @@ const onFileUpload = async (file: File) => {
     }
 };
 
-const onFixElevation = async () => {
-    try {
-        await fixElevation();
-    } catch (error) {
-        alert('Failed to fix elevation: ' + (error as Error).message);
-    }
-};
-
-const onComputeSpeeds = async () => {
-    try {
-        await computeMaxSpeeds();
-    } catch (error) {
-        alert('Failed to compute speeds: ' + (error as Error).message);
-    }
-};
-
 const onEnhancePath = async () => {
     try {
         await enhancePath();
@@ -65,6 +74,7 @@ const onEnhancePath = async () => {
 
 onMounted(() => {
     console.log('GPX Demo App initialized successfully');
+    loadGPXFile('gpx/stelvio.gpx').then(() => enhancePath());
 });
 </script>
 
@@ -73,7 +83,10 @@ onMounted(() => {
         <!-- Header Section -->
         <header class="app-header">
             <h1>🚴‍♂️ Virtual Cyclist - Interactive GPX Analysis</h1>
-            <p>Analyze cycling data with elevation correction and maximum speed computation</p>
+            <p>
+                Upload GPX routes and simulate realistic cycling speeds based on terrain and rider
+                physics
+            </p>
         </header>
 
         <!-- File Selection Section -->
@@ -85,29 +98,28 @@ onMounted(() => {
             @file-upload="onFileUpload"
         />
 
-        <!-- Control Panel -->
-        <ControlPanel
-            :is-processing="isProcessing"
-            :status-text="statusText"
-            :has-data="currentPath !== null"
-            @fix-elevation="onFixElevation"
-            @compute-speeds="onComputeSpeeds"
-            @enhance-path="onEnhancePath"
+        <!-- Control Panel (Status Only) -->
+        <ControlPanel :is-processing="isProcessing" :status-text="statusText" />
+
+        <!-- Configuration Modal -->
+        <ConfigModal
+            :is-open="isConfigOpen"
+            v-model:bike="bike"
+            v-model:cyclist="cyclist"
+            v-model:wind="wind"
+            v-model:enhance-options="enhanceOptions"
+            v-model:power-params="powerParams"
+            v-model:selected-fields="selectedFields"
+            @close="isConfigOpen = false"
         />
 
-        <!-- Configure Fields Button -->
-        <div class="chart-controls">
-            <button class="btn btn-secondary" @click="isDataPanelOpen = true">
-                ⚙️ Configure Fields
-            </button>
-        </div>
-
-        <!-- Data Selection Modal -->
-        <Modal :is-open="isDataPanelOpen" @close="isDataPanelOpen = false">
-            <DataPanel v-model:selected-fields="selectedFields" />
-        </Modal>
-
         <!-- Chart Section -->
-        <DataChart :current-path="currentPath" :selected-fields="selectedFields" />
+        <DataChart
+            :current-path="currentPath"
+            :selected-fields="selectedFields"
+            :is-processing="isProcessing"
+            @open-config="isConfigOpen = true"
+            @enhance-path="onEnhancePath"
+        />
     </div>
 </template>
