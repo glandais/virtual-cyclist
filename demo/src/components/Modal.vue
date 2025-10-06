@@ -46,7 +46,6 @@ const handleBackdropClick = (event: Event) => {
     border-radius: 16px;
     max-width: 900px;
     max-height: 90vh;
-    width: 100%;
     overflow: visible;
     position: relative;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
