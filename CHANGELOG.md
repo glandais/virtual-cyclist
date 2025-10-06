@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/glandais/virtual-cyclist/compare/v1.1.0...v1.1.1) (2025-10-06)
+
+
+### Bug Fixes
+
+* css ([3fead58](https://github.com/glandais/virtual-cyclist/commit/3fead581bd2bbf1e26670e46b0f5c172e55d1041))
+
 # [1.1.0](https://github.com/glandais/virtual-cyclist/compare/v1.0.0...v1.1.0) (2025-10-06)
 
 
