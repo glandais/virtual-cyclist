@@ -3,18 +3,21 @@ import { fieldToPointField } from '@lib/types';
 import {
     CategoryScale,
     Chart,
+    type ChartDataset,
     Filler,
     Legend,
     LinearScale,
     LineController,
     LineElement,
     PointElement,
+    type ScaleOptions,
     Title,
     Tooltip,
 } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import { computed, type Ref, shallowRef, watch } from 'vue';
 import { fieldConfig } from '~/config/fieldConfig';
+import type { HoverInfo } from './useHoverSync';
 
 // Register Chart.js components
 Chart.register(
@@ -33,7 +36,9 @@ Chart.register(
 export function useChart(
     canvasRef: Ref<HTMLCanvasElement | null>,
     currentPath: Ref<Path | null>,
-    selectedFields: Ref<Set<PointFieldName>>
+    selectedFields: Ref<Set<PointFieldName>>,
+    hoveredInfo: Ref<HoverInfo | null>,
+    onHoverChange: (index: number | null) => void
 ) {
     const chartInstance = shallowRef<Chart | null>(null);
 
@@ -59,6 +64,14 @@ export function useChart(
                 interaction: {
                     mode: 'index',
                     intersect: false,
+                },
+                onHover: (_event, activeElements) => {
+                    if (activeElements.length > 0) {
+                        const index = activeElements[0].index;
+                        onHoverChange(index);
+                    } else {
+                        onHoverChange(null);
+                    }
                 },
                 plugins: {
                     legend: {
@@ -86,6 +99,39 @@ export function useChart(
                 },
                 scales: {},
             },
+            plugins: [
+                {
+                    id: 'crosshair',
+                    afterDraw: chart => {
+                        if (hoveredInfo.value === null) {
+                            return;
+                        }
+
+                        const index = hoveredInfo.value.index;
+                        const meta = chart.getDatasetMeta(0);
+                        if (!meta || !meta.data[index]) {
+                            return;
+                        }
+
+                        const x = meta.data[index].x;
+                        const yAxis = chart.scales.y || Object.values(chart.scales)[1];
+                        if (!yAxis) {
+                            return;
+                        }
+
+                        const ctx = chart.ctx;
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.moveTo(x, yAxis.top);
+                        ctx.lineTo(x, yAxis.bottom);
+                        ctx.lineWidth = 2;
+                        ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
+                        ctx.setLineDash([5, 5]);
+                        ctx.stroke();
+                        ctx.restore();
+                    },
+                },
+            ],
         });
     };
 
@@ -105,8 +151,8 @@ export function useChart(
         }
 
         // Build datasets for selected fields
-        const datasets: any[] = [];
-        const scales: Record<string, any> = {
+        const datasets: ChartDataset<'line'>[] = [];
+        const scales: Record<string, ScaleOptions> = {
             x: {
                 type: 'linear',
                 title: {
@@ -199,6 +245,13 @@ export function useChart(
 
     // Watch for changes and update chart
     watch([currentPath, selectedFields], updateChart, { deep: true });
+
+    // Watch for hover changes to trigger crosshair redraw
+    watch(hoveredInfo, () => {
+        if (chartInstance.value) {
+            chartInstance.value.update('none'); // Update without animation
+        }
+    });
 
     return {
         chartInstance,

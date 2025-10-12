@@ -2,16 +2,19 @@
 import type { Path, PointFieldName } from '@lib/types';
 import { computed, onMounted, ref, toRef } from 'vue';
 import { useChart } from '~/composables/useChart';
+import type { HoverInfo } from '~/composables/useHoverSync';
 
 const props = defineProps<{
     currentPath: Path | null;
     selectedFields: Set<PointFieldName>;
     isProcessing: boolean;
+    hoveredInfo: HoverInfo | null;
 }>();
 
 const emit = defineEmits<{
     openConfig: [];
     enhancePath: [];
+    hoverChange: [index: number | null];
 }>();
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
@@ -23,7 +26,9 @@ const displayMode = ref<DisplayMode>('normal');
 const { createChart, resetZoom, hasData } = useChart(
     canvasRef,
     toRef(props, 'currentPath'),
-    toRef(props, 'selectedFields')
+    toRef(props, 'selectedFields'),
+    toRef(props, 'hoveredInfo'),
+    (index: number | null) => emit('hoverChange', index)
 );
 
 const displayModeIcon = computed(() => {

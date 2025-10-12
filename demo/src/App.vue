@@ -12,7 +12,9 @@ import ConfigModal from '~/components/ConfigModal.vue';
 import ControlPanel from '~/components/ControlPanel.vue';
 import DataChart from '~/components/DataChart.vue';
 import FileSection from '~/components/FileSection.vue';
+import MapView from '~/components/MapView.vue';
 import { useGPXDemo } from '~/composables/useGPXDemo';
+import { useHoverSync } from '~/composables/useHoverSync';
 import { PowerParams, PowerSourceType, WindDemo } from './types';
 
 const selectedFields = ref(
@@ -49,6 +51,13 @@ const {
     handleFileUpload,
     enhancePath,
 } = useGPXDemo(bike, cyclist, wind, enhanceOptions, powerParams);
+
+// Set up hover sync between chart and map
+const { hoveredInfo, setHoveredIndex } = useHoverSync(currentPath);
+
+const handleHoverChange = (index: number | null) => {
+    setHoveredIndex(index);
+};
 
 const onGPXSelect = async (url: string) => {
     try {
@@ -115,13 +124,37 @@ onMounted(() => {
             @close="isConfigOpen = false"
         />
 
-        <!-- Chart Section -->
-        <DataChart
-            :current-path="currentPath"
-            :selected-fields="selectedFields"
-            :is-processing="isProcessing"
-            @open-config="isConfigOpen = true"
-            @enhance-path="onEnhancePath"
-        />
+        <!-- Chart and Map Section -->
+        <div class="visualization-grid">
+            <DataChart
+                :current-path="currentPath"
+                :selected-fields="selectedFields"
+                :is-processing="isProcessing"
+                :hovered-info="hoveredInfo"
+                @open-config="isConfigOpen = true"
+                @enhance-path="onEnhancePath"
+                @hover-change="handleHoverChange"
+            />
+            <MapView
+                :current-path="currentPath"
+                :hovered-info="hoveredInfo"
+                @hover-change="handleHoverChange"
+            />
+        </div>
     </div>
 </template>
+
+<style>
+.visualization-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+@media (max-width: 1200px) {
+    .visualization-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
