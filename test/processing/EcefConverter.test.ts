@@ -4,9 +4,9 @@ import { Point } from '@/types/path/';
 describe('EcefConverter', () => {
     test('should convert WGS84 to ECEF coordinates', () => {
         const point = {
-            lat: 45.0, // 45° N
-            lon: 6.0, // 6° E
-            ele: 1000, // 1000m elevation
+            latitude: 45.0, // 45° N
+            longitude: 6.0, // 6° E
+            elevation: 1000, // 1000m elevation
         } as Point;
 
         const ecef = EcefConverter.toEcef(point, 1);
@@ -24,9 +24,9 @@ describe('EcefConverter', () => {
 
     test('should apply elevation exaggeration', () => {
         const point = {
-            lat: 45.0,
-            lon: 6.0,
-            ele: 1000,
+            latitude: 45.0,
+            longitude: 6.0,
+            elevation: 1000,
         } as Point;
 
         const ecef1 = EcefConverter.toEcef(point, 1);
@@ -38,9 +38,9 @@ describe('EcefConverter', () => {
 
     test('should handle equator point', () => {
         const point = {
-            lat: 0, // Equator
-            lon: 0, // Prime meridian
-            ele: 0,
+            latitude: 0, // Equator
+            longitude: 0, // Prime meridian
+            elevation: 0,
         } as Point;
 
         const ecef = EcefConverter.toEcef(point, 1);
@@ -53,9 +53,9 @@ describe('EcefConverter', () => {
 
     test('should handle north pole point', () => {
         const point = {
-            lat: Math.PI / 2, // 90 degrees in radians (North pole)
-            lon: 0,
-            ele: 0,
+            latitude: Math.PI / 2, // 90 degrees in radians (North pole)
+            longitude: 0,
+            elevation: 0,
         } as Point;
 
         const ecef = EcefConverter.toEcef(point, 1);

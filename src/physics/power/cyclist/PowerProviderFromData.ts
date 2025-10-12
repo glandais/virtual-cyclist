@@ -1,5 +1,5 @@
 import { CoursePhysics } from '@/types/course/';
-import { Path, PointField } from '@/types/path/';
+import { Path } from '@/types/path/';
 import { CyclistPowerProvider } from './CyclistPowerProvider';
 
 /**
@@ -49,7 +49,7 @@ class PowerProviderFromData implements CyclistPowerProvider {
      * @returns Power from point data in watts
      */
     getPowerW(_course: CoursePhysics, path: Path, pointIndex: number): number {
-        return path.getPower(pointIndex);
+        return path.getPInputPower(pointIndex);
     }
 }
 

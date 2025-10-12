@@ -115,6 +115,7 @@ export class MaxSpeedComputer {
         const circleCenter = this.getCircleCenter(tPrev, tCurrent, tNext);
 
         if (circleCenter === null) {
+            path.setRadius(currentIndex, 150.0);
             // Points are collinear or identical - no turning constraint
             path.setSpeedMax(currentIndex, cyclist.getMaxSpeedMs());
             return;
@@ -167,21 +168,21 @@ export class MaxSpeedComputer {
         }
 
         // Distance available for braking
-        const dist = path.getDistance(currentIndex) - path.getDistance(prevIndex);
+        const distance = path.getDistance(currentIndex) - path.getDistance(prevIndex);
 
         // Check if we can brake from v0 to vf in the available distance
         // Using kinematic equation: vf² = v0² + 2×a×d
         // Rearranging: required_distance = (vf² - v0²) / (2×a)
         const requiredDistance = (vf * vf - v0 * v0) / (2 * a);
 
-        if (requiredDistance <= dist) {
+        if (requiredDistance <= distance) {
             // Sufficient distance available for braking
             return;
         }
 
         // Insufficient distance - reduce the maximum speed at previous point
         // Solve for maximum v0: v0² = vf² - 2×a×distance (a is negative)
-        const newMaxSpeedPrevious = Math.sqrt(vf * vf - 2 * a * dist);
+        const newMaxSpeedPrevious = Math.sqrt(vf * vf - 2 * a * distance);
         path.setSpeedMax(prevIndex, newMaxSpeedPrevious);
     }
 
@@ -247,7 +248,7 @@ export class MaxSpeedComputer {
         const latRad = path.getLatitude(pointIndex) - path.getLatitude(refIndex);
 
         // Convert radians to meters using Earth's circumference
-        // lat/lon are already in radians, so direct scaling by circumference
+        // latitude/longitude are already in radians, so direct scaling by circumference
         const x = (lonRad * CIRC * Math.cos(path.getLatitude(refIndex))) / (2 * Math.PI);
         const y = (latRad * CIRC) / (2 * Math.PI);
 

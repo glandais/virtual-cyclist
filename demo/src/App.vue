@@ -15,7 +15,9 @@ import FileSection from '~/components/FileSection.vue';
 import { useGPXDemo } from '~/composables/useGPXDemo';
 import { PowerParams, PowerSourceType, WindDemo } from './types';
 
-const selectedFields = ref(new Set<PointFieldName>([PointFieldName.ele, PointFieldName.speed]));
+const selectedFields = ref(
+    new Set<PointFieldName>([PointFieldName.elevation, PointFieldName.speed])
+);
 const isConfigOpen = ref(false);
 const bike: Ref<BikeProperties> = ref(getDefaultBikeProperties());
 const cyclist: Ref<CyclistProperties> = ref(getDefaultCyclistProperties());

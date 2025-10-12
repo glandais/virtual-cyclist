@@ -10,35 +10,35 @@ export abstract class GeneratedPath extends AbstractPath {
     // === Spatial & Navigation Accessors ===
 
     getLatitude(pointIndex: number): number {
-        return super.getField(pointIndex, PointField.LAT);
+        return super.getField(pointIndex, PointField.LATITUDE);
     }
 
     getLatitudeDeg(pointIndex: number): number {
-        return toDegrees(super.getField(pointIndex, PointField.LAT));
+        return toDegrees(super.getField(pointIndex, PointField.LATITUDE));
     }
 
     setLatitude(pointIndex: number, value: number): void {
-        super.setField(pointIndex, PointField.LAT, value);
+        super.setField(pointIndex, PointField.LATITUDE, value);
     }
 
     getLongitude(pointIndex: number): number {
-        return super.getField(pointIndex, PointField.LON);
+        return super.getField(pointIndex, PointField.LONGITUDE);
     }
 
     getLongitudeDeg(pointIndex: number): number {
-        return toDegrees(super.getField(pointIndex, PointField.LON));
+        return toDegrees(super.getField(pointIndex, PointField.LONGITUDE));
     }
 
     setLongitude(pointIndex: number, value: number): void {
-        super.setField(pointIndex, PointField.LON, value);
+        super.setField(pointIndex, PointField.LONGITUDE, value);
     }
 
     getElevation(pointIndex: number): number {
-        return super.getField(pointIndex, PointField.ELE);
+        return super.getField(pointIndex, PointField.ELEVATION);
     }
 
     setElevation(pointIndex: number, value: number): void {
-        super.setField(pointIndex, PointField.ELE, value);
+        super.setField(pointIndex, PointField.ELEVATION, value);
     }
 
     getBearing(pointIndex: number): number {
@@ -50,11 +50,11 @@ export abstract class GeneratedPath extends AbstractPath {
     }
 
     getDistance(pointIndex: number): number {
-        return super.getField(pointIndex, PointField.DIST);
+        return super.getField(pointIndex, PointField.DISTANCE);
     }
 
     setDistance(pointIndex: number, value: number): void {
-        super.setField(pointIndex, PointField.DIST, value);
+        super.setField(pointIndex, PointField.DISTANCE, value);
     }
 
     getRadius(pointIndex: number): number {
@@ -63,6 +63,14 @@ export abstract class GeneratedPath extends AbstractPath {
 
     setRadius(pointIndex: number, value: number): void {
         super.setField(pointIndex, PointField.RADIUS, value);
+    }
+
+    getGrade(pointIndex: number): number {
+        return super.getField(pointIndex, PointField.GRADE);
+    }
+
+    setGrade(pointIndex: number, value: number): void {
+        super.setField(pointIndex, PointField.GRADE, value);
     }
 
     // === Temporal Accessors ===
@@ -90,44 +98,52 @@ export abstract class GeneratedPath extends AbstractPath {
 
     // === Physics & Power Accessors ===
 
-    getPower(pointIndex: number): number {
-        return super.getField(pointIndex, PointField.POWER);
+    getPInputPower(pointIndex: number): number {
+        return super.getField(pointIndex, PointField.P_INPUT_POWER);
     }
 
-    setPower(pointIndex: number, value: number): void {
-        super.setField(pointIndex, PointField.POWER, value);
+    setPInputPower(pointIndex: number, value: number): void {
+        super.setField(pointIndex, PointField.P_INPUT_POWER, value);
     }
 
-    getPCyclistRaw(pointIndex: number): number {
-        return super.getField(pointIndex, PointField.P_CYCLIST_RAW);
+    getPCyclistProvidedOptimalPower(pointIndex: number): number {
+        return super.getField(pointIndex, PointField.P_CYCLIST_PROVIDED_OPTIMAL_POWER);
     }
 
-    setPCyclistRaw(pointIndex: number, value: number): void {
-        super.setField(pointIndex, PointField.P_CYCLIST_RAW, value);
-    }
-
-    getPCyclistWheel(pointIndex: number): number {
-        return super.getField(pointIndex, PointField.P_CYCLIST_WHEEL);
-    }
-
-    setPCyclistWheel(pointIndex: number, value: number): void {
-        super.setField(pointIndex, PointField.P_CYCLIST_WHEEL, value);
-    }
-
-    getPCyclistOptimalPower(pointIndex: number): number {
-        return super.getField(pointIndex, PointField.P_CYCLIST_OPTIMAL_POWER);
-    }
-
-    setPCyclistOptimalPower(pointIndex: number, value: number): void {
-        super.setField(pointIndex, PointField.P_CYCLIST_OPTIMAL_POWER, value);
+    setPCyclistProvidedOptimalPower(pointIndex: number, value: number): void {
+        super.setField(pointIndex, PointField.P_CYCLIST_PROVIDED_OPTIMAL_POWER, value);
     }
 
     getPCyclistPowerNeeded(pointIndex: number): number {
-        return super.getField(pointIndex, PointField.P_CYCLIST_POWER_NEEDED);
+        return super.getField(pointIndex, PointField.P_CYCLIST_PROVIDED_POWER_NEEDED);
     }
 
     setPCyclistPowerNeeded(pointIndex: number, value: number): void {
-        super.setField(pointIndex, PointField.P_CYCLIST_POWER_NEEDED, value);
+        super.setField(pointIndex, PointField.P_CYCLIST_PROVIDED_POWER_NEEDED, value);
+    }
+
+    getPCyclistProvidedMuscular(pointIndex: number): number {
+        return super.getField(pointIndex, PointField.P_CYCLIST_PROVIDED_MUSCULAR);
+    }
+
+    setPCyclistProvidedMuscular(pointIndex: number, value: number): void {
+        super.setField(pointIndex, PointField.P_CYCLIST_PROVIDED_MUSCULAR, value);
+    }
+
+    getPCyclistProvidedWheel(pointIndex: number): number {
+        return super.getField(pointIndex, PointField.P_CYCLIST_PROVIDED_WHEEL);
+    }
+
+    setPCyclistProvidedWheel(pointIndex: number, value: number): void {
+        super.setField(pointIndex, PointField.P_CYCLIST_PROVIDED_WHEEL, value);
+    }
+
+    getAeroCoef(pointIndex: number): number {
+        return super.getField(pointIndex, PointField.AERO_COEF);
+    }
+
+    setAeroCoef(pointIndex: number, value: number): void {
+        super.setField(pointIndex, PointField.AERO_COEF, value);
     }
 
     getPAero(pointIndex: number): number {
@@ -162,36 +178,28 @@ export abstract class GeneratedPath extends AbstractPath {
         super.setField(pointIndex, PointField.P_WHEEL_BEARINGS, value);
     }
 
-    getPPowerFromAcc(pointIndex: number): number {
-        return super.getField(pointIndex, PointField.P_POWER_FROM_ACC);
+    getPComputedTotalPower(pointIndex: number): number {
+        return super.getField(pointIndex, PointField.P_COMPUTED_TOTAL_POWER);
     }
 
-    setPPowerFromAcc(pointIndex: number, value: number): void {
-        super.setField(pointIndex, PointField.P_POWER_FROM_ACC, value);
+    setPComputedTotalPower(pointIndex: number, value: number): void {
+        super.setField(pointIndex, PointField.P_COMPUTED_TOTAL_POWER, value);
     }
 
-    getPPowerWheelFromAcc(pointIndex: number): number {
-        return super.getField(pointIndex, PointField.P_POWER_WHEEL_FROM_ACC);
+    getPComputedWheelPower(pointIndex: number): number {
+        return super.getField(pointIndex, PointField.P_COMPUTED_WHEEL_POWER);
     }
 
-    setPPowerWheelFromAcc(pointIndex: number, value: number): void {
-        super.setField(pointIndex, PointField.P_POWER_WHEEL_FROM_ACC, value);
+    setPComputedWheelPower(pointIndex: number, value: number): void {
+        super.setField(pointIndex, PointField.P_COMPUTED_WHEEL_POWER, value);
     }
 
-    getAeroCoef(pointIndex: number): number {
-        return super.getField(pointIndex, PointField.AERO_COEF);
+    getPComputedPower(pointIndex: number): number {
+        return super.getField(pointIndex, PointField.POWER);
     }
 
-    setAeroCoef(pointIndex: number, value: number): void {
-        super.setField(pointIndex, PointField.AERO_COEF, value);
-    }
-
-    getGrade(pointIndex: number): number {
-        return super.getField(pointIndex, PointField.GRADE);
-    }
-
-    setGrade(pointIndex: number, value: number): void {
-        super.setField(pointIndex, PointField.GRADE, value);
+    setPComputedPower(pointIndex: number, value: number): void {
+        super.setField(pointIndex, PointField.POWER, value);
     }
 
     // === Speed & Motion Accessors ===
@@ -290,7 +298,7 @@ export abstract class GeneratedPath extends AbstractPath {
 
     /**
      * Adds a new point with the provided data.
-     * @param data Complete point data with all 32 properties
+     * @param data Complete point data with all 33 properties
      * @returns The index of the newly added point
      */
     addPoint(data: Point): number {
@@ -302,31 +310,32 @@ export abstract class GeneratedPath extends AbstractPath {
 
         // Set all fields from the provided data
         // Spatial & Navigation
-        this.setLatitude(pointIndex, data.lat);
-        this.setLongitude(pointIndex, data.lon);
-        this.setElevation(pointIndex, data.ele);
+        this.setLatitude(pointIndex, data.latitude);
+        this.setLongitude(pointIndex, data.longitude);
+        this.setElevation(pointIndex, data.elevation);
         this.setBearing(pointIndex, data.bearing);
-        this.setDistance(pointIndex, data.dist);
+        this.setDistance(pointIndex, data.distance);
         this.setRadius(pointIndex, data.radius);
+        this.setGrade(pointIndex, data.grade);
 
         // Temporal
         this.setTime(pointIndex, data.time);
         this.setElapsed(pointIndex, data.elapsed);
 
         // Physics & Power
-        this.setPower(pointIndex, data.power);
-        this.setPCyclistRaw(pointIndex, data.pCyclistRaw);
-        this.setPCyclistWheel(pointIndex, data.pCyclistWheel);
-        this.setPCyclistOptimalPower(pointIndex, data.pCyclistOptimalPower);
+        this.setPInputPower(pointIndex, data.pInputPower);
+        this.setPCyclistProvidedOptimalPower(pointIndex, data.pCyclistProvidedOptimalPower);
         this.setPCyclistPowerNeeded(pointIndex, data.pCyclistPowerNeeded);
+        this.setPCyclistProvidedMuscular(pointIndex, data.pCyclistProvidedMuscular);
+        this.setPCyclistProvidedWheel(pointIndex, data.PCyclistProvidedWheel);
+        this.setAeroCoef(pointIndex, data.aeroCoef);
         this.setPAero(pointIndex, data.pAero);
         this.setPGravity(pointIndex, data.pGravity);
         this.setPRollingResistance(pointIndex, data.pRollingResistance);
         this.setPWheelBearings(pointIndex, data.pWheelBearings);
-        this.setPPowerFromAcc(pointIndex, data.pPowerFromAcc);
-        this.setPPowerWheelFromAcc(pointIndex, data.pPowerWheelFromAcc);
-        this.setAeroCoef(pointIndex, data.aeroCoef);
-        this.setGrade(pointIndex, data.grade);
+        this.setPComputedTotalPower(pointIndex, data.pComputedTotalPower);
+        this.setPComputedWheelPower(pointIndex, data.pComputedWheelPower);
+        this.setPComputedPower(pointIndex, data.pComputedPower);
 
         // Speed & Motion
         this.setSpeed(pointIndex, data.speed);
@@ -354,29 +363,30 @@ export abstract class GeneratedPath extends AbstractPath {
     getPointData(pointIndex: number): Point {
         return {
             // Spatial & Navigation
-            lat: this.getLatitude(pointIndex),
-            lon: this.getLongitude(pointIndex),
-            ele: this.getElevation(pointIndex),
+            latitude: this.getLatitude(pointIndex),
+            longitude: this.getLongitude(pointIndex),
+            elevation: this.getElevation(pointIndex),
             bearing: this.getBearing(pointIndex),
-            dist: this.getDistance(pointIndex),
+            distance: this.getDistance(pointIndex),
             radius: this.getRadius(pointIndex),
+            grade: this.getGrade(pointIndex),
             // Temporal
             time: this.getTime(pointIndex),
             elapsed: this.getElapsed(pointIndex),
             // Physics & Power
-            power: this.getPower(pointIndex),
-            pCyclistRaw: this.getPCyclistRaw(pointIndex),
-            pCyclistWheel: this.getPCyclistWheel(pointIndex),
-            pCyclistOptimalPower: this.getPCyclistOptimalPower(pointIndex),
+            pInputPower: this.getPInputPower(pointIndex),
+            pCyclistProvidedOptimalPower: this.getPCyclistProvidedOptimalPower(pointIndex),
             pCyclistPowerNeeded: this.getPCyclistPowerNeeded(pointIndex),
+            pCyclistProvidedMuscular: this.getPCyclistProvidedMuscular(pointIndex),
+            PCyclistProvidedWheel: this.getPCyclistProvidedWheel(pointIndex),
+            aeroCoef: this.getAeroCoef(pointIndex),
             pAero: this.getPAero(pointIndex),
             pGravity: this.getPGravity(pointIndex),
             pRollingResistance: this.getPRollingResistance(pointIndex),
             pWheelBearings: this.getPWheelBearings(pointIndex),
-            pPowerFromAcc: this.getPPowerFromAcc(pointIndex),
-            pPowerWheelFromAcc: this.getPPowerWheelFromAcc(pointIndex),
-            aeroCoef: this.getAeroCoef(pointIndex),
-            grade: this.getGrade(pointIndex),
+            pComputedTotalPower: this.getPComputedTotalPower(pointIndex),
+            pComputedWheelPower: this.getPComputedWheelPower(pointIndex),
+            pComputedPower: this.getPComputedPower(pointIndex),
             // Speed & Motion
             speed: this.getSpeed(pointIndex),
             speedMax: this.getSpeedMax(pointIndex),
@@ -423,22 +433,21 @@ export abstract class GeneratedPath extends AbstractPath {
 
         return {
             // Spatial & Navigation
-            lat: this.interpolateValue(p1.lat, p2.lat, coef),
-            lon: this.interpolateValue(p1.lon, p2.lon, coef),
-            ele: this.interpolateValue(p1.ele, p2.ele, coef),
+            latitude: this.interpolateValue(p1.latitude, p2.latitude, coef),
+            longitude: this.interpolateValue(p1.longitude, p2.longitude, coef),
+            elevation: this.interpolateValue(p1.elevation, p2.elevation, coef),
             bearing: this.interpolateValue(p1.bearing, p2.bearing, coef),
-            dist: this.interpolateValue(p1.dist, p2.dist, coef),
+            distance: this.interpolateValue(p1.distance, p2.distance, coef),
             radius: this.interpolateValue(p1.radius, p2.radius, coef),
+            grade: this.interpolateValue(p1.grade, p2.grade, coef),
             // Temporal
             time: this.interpolateValue(p1.time, p2.time, coef),
             elapsed: this.interpolateValue(p1.elapsed, p2.elapsed, coef),
             // Physics & Power
-            power: this.interpolateValue(p1.power, p2.power, coef),
-            pCyclistRaw: this.interpolateValue(p1.pCyclistRaw, p2.pCyclistRaw, coef),
-            pCyclistWheel: this.interpolateValue(p1.pCyclistWheel, p2.pCyclistWheel, coef),
-            pCyclistOptimalPower: this.interpolateValue(
-                p1.pCyclistOptimalPower,
-                p2.pCyclistOptimalPower,
+            pInputPower: this.interpolateValue(p1.pInputPower, p2.pInputPower, coef),
+            pCyclistProvidedOptimalPower: this.interpolateValue(
+                p1.pCyclistProvidedOptimalPower,
+                p2.pCyclistProvidedOptimalPower,
                 coef
             ),
             pCyclistPowerNeeded: this.interpolateValue(
@@ -446,6 +455,17 @@ export abstract class GeneratedPath extends AbstractPath {
                 p2.pCyclistPowerNeeded,
                 coef
             ),
+            pCyclistProvidedMuscular: this.interpolateValue(
+                p1.pCyclistProvidedMuscular,
+                p2.pCyclistProvidedMuscular,
+                coef
+            ),
+            PCyclistProvidedWheel: this.interpolateValue(
+                p1.PCyclistProvidedWheel,
+                p2.PCyclistProvidedWheel,
+                coef
+            ),
+            aeroCoef: this.interpolateValue(p1.aeroCoef, p2.aeroCoef, coef),
             pAero: this.interpolateValue(p1.pAero, p2.pAero, coef),
             pGravity: this.interpolateValue(p1.pGravity, p2.pGravity, coef),
             pRollingResistance: this.interpolateValue(
@@ -454,14 +474,17 @@ export abstract class GeneratedPath extends AbstractPath {
                 coef
             ),
             pWheelBearings: this.interpolateValue(p1.pWheelBearings, p2.pWheelBearings, coef),
-            pPowerFromAcc: this.interpolateValue(p1.pPowerFromAcc, p2.pPowerFromAcc, coef),
-            pPowerWheelFromAcc: this.interpolateValue(
-                p1.pPowerWheelFromAcc,
-                p2.pPowerWheelFromAcc,
+            pComputedTotalPower: this.interpolateValue(
+                p1.pComputedTotalPower,
+                p2.pComputedTotalPower,
                 coef
             ),
-            aeroCoef: this.interpolateValue(p1.aeroCoef, p2.aeroCoef, coef),
-            grade: this.interpolateValue(p1.grade, p2.grade, coef),
+            pComputedWheelPower: this.interpolateValue(
+                p1.pComputedWheelPower,
+                p2.pComputedWheelPower,
+                coef
+            ),
+            pComputedPower: this.interpolateValue(p1.pComputedPower, p2.pComputedPower, coef),
             // Speed & Motion
             speed: this.interpolateValue(p1.speed, p2.speed, coef),
             speedMax: this.interpolateValue(p1.speedMax, p2.speedMax, coef),

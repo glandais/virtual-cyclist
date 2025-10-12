@@ -1,7 +1,7 @@
 import { rollingResistancePowerProvider } from '@/physics/power/rolling/';
 import { CoursePhysics } from '@/types/course/';
 import { Bike, Cyclist } from '@/types/models/';
-import { Path, Point, PointField } from '@/types/path/';
+import { Path, Point } from '@/types/path/';
 
 describe('RollingResistancePowerProvider', () => {
     let path: Path;
@@ -16,11 +16,11 @@ describe('RollingResistancePowerProvider', () => {
 
     test('should calculate rolling resistance (always negative)', () => {
         path.addPoint({
-            lat: 45.0,
-            lon: 6.0,
-            ele: 1000,
+            latitude: 45.0,
+            longitude: 6.0,
+            elevation: 1000,
             time: Date.now(),
-            dist: 0,
+            distance: 0,
             speed: 10,
             grade: 0,
             bearing: 0,
@@ -37,11 +37,11 @@ describe('RollingResistancePowerProvider', () => {
 
     test('should scale linearly with speed', () => {
         path.addPoint({
-            lat: 45.0,
-            lon: 6.0,
-            ele: 1000,
+            latitude: 45.0,
+            longitude: 6.0,
+            elevation: 1000,
             time: Date.now(),
-            dist: 0,
+            distance: 0,
             speed: 5,
             grade: 0,
             bearing: 0,
@@ -50,7 +50,7 @@ describe('RollingResistancePowerProvider', () => {
         const course = { cyclist, bike } as unknown as CoursePhysics;
         const power5 = rollingResistancePowerProvider.getPowerW(course, path, 0);
 
-        path.setField(0, PointField.SPEED, 10);
+        path.setSpeed(0, 10);
         const power10 = rollingResistancePowerProvider.getPowerW(course, path, 0);
 
         expect(power10 / power5).toBeCloseTo(2, 1);
@@ -58,11 +58,11 @@ describe('RollingResistancePowerProvider', () => {
 
     test('should be slightly less on climbs (cosine factor)', () => {
         path.addPoint({
-            lat: 45.0,
-            lon: 6.0,
-            ele: 1000,
+            latitude: 45.0,
+            longitude: 6.0,
+            elevation: 1000,
             time: Date.now(),
-            dist: 0,
+            distance: 0,
             speed: 10,
             grade: 0,
             bearing: 0,
@@ -71,7 +71,7 @@ describe('RollingResistancePowerProvider', () => {
         const course = { cyclist, bike } as unknown as CoursePhysics;
         const powerFlat = rollingResistancePowerProvider.getPowerW(course, path, 0);
 
-        path.setField(0, PointField.GRADE, 0.5); // 50% grade for noticeable cosine effect
+        path.setGrade(0, 0.5); // 50% grade for noticeable cosine effect
         const powerClimb = rollingResistancePowerProvider.getPowerW(course, path, 0);
 
         // cos(atan(0.5)) ≈ 0.894 < 1, so climbing resistance is measurably less

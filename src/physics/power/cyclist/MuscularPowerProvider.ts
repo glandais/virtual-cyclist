@@ -1,6 +1,6 @@
 import { PowerProvider } from '@/physics/power/';
 import { CoursePhysics } from '@/types/course/';
-import { Path, PointField } from '@/types/path/';
+import { Path } from '@/types/path/';
 
 /**
  * Power provider for cyclist muscular power with drivetrain efficiency.
@@ -60,11 +60,11 @@ class MuscularPowerProvider implements PowerProvider {
     getPowerW(course: CoursePhysics, path: Path, pointIndex: number): number {
         // Get raw muscular power from cyclist power provider
         let w = course.cyclistPowerProvider.getPowerW(course, path, pointIndex);
-        path.setField(pointIndex, PointField.P_CYCLIST_RAW, w);
+        path.setPCyclistProvidedMuscular(pointIndex, w);
 
         // Apply drivetrain efficiency
         w = w * course.bike.efficiency;
-        path.setField(pointIndex, PointField.P_CYCLIST_WHEEL, w);
+        path.setPCyclistProvidedWheel(pointIndex, w);
 
         return w;
     }

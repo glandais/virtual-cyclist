@@ -1,6 +1,6 @@
 import { wheelBearingsPowerProvider } from '@/physics/power/rolling/';
 import { CoursePhysics } from '@/types/course/';
-import { EMPTY_POINT, Path, Point, PointField } from '@/types/path/';
+import { EMPTY_POINT, Path, Point } from '@/types/path/';
 
 describe('WheelBearingsPowerProvider', () => {
     let path: Path;
@@ -12,11 +12,11 @@ describe('WheelBearingsPowerProvider', () => {
     test('should calculate bearing friction (always negative)', () => {
         path.addPoint({
             ...EMPTY_POINT,
-            lat: 45.0,
-            lon: 6.0,
-            ele: 1000,
+            latitude: 45.0,
+            longitude: 6.0,
+            elevation: 1000,
             time: Date.now(),
-            dist: 0,
+            distance: 0,
             speed: 10,
             grade: 0,
             bearing: 0,
@@ -32,11 +32,11 @@ describe('WheelBearingsPowerProvider', () => {
 
     test('should increase non-linearly with speed', () => {
         path.addPoint({
-            lat: 45.0,
-            lon: 6.0,
-            ele: 1000,
+            latitude: 45.0,
+            longitude: 6.0,
+            elevation: 1000,
             time: Date.now(),
-            dist: 0,
+            distance: 0,
             speed: 5,
             grade: 0,
             bearing: 0,
@@ -44,7 +44,7 @@ describe('WheelBearingsPowerProvider', () => {
 
         const power5 = wheelBearingsPowerProvider.getPowerW({} as CoursePhysics, path, 0);
 
-        path.setField(0, PointField.SPEED, 10);
+        path.setSpeed(0, 10);
         const power10 = wheelBearingsPowerProvider.getPowerW({} as CoursePhysics, path, 0);
 
         // Should be more than double (quadratic component)
@@ -54,11 +54,11 @@ describe('WheelBearingsPowerProvider', () => {
 
     test('should handle zero speed', () => {
         path.addPoint({
-            lat: 45.0,
-            lon: 6.0,
-            ele: 1000,
+            latitude: 45.0,
+            longitude: 6.0,
+            elevation: 1000,
             time: Date.now(),
-            dist: 0,
+            distance: 0,
             speed: 0,
             grade: 0,
             bearing: 0,

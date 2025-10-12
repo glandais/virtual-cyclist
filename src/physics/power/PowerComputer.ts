@@ -1,6 +1,6 @@
 import { DT, MINIMAL_SPEED } from '@/constants/';
 import { Course, CoursePhysics } from '@/types/course/';
-import { Path, PointField } from '@/types/path/';
+import { Path } from '@/types/path/';
 import { aeroPowerProvider } from './aero';
 import { muscularPowerProvider } from './cyclist';
 import { gravPowerProvider } from './grav';
@@ -192,11 +192,11 @@ export class PowerComputer {
 
         // Calculate total power from kinetic energy change
         const totPower = this.getTotPower(equivalentMass, s1, s2, dt);
-        path.setField(pointIndex1, PointField.P_POWER_FROM_ACC, totPower);
+        path.setPComputedTotalPower(pointIndex1, totPower);
 
         // Cyclist wheel power = total - resistances
         let cyclistPower = totPower - power;
-        path.setField(pointIndex1, PointField.P_POWER_WHEEL_FROM_ACC, cyclistPower);
+        path.setPComputedWheelPower(pointIndex1, cyclistPower);
 
         // Ensure non-negative
         cyclistPower = Math.max(0.0, cyclistPower);

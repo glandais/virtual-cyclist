@@ -45,11 +45,11 @@ describe('VirtualizeService', () => {
         const path = new Path('test');
         path.addPoint({
             ...EMPTY_POINT,
-            lat: 45.0,
-            lon: 6.0,
-            ele: 1000,
+            latitude: 45.0,
+            longitude: 6.0,
+            elevation: 1000,
             time: Date.now(),
-            dist: 0,
+            distance: 0,
             speed: 10,
             grade: 0,
             bearing: 0,

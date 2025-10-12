@@ -1,7 +1,7 @@
 import { G } from '@/constants/';
 import { PowerProvider } from '@/physics/power/';
 import { Course } from '@/types/course/';
-import { Path, PointField } from '@/types/path/';
+import { Path } from '@/types/path/';
 
 /**
  * Provides gravitational power calculations for virtual cycling.
@@ -58,7 +58,7 @@ class GravPowerProvider implements PowerProvider {
         const powerGravity = -mKg * G * speed * coef;
 
         // Store debug value in the point
-        path.setField(pointIndex, PointField.P_GRAVITY, powerGravity);
+        path.setPGravity(pointIndex, powerGravity);
 
         return powerGravity;
     }

@@ -25,9 +25,9 @@ export class Elevation {
             const coord = resultCoordinates[i];
             result.addPoint({
                 ...EMPTY_POINT,
-                lat: toRadians(coord.latitude),
-                lon: toRadians(coord.longitude),
-                ele: coord.elevation,
+                latitude: toRadians(coord.latitude),
+                longitude: toRadians(coord.longitude),
+                elevation: coord.elevation,
             });
         }
         result.computeDerivedData();

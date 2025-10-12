@@ -1,7 +1,7 @@
 import { DT, MINIMAL_SPEED } from '@/constants/';
 import { PowerComputer } from '@/physics/power/';
 import { CoursePhysics } from '@/types/course/';
-import { Path, PointField } from '@/types/path/';
+import { Path } from '@/types/path/';
 import { createLogger, Logger } from '@/utils/';
 
 const logger: Logger = createLogger('physics/VirtualService');
@@ -17,13 +17,12 @@ const logger: Logger = createLogger('physics/VirtualService');
  *
  * ## Algorithm Overview
  *
- * 1. **Pre-computation**: Build OptimalSpeeds lookup table (~526k entries)
- * 2. **Time-stepping loop**: Integrate physics from start to finish
+ * 1. **Time-stepping loop**: Integrate physics from start to finish
  *    - Calculate power balance at each step
  *    - Determine distance traveled
  *    - Align with GPS waypoints or interpolate
  *    - Enforce maximum speed constraints
- * 3. **Post-processing**: Back-calculate cyclist power from speed profile
+ * 2. **Post-processing**: Back-calculate cyclist power from speed profile
  *
  * ## GPS Waypoint Alignment
  *
@@ -35,7 +34,6 @@ const logger: Logger = createLogger('physics/VirtualService');
  * This ensures the virtual cyclist follows the exact recorded path.
  *
  * @see PowerComputer
- * @see OptimalSpeeds
  */
 export class VirtualizeService {
     private static readonly powerComputer: PowerComputer = PowerComputer.INSTANCE;
@@ -74,7 +72,7 @@ export class VirtualizeService {
         // Add first point
         newPath.addPoint({
             ...currentPoint,
-            dist: currentDist,
+            distance: currentDist,
             time: currentTime,
             elapsed: 0,
             speed: currentSpeed,
@@ -132,7 +130,7 @@ export class VirtualizeService {
             // Add simulated point
             newPath.addPoint({
                 ...currentPoint,
-                dist: currentDist,
+                distance: currentDist,
                 time: currentTime,
                 elapsed: currentTime - startTime,
                 speed: currentSpeed,
@@ -155,7 +153,7 @@ export class VirtualizeService {
                 i + 1
             );
             // Set power on current point
-            newPath.setPower(i, cyclistPower);
+            newPath.setPComputedPower(i, cyclistPower);
         }
         newPath.computeDerivedData();
         return newPath;
@@ -166,18 +164,18 @@ export class VirtualizeService {
      *
      * @param dists Array of cumulative distances
      * @param distsLength Length of dists array
-     * @param dist Current distance
+     * @param distance Current distance
      * @param dx Distance to travel
      * @returns Index of next waypoint, or current index if not crossing
      */
     private static getNextIndex(
         dists: Float64Array,
         distsLength: number,
-        dist: number,
+        distance: number,
         dx: number
     ): number {
-        const i1 = this.getIndex(dists, distsLength, dist);
-        const i2 = this.getIndex(dists, distsLength, dist + dx);
+        const i1 = this.getIndex(dists, distsLength, distance);
+        const i2 = this.getIndex(dists, distsLength, distance + dx);
         if (i1 !== i2) {
             return i1 + 1;
         }
@@ -189,21 +187,21 @@ export class VirtualizeService {
      *
      * @param dists Array of cumulative distances
      * @param distsLength Length of dists array
-     * @param dist Target distance
-     * @returns Index of waypoint at or before dist, or -1 if not found
+     * @param distance Target distance
+     * @returns Index of waypoint at or before distance, or -1 if not found
      */
-    private static getIndex(dists: Float64Array, distsLength: number, dist: number): number {
+    private static getIndex(dists: Float64Array, distsLength: number, distance: number): number {
         let left = 0;
         let right = distsLength - 1;
 
         while (left <= right) {
             const mid = left + Math.floor((right - left) / 2);
 
-            if (dists[mid] <= dist && (mid === distsLength - 1 || dist < dists[mid + 1])) {
+            if (dists[mid] <= distance && (mid === distsLength - 1 || distance < dists[mid + 1])) {
                 return mid;
             }
 
-            if (dists[mid] < dist) {
+            if (dists[mid] < distance) {
                 left = mid + 1;
             } else {
                 right = mid - 1;

@@ -1,7 +1,7 @@
 import { PowerProvider } from '@/physics/power/';
 
 import { CoursePhysics } from '@/types/course/';
-import { Path, PointField } from '@/types/path/';
+import { Path } from '@/types/path/';
 import { Wind } from './wind';
 
 /**
@@ -46,7 +46,7 @@ class AeroPowerProvider implements PowerProvider {
      */
     getPowerW(course: CoursePhysics, path: Path, pointIndex: number): number {
         const aeroCoef = course.aeroProvider.getAeroCoef(course, path, pointIndex);
-        path.setField(pointIndex, PointField.AERO_COEF, aeroCoef);
+        path.setAeroCoef(pointIndex, aeroCoef);
 
         const wind = course.windProvider.getWind(course, path, pointIndex);
 
@@ -61,7 +61,7 @@ class AeroPowerProvider implements PowerProvider {
             p_air = this.computePAirWithWind(path, pointIndex, aeroCoef, wind);
         }
 
-        path.setField(pointIndex, PointField.P_AERO, p_air);
+        path.setPAero(pointIndex, p_air);
         return p_air;
     }
 
@@ -97,18 +97,18 @@ class AeroPowerProvider implements PowerProvider {
         const bearing = path.getBearing(pointIndex);
 
         // Store wind data for debugging/analysis
-        path.setField(pointIndex, PointField.WIND_SPEED, wind.windSpeed);
-        path.setField(pointIndex, PointField.WIND_DIRECTION, wind.windDirection);
+        path.setWindSpeed(pointIndex, wind.windSpeed);
+        path.setWindDirection(pointIndex, wind.windDirection);
 
         // Convert wind direction to bearing convention
         // Wind direction: 0 = North, π/2 = East
         // Bearing: 0 = East, π/2 = North (standard math convention)
         const windDirectionAsBearing = Math.PI / 2 - wind.windDirection;
-        path.setField(pointIndex, PointField.WIND_BEARING, windDirectionAsBearing);
+        path.setWindBearing(pointIndex, windDirectionAsBearing);
 
         // Calculate angle between wind and cyclist direction
         const alpha = windDirectionAsBearing - bearing;
-        path.setField(pointIndex, PointField.WIND_ALPHA, alpha);
+        path.setWindAlpha(pointIndex, alpha);
 
         const v = wind.windSpeed;
 

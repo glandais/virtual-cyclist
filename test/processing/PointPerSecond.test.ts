@@ -15,33 +15,33 @@ describe('PointPerSecond', () => {
 
         // Points at 0s, 2.5s, 5s (uneven timing)
         path.addPoint({
-            lat: 45.0,
-            lon: 6.0,
-            ele: 1000,
+            latitude: 45.0,
+            longitude: 6.0,
+            elevation: 1000,
             time: baseTime,
-            dist: 0,
+            distance: 0,
             speed: 10,
             grade: 0,
             bearing: 0,
         } as Point);
 
         path.addPoint({
-            lat: 45.001,
-            lon: 6.0,
-            ele: 1000,
+            latitude: 45.001,
+            longitude: 6.0,
+            elevation: 1000,
             time: baseTime + 2500,
-            dist: 25,
+            distance: 25,
             speed: 10,
             grade: 0,
             bearing: 0,
         } as Point);
 
         path.addPoint({
-            lat: 45.002,
-            lon: 6.0,
-            ele: 1000,
+            latitude: 45.002,
+            longitude: 6.0,
+            elevation: 1000,
             time: baseTime + 5000,
-            dist: 50,
+            distance: 50,
             speed: 10,
             grade: 0,
             bearing: 0,
@@ -58,22 +58,22 @@ describe('PointPerSecond', () => {
         const baseTime = Date.now();
 
         path.addPoint({
-            lat: 45.0,
-            lon: 6.0,
-            ele: 1000,
+            latitude: 45.0,
+            longitude: 6.0,
+            elevation: 1000,
             time: baseTime,
-            dist: 0,
+            distance: 0,
             speed: 10,
             grade: 0,
             bearing: 0,
         } as Point);
 
         path.addPoint({
-            lat: 45.002,
-            lon: 6.0,
-            ele: 1020,
+            latitude: 45.002,
+            longitude: 6.0,
+            elevation: 1020,
             time: baseTime + 2000,
-            dist: 20,
+            distance: 20,
             speed: 10,
             grade: 0,
             bearing: 0,

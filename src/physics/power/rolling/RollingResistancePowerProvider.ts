@@ -1,7 +1,7 @@
 import { G } from '@/constants/';
 import { PowerProvider } from '@/physics/power/';
 import { Course } from '@/types/course/';
-import { Path, PointField } from '@/types/path/';
+import { Path } from '@/types/path/';
 
 /**
  * Provides rolling resistance power calculations for virtual cycling.
@@ -50,7 +50,7 @@ class RollingResistancePowerProvider implements PowerProvider {
         const powerRollingResistance = -coef * mKg * G * speed * crr;
 
         // Store debug value in the point
-        path.setField(pointIndex, PointField.P_ROLLING_RESISTANCE, powerRollingResistance);
+        path.setPRollingResistance(pointIndex, powerRollingResistance);
 
         return powerRollingResistance;
     }

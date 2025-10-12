@@ -6,81 +6,83 @@
 /**
  * Enum defining the index of each field in the chunked array storage.
  * Based on PropertyKeys.java from gpx2web project.
- * Each point has exactly 32 numeric values stored contiguously.
+ * Each point has exactly 33 numeric values stored contiguously.
  */
 export enum PointField {
-    // Spatial & Navigation (6 properties)
-    LAT = 0, // Latitude (radians)
-    LON = 1, // Longitude (radians)
-    ELE = 2, // Elevation (meters)
+    // Spatial & Navigation (7 properties)
+    LATITUDE = 0, // Latitude (radians)
+    LONGITUDE = 1, // Longitude (radians)
+    ELEVATION = 2, // Elevation (meters)
     BEARING = 3, // Direction bearing (radians)
-    DIST = 4, // Distance (meters)
+    DISTANCE = 4, // Distance (meters)
     RADIUS = 5, // Turn radius (meters)
+    GRADE = 6, // Road grade/slope (%)
 
     // Temporal (2 properties)
-    TIME = 6, // Timestamp (ms since epoch)
-    ELAPSED = 7, // Elapsed duration (ms)
+    TIME = 7, // Timestamp (ms since epoch)
+    ELAPSED = 8, // Elapsed duration (ms)
 
     // Physics & Power (13 properties)
-    POWER = 8, // Total power (watts)
-    P_CYCLIST_RAW = 9, // Raw cyclist power
-    P_CYCLIST_WHEEL = 10, // Cyclist wheel power
-    P_CYCLIST_OPTIMAL_POWER = 11, // Optimal power
-    P_CYCLIST_POWER_NEEDED = 12, // Power needed
-    P_AERO = 13, // Aerodynamic power
-    P_GRAVITY = 14, // Gravitational power
-    P_ROLLING_RESISTANCE = 15, // Rolling resistance power
-    P_WHEEL_BEARINGS = 16, // Wheel bearings power
-    P_POWER_FROM_ACC = 17, // Power from acceleration
-    P_POWER_WHEEL_FROM_ACC = 18, // Wheel power from acceleration
-    AERO_COEF = 19, // Aerodynamic coefficient
-    GRADE = 20, // Road grade/slope (%)
+    P_INPUT_POWER = 9, // GPX input power
+    P_CYCLIST_PROVIDED_OPTIMAL_POWER = 10, // Optimal power
+    P_CYCLIST_PROVIDED_POWER_NEEDED = 11, // Power needed
+    P_CYCLIST_PROVIDED_MUSCULAR = 12, // Raw cyclist power
+    P_CYCLIST_PROVIDED_WHEEL = 13, // Cyclist power transmitted to ground
+    AERO_COEF = 14, // Aerodynamic coefficient
+    P_AERO = 15, // Aerodynamic power
+    P_GRAVITY = 16, // Gravitational power
+    P_ROLLING_RESISTANCE = 17, // Rolling resistance power
+    P_WHEEL_BEARINGS = 18, // Wheel bearings power
+    P_COMPUTED_TOTAL_POWER = 19, // Power from acceleration
+    P_COMPUTED_WHEEL_POWER = 20, // Wheel power from acceleration
+    POWER = 21, // Total power (watts)
 
     // Speed & Motion (4 properties)
-    SPEED = 21, // Current speed (m/s)
-    SPEED_MAX = 22, // Maximum speed (m/s)
-    SPEED_MAX_INCLINE = 23, // Max speed on incline (m/s)
-    VIRT_SPEED_CURRENT = 24, // Virtual current speed (m/s)
+    SPEED = 22, // Current speed (m/s)
+    SPEED_MAX = 23, // Maximum speed (m/s)
+    SPEED_MAX_INCLINE = 24, // Max speed on incline (m/s)
+    VIRT_SPEED_CURRENT = 25, // Virtual current speed (m/s)
 
     // Environmental (5 properties)
-    TEMPERATURE = 25, // Temperature (celsius)
-    WIND_SPEED = 26, // Wind speed (m/s)
-    WIND_DIRECTION = 27, // Wind direction (radians)
-    WIND_BEARING = 28, // Wind bearing (radians)
-    WIND_ALPHA = 29, // Wind angle (radians)
+    TEMPERATURE = 26, // Temperature (celsius)
+    WIND_SPEED = 27, // Wind speed (m/s)
+    WIND_DIRECTION = 28, // Wind direction (radians)
+    WIND_BEARING = 29, // Wind bearing (radians)
+    WIND_ALPHA = 30, // Wind angle (radians)
 
     // Physiological (2 properties)
-    HEART_RATE = 30, // Heart rate (bpm)
-    CADENCE = 31, // Pedaling cadence (rpm)
+    HEART_RATE = 31, // Heart rate (bpm)
+    CADENCE = 32, // Pedaling cadence (rpm)
 }
 
 export enum PointFieldName {
-    // Spatial & Navigation (6 properties)
-    lat = 'lat', // Latitude (radians)
-    lon = 'lon', // Longitude (radians)
-    ele = 'ele', // Elevation (meters)
+    // Spatial & Navigation (7 properties)
+    latitude = 'latitude', // Latitude (radians)
+    longitude = 'longitude', // Longitude (radians)
+    elevation = 'elevation', // Elevation (meters)
     bearing = 'bearing', // Direction bearing (radians)
-    dist = 'dist', // Distance (meters)
+    distance = 'distance', // Distance (meters)
     radius = 'radius', // Turn radius (meters)
+    grade = 'grade', // Road grade/slope (%)
 
     // Temporal (2 properties)
     time = 'time', // Timestamp (ms since epoch)
     elapsed = 'elapsed', // Elapsed duration (ms)
 
     // Physics & Power (13 properties)
-    power = 'power', // Total power (watts)
-    pCyclistRaw = 'pCyclistRaw', // Raw cyclist power
-    pCyclistWheel = 'pCyclistWheel', // Cyclist wheel power
-    pCyclistOptimalPower = 'pCyclistOptimalPower', // Optimal power
+    pInputPower = 'pInputPower', // GPX input power
+    pCyclistProvidedOptimalPower = 'pCyclistProvidedOptimalPower', // Optimal power
     pCyclistPowerNeeded = 'pCyclistPowerNeeded', // Power needed
+    pCyclistProvidedMuscular = 'pCyclistProvidedMuscular', // Raw cyclist power
+    PCyclistProvidedWheel = 'PCyclistProvidedWheel', // Cyclist power transmitted to ground
+    aeroCoef = 'aeroCoef', // Aerodynamic coefficient
     pAero = 'pAero', // Aerodynamic power
     pGravity = 'pGravity', // Gravitational power
     pRollingResistance = 'pRollingResistance', // Rolling resistance power
     pWheelBearings = 'pWheelBearings', // Wheel bearings power
-    pPowerFromAcc = 'pPowerFromAcc', // Power from acceleration
-    pPowerWheelFromAcc = 'pPowerWheelFromAcc', // Wheel power from acceleration
-    aeroCoef = 'aeroCoef', // Aerodynamic coefficient
-    grade = 'grade', // Road grade/slope (%)
+    pComputedTotalPower = 'pComputedTotalPower', // Power from acceleration
+    pComputedWheelPower = 'pComputedWheelPower', // Wheel power from acceleration
+    pComputedPower = 'pComputedPower', // Total power (watts)
 
     // Speed & Motion (4 properties)
     speed = 'speed', // Current speed (m/s)
@@ -101,32 +103,33 @@ export enum PointFieldName {
 }
 
 export const fieldToPointField: Record<PointFieldName, PointField> = {
-    // Spatial & Navigation (6 properties)
-    lat: PointField.LAT, // Latitude (radians)
-    lon: PointField.LON, // Longitude (radians)
-    ele: PointField.ELE, // Elevation (meters)
+    // Spatial & Navigation (7 properties)
+    latitude: PointField.LATITUDE, // Latitude (radians)
+    longitude: PointField.LONGITUDE, // Longitude (radians)
+    elevation: PointField.ELEVATION, // Elevation (meters)
     bearing: PointField.BEARING, // Direction bearing (radians)
-    dist: PointField.DIST, // Distance (meters)
+    distance: PointField.DISTANCE, // Distance (meters)
     radius: PointField.RADIUS, // Turn radius (meters)
+    grade: PointField.GRADE, // Road grade/slope (%)
 
     // Temporal (2 properties)
     time: PointField.TIME, // Timestamp (ms since epoch)
     elapsed: PointField.ELAPSED, // Elapsed duration (ms)
 
     // Physics & Power (13 properties)
-    power: PointField.POWER, // Total power (watts)
-    pCyclistRaw: PointField.P_CYCLIST_RAW, // Raw cyclist power
-    pCyclistWheel: PointField.P_CYCLIST_WHEEL, // Cyclist wheel power
-    pCyclistOptimalPower: PointField.P_CYCLIST_OPTIMAL_POWER, // Optimal power
-    pCyclistPowerNeeded: PointField.P_CYCLIST_POWER_NEEDED, // Power needed
+    pInputPower: PointField.P_INPUT_POWER, // GPX input power
+    pCyclistProvidedOptimalPower: PointField.P_CYCLIST_PROVIDED_OPTIMAL_POWER, // Optimal power
+    pCyclistPowerNeeded: PointField.P_CYCLIST_PROVIDED_POWER_NEEDED, // Power needed
+    pCyclistProvidedMuscular: PointField.P_CYCLIST_PROVIDED_MUSCULAR, // Raw cyclist power
+    PCyclistProvidedWheel: PointField.P_CYCLIST_PROVIDED_WHEEL, // Cyclist power transmitted to ground
+    aeroCoef: PointField.AERO_COEF, // Aerodynamic coefficient
     pAero: PointField.P_AERO, // Aerodynamic power
     pGravity: PointField.P_GRAVITY, // Gravitational power
     pRollingResistance: PointField.P_ROLLING_RESISTANCE, // Rolling resistance power
     pWheelBearings: PointField.P_WHEEL_BEARINGS, // Wheel bearings power
-    pPowerFromAcc: PointField.P_POWER_FROM_ACC, // Power from acceleration
-    pPowerWheelFromAcc: PointField.P_POWER_WHEEL_FROM_ACC, // Wheel power from acceleration
-    aeroCoef: PointField.AERO_COEF, // Aerodynamic coefficient
-    grade: PointField.GRADE, // Road grade/slope (%)
+    pComputedTotalPower: PointField.P_COMPUTED_TOTAL_POWER, // Power from acceleration
+    pComputedWheelPower: PointField.P_COMPUTED_WHEEL_POWER, // Wheel power from acceleration
+    pComputedPower: PointField.POWER, // Total power (watts)
 
     // Speed & Motion (4 properties)
     speed: PointField.SPEED, // Current speed (m/s)
@@ -149,41 +152,42 @@ export const fieldToPointField: Record<PointFieldName, PointField> = {
 /**
  * Total number of fields per point in the chunked storage.
  */
-export const FIELDS_PER_POINT = 32;
+export const FIELDS_PER_POINT = 33;
 
 /**
- * Interface representing a complete point with all 32 properties.
+ * Interface representing a complete point with all 33 properties.
  * All values are stored as numbers with appropriate unit conversions.
  *
  * Note: Angles are stored in RADIANS for efficient physics calculations.
  */
 export interface Point {
     // Spatial & Navigation
-    readonly lat: number; // Latitude (radians)
-    readonly lon: number; // Longitude (radians)
-    readonly ele: number; // Elevation (meters)
+    readonly latitude: number; // Latitude (radians)
+    readonly longitude: number; // Longitude (radians)
+    readonly elevation: number; // Elevation (meters)
     readonly bearing: number; // Direction bearing (radians)
-    readonly dist: number; // Distance (meters)
+    readonly distance: number; // Distance (meters)
     readonly radius: number; // Turn radius (meters)
+    readonly grade: number; // Road grade/slope (%)
 
     // Temporal
     readonly time: number; // Timestamp (ms since epoch)
     readonly elapsed: number; // Elapsed duration (ms)
 
     // Physics & Power
-    readonly power: number; // Total power (watts)
-    readonly pCyclistRaw: number; // Raw cyclist power
-    readonly pCyclistWheel: number; // Cyclist wheel power
-    readonly pCyclistOptimalPower: number; // Optimal power
+    readonly pInputPower: number; // GPX input power
+    readonly pCyclistProvidedOptimalPower: number; // Optimal power
     readonly pCyclistPowerNeeded: number; // Power needed
+    readonly pCyclistProvidedMuscular: number; // Raw cyclist power
+    readonly PCyclistProvidedWheel: number; // Cyclist power transmitted to ground
+    readonly aeroCoef: number; // Aerodynamic coefficient
     readonly pAero: number; // Aerodynamic power
     readonly pGravity: number; // Gravitational power
     readonly pRollingResistance: number; // Rolling resistance power
     readonly pWheelBearings: number; // Wheel bearings power
-    readonly pPowerFromAcc: number; // Power from acceleration
-    readonly pPowerWheelFromAcc: number; // Wheel power from acceleration
-    readonly aeroCoef: number; // Aerodynamic coefficient
-    readonly grade: number; // Road grade/slope (%)
+    readonly pComputedTotalPower: number; // Power from acceleration
+    readonly pComputedWheelPower: number; // Wheel power from acceleration
+    readonly pComputedPower: number; // Total power (watts)
 
     // Speed & Motion
     readonly speed: number; // Current speed (m/s)
@@ -211,29 +215,30 @@ export type PointWritable = Writable<Point>;
 
 export const EMPTY_POINT: Point = {
     // Spatial & Navigation
-    lat: NaN,
-    lon: NaN,
-    ele: NaN,
+    latitude: NaN,
+    longitude: NaN,
+    elevation: NaN,
     bearing: NaN,
-    dist: NaN,
+    distance: NaN,
     radius: NaN,
+    grade: NaN,
     // Temporal
     time: NaN,
     elapsed: NaN,
     // Physics & Power
-    power: NaN,
-    pCyclistRaw: NaN,
-    pCyclistWheel: NaN,
-    pCyclistOptimalPower: NaN,
+    pInputPower: NaN,
+    pCyclistProvidedOptimalPower: NaN,
     pCyclistPowerNeeded: NaN,
+    pCyclistProvidedMuscular: NaN,
+    PCyclistProvidedWheel: NaN,
+    aeroCoef: NaN,
     pAero: NaN,
     pGravity: NaN,
     pRollingResistance: NaN,
     pWheelBearings: NaN,
-    pPowerFromAcc: NaN,
-    pPowerWheelFromAcc: NaN,
-    aeroCoef: NaN,
-    grade: NaN,
+    pComputedTotalPower: NaN,
+    pComputedWheelPower: NaN,
+    pComputedPower: NaN,
     // Speed & Motion
     speed: NaN,
     speedMax: NaN,

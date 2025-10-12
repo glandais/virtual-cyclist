@@ -129,12 +129,12 @@ export class GPXWriter {
     private createTrackPointElement(doc: Document, trackPoint: Point): Element {
         const trackPointElement = doc.createElement('trkpt');
 
-        trackPointElement.setAttribute('lat', toDegrees(trackPoint.lat).toString());
-        trackPointElement.setAttribute('lon', toDegrees(trackPoint.lon).toString());
+        trackPointElement.setAttribute('latitude', toDegrees(trackPoint.latitude).toString());
+        trackPointElement.setAttribute('longitude', toDegrees(trackPoint.longitude).toString());
 
-        if (!isNaN(trackPoint.ele)) {
-            const eleElement = doc.createElement('ele');
-            eleElement.textContent = trackPoint.ele.toString();
+        if (!isNaN(trackPoint.elevation)) {
+            const eleElement = doc.createElement('elevation');
+            eleElement.textContent = trackPoint.elevation.toString();
             trackPointElement.appendChild(eleElement);
         }
 
@@ -194,9 +194,9 @@ export class GPXWriter {
         }
 
         // Add custom power extensions if enabled
-        if (!isNaN(trackPoint.power)) {
+        if (!isNaN(trackPoint.pInputPower)) {
             const powerElement = doc.createElement('power');
-            powerElement.textContent = Math.round(trackPoint.power).toString();
+            powerElement.textContent = Math.round(trackPoint.pInputPower).toString();
             extensionsElement.appendChild(powerElement);
         }
 

@@ -1,6 +1,6 @@
 import { PowerComputer } from '@/physics/power/';
 import { CoursePhysics } from '@/types/course/';
-import { Path, PointField } from '@/types/path/';
+import { Path } from '@/types/path/';
 import { CyclistPowerProvider } from './CyclistPowerProvider';
 import { Harmonic } from './Harmonic';
 
@@ -45,7 +45,6 @@ import { Harmonic } from './Harmonic';
  * - Reduced effort when speed exceeds target (coasting, tailwind)
  *
  * @see CyclistPowerProvider
- * @see OptimalSpeeds
  */
 export abstract class CyclistPowerProviderBase implements CyclistPowerProvider {
     private static readonly TOLERANCE = 0.05; // ±5% speed tolerance
@@ -131,7 +130,10 @@ export abstract class CyclistPowerProviderBase implements CyclistPowerProvider {
             }
         }
         // Store debug value
-        path.setField(pointIndex, PointField.P_CYCLIST_OPTIMAL_POWER, optimalPower);
+        path.setPCyclistProvidedOptimalPower(pointIndex, optimalPower);
+
+        const powerNeeded = -PowerComputer.INSTANCE.getNewPower(course, path, pointIndex, false);
+        path.setPCyclistPowerNeeded(pointIndex, powerNeeded);
 
         return optimalPower;
         // return this.getRealOptimalPower(course, path, pointIndex, optimalPower);
@@ -144,7 +146,7 @@ export abstract class CyclistPowerProviderBase implements CyclistPowerProvider {
         optimalPower: number
     ): number {
         const powerNeeded = -PowerComputer.INSTANCE.getNewPower(course, path, pointIndex, false);
-        path.setField(pointIndex, PointField.P_CYCLIST_POWER_NEEDED, powerNeeded);
+        path.setPCyclistPowerNeeded(pointIndex, powerNeeded);
         const minOptimalPower = optimalPower * (1 - CyclistPowerProviderBase.TOLERANCE);
         const maxOptimalPower = optimalPower * (1 + CyclistPowerProviderBase.TOLERANCE);
         // Adjust power based on speed

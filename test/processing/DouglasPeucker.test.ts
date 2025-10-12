@@ -5,11 +5,11 @@ describe('DouglasPeucker', () => {
     test('should return path unchanged with < 2 points', () => {
         const path = new Path('test');
         path.addPoint({
-            lat: 45.0,
-            lon: 6.0,
-            ele: 1000,
+            latitude: 45.0,
+            longitude: 6.0,
+            elevation: 1000,
             time: Date.now(),
-            dist: 0,
+            distance: 0,
             speed: 0,
             grade: 0,
             bearing: 0,
@@ -27,11 +27,11 @@ describe('DouglasPeucker', () => {
         // Straight line: 5 points
         for (let i = 0; i < 5; i++) {
             path.addPoint({
-                lat: 45.0 + i * 0.001,
-                lon: 6.0,
-                ele: 1000,
+                latitude: 45.0 + i * 0.001,
+                longitude: 6.0,
+                elevation: 1000,
                 time: baseTime + i * 1000,
-                dist: i * 100,
+                distance: i * 100,
                 speed: 10,
                 grade: 0,
                 bearing: 0,
@@ -50,51 +50,51 @@ describe('DouglasPeucker', () => {
 
         // Path with peak in middle
         path.addPoint({
-            lat: 45.0,
-            lon: 6.0,
-            ele: 1000,
+            latitude: 45.0,
+            longitude: 6.0,
+            elevation: 1000,
             time: baseTime,
-            dist: 0,
+            distance: 0,
             speed: 10,
             grade: 0,
             bearing: 0,
         } as Point);
         path.addPoint({
-            lat: 45.001,
-            lon: 6.0,
-            ele: 1050,
+            latitude: 45.001,
+            longitude: 6.0,
+            elevation: 1050,
             time: baseTime + 1000,
-            dist: 100,
+            distance: 100,
             speed: 10,
             grade: 0.5,
             bearing: 0,
         } as Point);
         path.addPoint({
-            lat: 45.002,
-            lon: 6.0,
-            ele: 1100,
+            latitude: 45.002,
+            longitude: 6.0,
+            elevation: 1100,
             time: baseTime + 2000,
-            dist: 200,
+            distance: 200,
             speed: 10,
             grade: 0.5,
             bearing: 0,
         } as Point); // Peak
         path.addPoint({
-            lat: 45.003,
-            lon: 6.0,
-            ele: 1050,
+            latitude: 45.003,
+            longitude: 6.0,
+            elevation: 1050,
             time: baseTime + 3000,
-            dist: 300,
+            distance: 300,
             speed: 10,
             grade: -0.5,
             bearing: 0,
         } as Point);
         path.addPoint({
-            lat: 45.004,
-            lon: 6.0,
-            ele: 1000,
+            latitude: 45.004,
+            longitude: 6.0,
+            elevation: 1000,
             time: baseTime + 4000,
-            dist: 400,
+            distance: 400,
             speed: 10,
             grade: -0.5,
             bearing: 0,
@@ -112,11 +112,11 @@ describe('DouglasPeucker', () => {
 
         for (let i = 0; i < 3; i++) {
             path.addPoint({
-                lat: 45.0 + i * 0.001,
-                lon: 6.0,
-                ele: 1000 + i * 10,
+                latitude: 45.0 + i * 0.001,
+                longitude: 6.0,
+                elevation: 1000 + i * 10,
                 time: baseTime + i * 1000,
-                dist: i * 100,
+                distance: i * 100,
                 speed: 10,
                 grade: 0.1,
                 bearing: 0,

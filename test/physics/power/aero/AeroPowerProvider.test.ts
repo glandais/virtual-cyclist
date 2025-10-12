@@ -1,6 +1,6 @@
 import { aeroPowerProvider } from '@/physics/power/aero/';
 import { CoursePhysics } from '@/types/course/';
-import { Path, Point, PointField } from '@/types/path/';
+import { Path, Point } from '@/types/path/';
 
 describe('AeroPowerProvider', () => {
     let path: Path;
@@ -11,11 +11,11 @@ describe('AeroPowerProvider', () => {
 
     test('should calculate aero drag without wind (cubic relationship)', () => {
         path.addPoint({
-            lat: 45.0,
-            lon: 6.0,
-            ele: 1000,
+            latitude: 45.0,
+            longitude: 6.0,
+            elevation: 1000,
             time: Date.now(),
-            dist: 0,
+            distance: 0,
             speed: 10,
             grade: 0,
             bearing: 0,
@@ -40,11 +40,11 @@ describe('AeroPowerProvider', () => {
 
     test('should scale with cube of velocity', () => {
         path.addPoint({
-            lat: 45.0,
-            lon: 6.0,
-            ele: 1000,
+            latitude: 45.0,
+            longitude: 6.0,
+            elevation: 1000,
             time: Date.now(),
-            dist: 0,
+            distance: 0,
             speed: 5,
             grade: 0,
             bearing: 0,
@@ -57,7 +57,7 @@ describe('AeroPowerProvider', () => {
 
         const power5 = aeroPowerProvider.getPowerW(course, path, 0);
 
-        path.setField(0, PointField.SPEED, 10); // Update speed from 5 to 10 m/s
+        path.setSpeed(0, 10); // Update speed from 5 to 10 m/s
         const power10 = aeroPowerProvider.getPowerW(course, path, 0);
 
         // Double speed → 8x power (2³)
@@ -66,11 +66,11 @@ describe('AeroPowerProvider', () => {
 
     test('should handle wind using Isvan model', () => {
         path.addPoint({
-            lat: 45.0,
-            lon: 6.0,
-            ele: 1000,
+            latitude: 45.0,
+            longitude: 6.0,
+            elevation: 1000,
             time: Date.now(),
-            dist: 0,
+            distance: 0,
             speed: 10,
             grade: 0,
             bearing: 0, // Heading east (0 radians)
@@ -94,11 +94,11 @@ describe('AeroPowerProvider', () => {
 
     test('should handle tailwind (reduced resistance)', () => {
         path.addPoint({
-            lat: 45.0,
-            lon: 6.0,
-            ele: 1000,
+            latitude: 45.0,
+            longitude: 6.0,
+            elevation: 1000,
             time: Date.now(),
-            dist: 0,
+            distance: 0,
             speed: 10,
             grade: 0,
             bearing: 0,

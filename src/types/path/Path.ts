@@ -177,19 +177,19 @@ export class Path extends GeneratedPath {
 
         // First pass: compute distances, elevation stats, and geographic bounds
         for (let i = 0; i < this.pointCount; i++) {
-            const lat = this.getLatitude(i);
-            const lon = this.getLongitude(i);
-            const ele = this.getElevation(i);
+            const latitude = this.getLatitude(i);
+            const longitude = this.getLongitude(i);
+            const elevation = this.getElevation(i);
 
             // Update geographic bounds
-            this.minLat = Math.min(this.minLat, lat);
-            this.maxLat = Math.max(this.maxLat, lat);
-            this.minLon = Math.min(this.minLon, lon);
-            this.maxLon = Math.max(this.maxLon, lon);
+            this.minLat = Math.min(this.minLat, latitude);
+            this.maxLat = Math.max(this.maxLat, latitude);
+            this.minLon = Math.min(this.minLon, longitude);
+            this.maxLon = Math.max(this.maxLon, longitude);
 
             // Update elevation statistics
-            this.minElevation = Math.min(this.minElevation, ele);
-            this.maxElevation = Math.max(this.maxElevation, ele);
+            this.minElevation = Math.min(this.minElevation, elevation);
+            this.maxElevation = Math.max(this.maxElevation, elevation);
 
             // Calculate cumulative distance
             if (i > 0) {
@@ -197,11 +197,11 @@ export class Path extends GeneratedPath {
                 const prevLon = this.getLongitude(i - 1);
                 const prevEle = this.getElevation(i - 1);
 
-                const distance = this.distanceTo(prevLat, prevLon, lat, lon);
+                const distance = this.distanceTo(prevLat, prevLon, latitude, longitude);
                 this.totalDistance += distance;
 
                 // Calculate elevation gain/loss
-                const elevationDiff = ele - prevEle;
+                const elevationDiff = elevation - prevEle;
                 if (elevationDiff > 0) {
                     this.totalElevationGain += elevationDiff;
                 } else {
@@ -292,15 +292,15 @@ export class Path extends GeneratedPath {
 
     /**
      * Simple coordinate projection to Cartesian coordinates for bearing calculation.
-     * @param lat Latitude in radians
-     * @param lon Longitude in radians
+     * @param latitude Latitude in radians
+     * @param longitude Longitude in radians
      * @returns Projected x,y coordinates
      */
-    private project(lat: number, lon: number): { x: number; y: number } {
+    private project(latitude: number, longitude: number): { x: number; y: number } {
         // Simple cylindrical projection (adequate for bearing calculations)
         return {
-            x: lon * Math.cos(lat),
-            y: lat,
+            x: longitude * Math.cos(latitude),
+            y: latitude,
         };
     }
 }

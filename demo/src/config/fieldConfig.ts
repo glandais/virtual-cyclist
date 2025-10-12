@@ -4,7 +4,7 @@ import type { CategoryConfig } from '~/types';
 const dh = 360 / FIELDS_PER_POINT;
 let i = 0;
 
-function getColor(j) {
+function getColor(j: number) {
     const h = j * dh;
     return `hsl(${h} 50% 50%)`;
 }
@@ -15,7 +15,7 @@ export const fieldConfig: Record<string, CategoryConfig> = {
         axis: 'elevation',
         unit: 'm',
         fields: {
-            ele: { label: 'Elevation', unit: 'm', color: getColor(i++) },
+            elevation: { label: 'Elevation', unit: 'm', color: getColor(i++) },
         },
     },
     radius: {
@@ -49,7 +49,7 @@ export const fieldConfig: Record<string, CategoryConfig> = {
         axis: 'power',
         unit: 'W',
         fields: {
-            power: { label: 'Cyclist Power', unit: 'W', color: getColor(i++) },
+            pComputedPower: { label: 'Cyclist Power', unit: 'W', color: getColor(i++) },
             pAero: { label: 'Aerodynamic Power', unit: 'W', color: getColor(i++) },
             pGravity: { label: 'Gravity Power', unit: 'W', color: getColor(i++) },
             pRollingResistance: { label: 'Rolling Resistance', unit: 'W', color: getColor(i++) },
@@ -61,16 +61,28 @@ export const fieldConfig: Record<string, CategoryConfig> = {
         axis: 'power',
         unit: 'W',
         fields: {
-            pCyclistRaw: { label: 'Cyclist Power (Raw)', unit: 'W', color: getColor(i++) },
-            pCyclistWheel: { label: 'Cyclist Power (Wheel)', unit: 'W', color: getColor(i++) },
-            pCyclistOptimalPower: {
+            pCyclistProvidedMuscular: {
+                label: 'Cyclist Power (Raw)',
+                unit: 'W',
+                color: getColor(i++),
+            },
+            PCyclistProvidedWheel: {
+                label: 'Cyclist Power (Wheel)',
+                unit: 'W',
+                color: getColor(i++),
+            },
+            pCyclistProvidedOptimalPower: {
                 label: 'Cyclist Optimal Power',
                 unit: 'W',
                 color: getColor(i++),
             },
             pCyclistPowerNeeded: { label: 'Cyclist Power Needed', unit: 'W', color: getColor(i++) },
-            pPowerFromAcc: { label: 'Power from acceleration', unit: 'W', color: getColor(i++) },
-            pPowerWheelFromAcc: {
+            pComputedTotalPower: {
+                label: 'Power from acceleration',
+                unit: 'W',
+                color: getColor(i++),
+            },
+            pComputedWheelPower: {
                 label: 'Wheel power from acceleration',
                 unit: 'W',
                 color: getColor(i++),

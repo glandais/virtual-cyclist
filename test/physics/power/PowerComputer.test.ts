@@ -216,22 +216,22 @@ describe('PowerComputer', () => {
         test('should sum power from all providers with cyclist', () => {
             // Create simple test path with required data
             path.addPoint({
-                lat: 45.0,
-                lon: 6.0,
-                ele: 1000,
+                latitude: 45.0,
+                longitude: 6.0,
+                elevation: 1000,
                 time: Date.now(),
-                dist: 0,
+                distance: 0,
                 speed: 10,
                 grade: 0.05,
                 bearing: 0,
             } as Point);
 
             path.addPoint({
-                lat: 45.001,
-                lon: 6.0,
-                ele: 1005,
+                latitude: 45.001,
+                longitude: 6.0,
+                elevation: 1005,
                 time: Date.now() + 1000,
-                dist: 100,
+                distance: 100,
                 speed: 10,
                 grade: 0.05,
                 bearing: 0,
@@ -272,22 +272,22 @@ describe('PowerComputer', () => {
             const time2 = time1 + 1000; // 1 second later
 
             path.addPoint({
-                lat: 45.0,
-                lon: 6.0,
-                ele: 1000,
+                latitude: 45.0,
+                longitude: 6.0,
+                elevation: 1000,
                 time: time1,
-                dist: 0,
+                distance: 0,
                 speed: 10, // 10 m/s
                 grade: 0,
                 bearing: 0,
             } as Point);
 
             path.addPoint({
-                lat: 45.001,
-                lon: 6.0,
-                ele: 1000,
+                latitude: 45.001,
+                longitude: 6.0,
+                elevation: 1000,
                 time: time2,
-                dist: 10.5,
+                distance: 10.5,
                 speed: 11, // 11 m/s (acceleration)
                 grade: 0,
                 bearing: 0,
@@ -318,22 +318,22 @@ describe('PowerComputer', () => {
             const time2 = time1 + 1000;
 
             path.addPoint({
-                lat: 45.0,
-                lon: 6.0,
-                ele: 1000,
+                latitude: 45.0,
+                longitude: 6.0,
+                elevation: 1000,
                 time: time1,
-                dist: 0,
+                distance: 0,
                 speed: 15,
                 grade: 0,
                 bearing: 0,
             } as Point);
 
             path.addPoint({
-                lat: 45.001,
-                lon: 6.0,
-                ele: 1000,
+                latitude: 45.001,
+                longitude: 6.0,
+                elevation: 1000,
                 time: time2,
-                dist: 14,
+                distance: 14,
                 speed: 13, // Deceleration
                 grade: 0,
                 bearing: 0,

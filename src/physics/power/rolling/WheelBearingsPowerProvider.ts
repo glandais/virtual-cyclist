@@ -1,6 +1,6 @@
 import { PowerProvider } from '@/physics/power/';
 import { Course } from '@/types/course/';
-import { Path, PointField } from '@/types/path/';
+import { Path } from '@/types/path/';
 
 /**
  * Provides wheel bearings friction power calculations for virtual cycling.
@@ -52,7 +52,7 @@ class WheelBearingsPowerProvider implements PowerProvider {
         const powerWheelBearings = (-speed * (91 + 8.7 * speed)) / 1000.0;
 
         // Store debug value in the point
-        path.setField(pointIndex, PointField.P_WHEEL_BEARINGS, powerWheelBearings);
+        path.setPWheelBearings(pointIndex, powerWheelBearings);
 
         return powerWheelBearings;
     }

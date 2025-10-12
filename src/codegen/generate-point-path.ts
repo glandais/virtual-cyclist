@@ -14,10 +14,10 @@ const PROJECT_ROOT = resolve(__dirname, '..');
 
 /**
  * Convert field property name to PascalCase for method names.
- * Examples: lat -> Latitude, pCyclistRaw -> PCyclistRaw
+ * Examples: latitude -> Latitude, pCyclistProvidedMuscular -> pCyclistProvidedMuscular
  */
 function toPascalCase(prop: string): string {
-    // Handle special cases like pCyclistRaw -> PCyclistRaw
+    // Handle special cases like pCyclistProvidedMuscular -> pCyclistProvidedMuscular
     if (prop.startsWith('p') && prop.charAt(1) === prop.charAt(1).toUpperCase()) {
         return prop.charAt(0).toUpperCase() + prop.slice(1);
     }
@@ -208,7 +208,7 @@ function generatePathAccessors(lines: string[]) {
         lines.push('');
 
         for (const field of category.fields) {
-            const pascalName = field.methodName || toPascalCase(field.prop);
+            const pascalName = toPascalCase(field.prop);
 
             // Standard getter
             lines.push(`    get${pascalName}(pointIndex: number): number {`);
@@ -280,7 +280,7 @@ function generateAddPointMethod(lines: string[]) {
         lines.push(`        // ${category.name}`);
 
         for (const field of category.fields) {
-            const pascalName = field.methodName || toPascalCase(field.prop);
+            const pascalName = toPascalCase(field.prop);
             lines.push(`        this.set${pascalName}(pointIndex, data.${field.prop});`);
         }
         lines.push('');
@@ -306,7 +306,7 @@ function generateGetPointDataMethod(lines: string[]) {
         lines.push(`            // ${category.name}`);
 
         for (const field of category.fields) {
-            const pascalName = field.methodName || toPascalCase(field.prop);
+            const pascalName = toPascalCase(field.prop);
             lines.push(`            ${field.prop}: this.get${pascalName}(pointIndex),`);
         }
     }

@@ -11,15 +11,12 @@
 export interface FieldDefinition {
     /** Enum name (e.g., "LAT") */
     name: string;
-    /** Property name in camelCase (e.g., "lat") */
+    /** Property name in camelCase (e.g., "latitude") */
     prop: string;
     /** JSDoc comment describing the field */
     comment: string;
     /** Optional unit for documentation */
     unit?: string;
-
-    /** Custom method name suffix (e.g., "Latitude" for getLatitude/setLatitude) */
-    methodName?: string;
 
     /** Generate getDegrees variant (for angles stored in radians) */
     getDegrees?: boolean;
@@ -45,27 +42,24 @@ export const FIELD_DEFINITIONS: FieldCategory[] = [
         name: 'Spatial & Navigation',
         fields: [
             {
-                name: 'LAT',
-                prop: 'lat',
+                name: 'LATITUDE',
+                prop: 'latitude',
                 comment: 'Latitude (radians)',
                 unit: 'radians',
-                methodName: 'Latitude',
                 getDegrees: true,
             },
             {
-                name: 'LON',
-                prop: 'lon',
+                name: 'LONGITUDE',
+                prop: 'longitude',
                 comment: 'Longitude (radians)',
                 unit: 'radians',
-                methodName: 'Longitude',
                 getDegrees: true,
             },
             {
-                name: 'ELE',
-                prop: 'ele',
+                name: 'ELEVATION',
+                prop: 'elevation',
                 comment: 'Elevation (meters)',
                 unit: 'meters',
-                methodName: 'Elevation',
             },
             {
                 name: 'BEARING',
@@ -74,17 +68,22 @@ export const FIELD_DEFINITIONS: FieldCategory[] = [
                 unit: 'radians',
             },
             {
-                name: 'DIST',
-                prop: 'dist',
+                name: 'DISTANCE',
+                prop: 'distance',
                 comment: 'Distance (meters)',
                 unit: 'meters',
-                methodName: 'Distance',
             },
             {
                 name: 'RADIUS',
                 prop: 'radius',
                 comment: 'Turn radius (meters)',
                 unit: 'meters',
+            },
+            {
+                name: 'GRADE',
+                prop: 'grade',
+                comment: 'Road grade/slope (%)',
+                unit: '%',
             },
         ],
     },
@@ -111,34 +110,41 @@ export const FIELD_DEFINITIONS: FieldCategory[] = [
         name: 'Physics & Power',
         fields: [
             {
-                name: 'POWER',
-                prop: 'power',
-                comment: 'Total power (watts)',
+                name: 'P_INPUT_POWER',
+                prop: 'pInputPower',
+                comment: 'GPX input power',
                 unit: 'watts',
             },
+            // provided
             {
-                name: 'P_CYCLIST_RAW',
-                prop: 'pCyclistRaw',
-                comment: 'Raw cyclist power',
-                unit: 'watts',
-            },
-            {
-                name: 'P_CYCLIST_WHEEL',
-                prop: 'pCyclistWheel',
-                comment: 'Cyclist wheel power',
-                unit: 'watts',
-            },
-            {
-                name: 'P_CYCLIST_OPTIMAL_POWER',
-                prop: 'pCyclistOptimalPower',
+                name: 'P_CYCLIST_PROVIDED_OPTIMAL_POWER',
+                prop: 'pCyclistProvidedOptimalPower',
                 comment: 'Optimal power',
                 unit: 'watts',
             },
             {
-                name: 'P_CYCLIST_POWER_NEEDED',
+                name: 'P_CYCLIST_PROVIDED_POWER_NEEDED',
                 prop: 'pCyclistPowerNeeded',
                 comment: 'Power needed',
                 unit: 'watts',
+            },
+            {
+                name: 'P_CYCLIST_PROVIDED_MUSCULAR',
+                prop: 'pCyclistProvidedMuscular',
+                comment: 'Raw cyclist power',
+                unit: 'watts',
+            },
+            {
+                name: 'P_CYCLIST_PROVIDED_WHEEL',
+                prop: 'PCyclistProvidedWheel',
+                comment: 'Cyclist power transmitted to ground',
+                unit: 'watts',
+            },
+            // algo
+            {
+                name: 'AERO_COEF',
+                prop: 'aeroCoef',
+                comment: 'Aerodynamic coefficient',
             },
             {
                 name: 'P_AERO',
@@ -164,28 +170,24 @@ export const FIELD_DEFINITIONS: FieldCategory[] = [
                 comment: 'Wheel bearings power',
                 unit: 'watts',
             },
+            // computed
             {
-                name: 'P_POWER_FROM_ACC',
-                prop: 'pPowerFromAcc',
+                name: 'P_COMPUTED_TOTAL_POWER',
+                prop: 'pComputedTotalPower',
                 comment: 'Power from acceleration',
                 unit: 'watts',
             },
             {
-                name: 'P_POWER_WHEEL_FROM_ACC',
-                prop: 'pPowerWheelFromAcc',
+                name: 'P_COMPUTED_WHEEL_POWER',
+                prop: 'pComputedWheelPower',
                 comment: 'Wheel power from acceleration',
                 unit: 'watts',
             },
             {
-                name: 'AERO_COEF',
-                prop: 'aeroCoef',
-                comment: 'Aerodynamic coefficient',
-            },
-            {
-                name: 'GRADE',
-                prop: 'grade',
-                comment: 'Road grade/slope (%)',
-                unit: '%',
+                name: 'POWER',
+                prop: 'pComputedPower',
+                comment: 'Total power (watts)',
+                unit: 'watts',
             },
         ],
     },

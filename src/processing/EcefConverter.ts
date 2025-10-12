@@ -4,7 +4,7 @@ import { Vector3D } from '@/utils/';
 
 /**
  * ECEF (Earth-Centered, Earth-Fixed) coordinate converter
- * Converts WGS84 coordinates (lat/lon/elevation) to ECEF Cartesian coordinates
+ * Converts WGS84 coordinates (latitude/longitude/elevation) to ECEF Cartesian coordinates
  */
 export class EcefConverter {
     /**
@@ -15,12 +15,12 @@ export class EcefConverter {
      */
     public static toEcef(coordinates: Point, zExaggeration: number = 3): Vector3D {
         // Convert degrees to radians
-        const latRad = coordinates.lat;
-        const lonRad = coordinates.lon;
+        const latRad = coordinates.latitude;
+        const lonRad = coordinates.longitude;
 
         // Apply elevation exaggeration
-        const ele = isNaN(coordinates.ele) ? 0 : coordinates.ele;
-        const elevationExaggerated = zExaggeration * ele;
+        const elevation = isNaN(coordinates.elevation) ? 0 : coordinates.elevation;
+        const elevationExaggerated = zExaggeration * elevation;
 
         // Calculate prime vertical radius of curvature
         const sinLat = Math.sin(latRad);

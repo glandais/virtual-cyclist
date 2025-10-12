@@ -69,7 +69,7 @@ export class ExtensionParser {
     private parsePower(parent: Element, trackPoint: PointWritable): void {
         const value = this.findExtensionValue('power', parent);
         if (value !== null) {
-            trackPoint.power = Math.round(value);
+            trackPoint.pInputPower = Math.round(value);
         }
     }
 

@@ -8,9 +8,9 @@ describe('Elevation', () => {
             const inputPath = new Path('test');
             inputPath.addPoint({
                 ...EMPTY_POINT,
-                lat: toRadians(46.5197),
-                lon: toRadians(6.6323),
-                ele: 300,
+                latitude: toRadians(46.5197),
+                longitude: toRadians(6.6323),
+                elevation: 300,
                 time: Date.now(),
             });
 
@@ -19,9 +19,9 @@ describe('Elevation', () => {
             expect(result.getPointCount()).toBe(1);
 
             const resultPoint = result.getPointData(0);
-            expect(resultPoint.lat).toBeCloseTo(toRadians(46.5197), 6);
-            expect(resultPoint.lon).toBeCloseTo(toRadians(6.6323), 6);
-            expect(resultPoint.ele).toBe(100); // Mock elevation
+            expect(resultPoint.latitude).toBeCloseTo(toRadians(46.5197), 6);
+            expect(resultPoint.longitude).toBeCloseTo(toRadians(6.6323), 6);
+            expect(resultPoint.elevation).toBe(100); // Mock elevation
         });
 
         test('should process path with multiple points', async () => {
@@ -29,17 +29,17 @@ describe('Elevation', () => {
 
             // Add multiple points along a route
             const points = [
-                { lat: 46.5197, lon: 6.6323, ele: 300 },
-                { lat: 46.52, lon: 6.633, ele: 310 },
-                { lat: 46.5203, lon: 6.6337, ele: 320 },
+                { latitude: 46.5197, longitude: 6.6323, elevation: 300 },
+                { latitude: 46.52, longitude: 6.633, elevation: 310 },
+                { latitude: 46.5203, longitude: 6.6337, elevation: 320 },
             ];
 
             points.forEach(point => {
                 inputPath.addPoint({
                     ...EMPTY_POINT,
-                    lat: toRadians(point.lat),
-                    lon: toRadians(point.lon),
-                    ele: point.ele,
+                    latitude: toRadians(point.latitude),
+                    longitude: toRadians(point.longitude),
+                    elevation: point.elevation,
                     time: Date.now(),
                 });
             });
@@ -51,7 +51,7 @@ describe('Elevation', () => {
             // Check that elevations follow the mock pattern (100 + index * 10)
             for (let i = 0; i < 3; i++) {
                 const resultPoint = result.getPointData(i);
-                expect(resultPoint.ele).toBe(100 + i * 10);
+                expect(resultPoint.elevation).toBe(100 + i * 10);
             }
         });
 
@@ -70,18 +70,18 @@ describe('Elevation', () => {
 
             inputPath.addPoint({
                 ...EMPTY_POINT,
-                lat: originalLat,
-                lon: originalLon,
-                ele: 500,
+                latitude: originalLat,
+                longitude: originalLon,
+                elevation: 500,
                 time: Date.now(),
             });
 
             const result = await Elevation.fixElevation(inputPath);
 
             const resultPoint = result.getPointData(0);
-            expect(resultPoint.lat).toBeCloseTo(originalLat, 6);
-            expect(resultPoint.lon).toBeCloseTo(originalLon, 6);
-            expect(resultPoint.ele).toBe(100); // Mock elevation replaces original
+            expect(resultPoint.latitude).toBeCloseTo(originalLat, 6);
+            expect(resultPoint.longitude).toBeCloseTo(originalLon, 6);
+            expect(resultPoint.elevation).toBe(100); // Mock elevation replaces original
         });
 
         test('should handle path with varying coordinates', async () => {
@@ -89,19 +89,19 @@ describe('Elevation', () => {
 
             // Add points with different coordinates and elevations
             const testPoints = [
-                { lat: 45.0, lon: 0.0, ele: 0 },
-                { lat: 46.0, lon: 1.0, ele: 100 },
-                { lat: 47.0, lon: 2.0, ele: 200 },
-                { lat: 48.0, lon: 3.0, ele: 300 },
-                { lat: 49.0, lon: 4.0, ele: 400 },
+                { latitude: 45.0, longitude: 0.0, elevation: 0 },
+                { latitude: 46.0, longitude: 1.0, elevation: 100 },
+                { latitude: 47.0, longitude: 2.0, elevation: 200 },
+                { latitude: 48.0, longitude: 3.0, elevation: 300 },
+                { latitude: 49.0, longitude: 4.0, elevation: 400 },
             ];
 
             testPoints.forEach(point => {
                 inputPath.addPoint({
                     ...EMPTY_POINT,
-                    lat: toRadians(point.lat),
-                    lon: toRadians(point.lon),
-                    ele: point.ele,
+                    latitude: toRadians(point.latitude),
+                    longitude: toRadians(point.longitude),
+                    elevation: point.elevation,
                     time: Date.now(),
                 });
             });
@@ -115,9 +115,9 @@ describe('Elevation', () => {
                 const resultPoint = result.getPointData(i);
                 const originalPoint = testPoints[i];
 
-                expect(resultPoint.lat).toBeCloseTo(toRadians(originalPoint.lat), 6);
-                expect(resultPoint.lon).toBeCloseTo(toRadians(originalPoint.lon), 6);
-                expect(resultPoint.ele).toBe(100 + i * 10); // Mock elevation pattern
+                expect(resultPoint.latitude).toBeCloseTo(toRadians(originalPoint.latitude), 6);
+                expect(resultPoint.longitude).toBeCloseTo(toRadians(originalPoint.longitude), 6);
+                expect(resultPoint.elevation).toBe(100 + i * 10); // Mock elevation pattern
             }
         });
 
@@ -125,9 +125,9 @@ describe('Elevation', () => {
             const inputPath = new Path('test');
             inputPath.addPoint({
                 ...EMPTY_POINT,
-                lat: toRadians(46.5197),
-                lon: toRadians(6.6323),
-                ele: 300,
+                latitude: toRadians(46.5197),
+                longitude: toRadians(6.6323),
+                elevation: 300,
                 time: Date.now(),
             });
 
@@ -139,11 +139,11 @@ describe('Elevation', () => {
 
             // Original path should remain unchanged
             expect(inputPath.getPointCount()).toBe(1);
-            expect(inputPath.getPointData(0).ele).toBe(300);
+            expect(inputPath.getPointData(0).elevation).toBe(300);
 
             // Result path should have corrected elevation
             expect(result.getPointCount()).toBe(1);
-            expect(result.getPointData(0).ele).toBe(100);
+            expect(result.getPointData(0).elevation).toBe(100);
         });
 
         test('should handle large path with many points', async () => {
@@ -153,11 +153,11 @@ describe('Elevation', () => {
             for (let i = 0; i < 100; i++) {
                 inputPath.addPoint({
                     ...EMPTY_POINT,
-                    lat: toRadians(46.0 + i * 0.001),
-                    lon: toRadians(6.0 + i * 0.001),
-                    ele: 1000 + i,
+                    latitude: toRadians(46.0 + i * 0.001),
+                    longitude: toRadians(6.0 + i * 0.001),
+                    elevation: 1000 + i,
                     time: Date.now() + i * 1000,
-                    dist: i * 10,
+                    distance: i * 10,
                     elapsed: i,
                 });
             }
@@ -169,7 +169,7 @@ describe('Elevation', () => {
             // Check that all points were processed
             for (let i = 0; i < 100; i++) {
                 const resultPoint = result.getPointData(i);
-                expect(resultPoint.ele).toBe(100 + i * 10); // Mock elevation pattern
+                expect(resultPoint.elevation).toBe(100 + i * 10); // Mock elevation pattern
             }
         });
 
@@ -178,17 +178,17 @@ describe('Elevation', () => {
 
             // Add points with extreme but valid coordinate values
             const extremePoints = [
-                { lat: -89.0, lon: -179.0, ele: 0 },
-                { lat: 89.0, lon: 179.0, ele: 8848 }, // Mount Everest height
-                { lat: 0.0, lon: 0.0, ele: -400 }, // Below sea level
+                { latitude: -89.0, longitude: -179.0, elevation: 0 },
+                { latitude: 89.0, longitude: 179.0, elevation: 8848 }, // Mount Everest height
+                { latitude: 0.0, longitude: 0.0, elevation: -400 }, // Below sea level
             ];
 
             extremePoints.forEach(point => {
                 inputPath.addPoint({
                     ...EMPTY_POINT,
-                    lat: toRadians(point.lat),
-                    lon: toRadians(point.lon),
-                    ele: point.ele,
+                    latitude: toRadians(point.latitude),
+                    longitude: toRadians(point.longitude),
+                    elevation: point.elevation,
                     time: Date.now(),
                 });
             });
@@ -202,9 +202,9 @@ describe('Elevation', () => {
                 const resultPoint = result.getPointData(i);
                 const originalPoint = extremePoints[i];
 
-                expect(resultPoint.lat).toBeCloseTo(toRadians(originalPoint.lat), 6);
-                expect(resultPoint.lon).toBeCloseTo(toRadians(originalPoint.lon), 6);
-                expect(resultPoint.ele).toBe(100 + i * 10); // Mock elevation pattern
+                expect(resultPoint.latitude).toBeCloseTo(toRadians(originalPoint.latitude), 6);
+                expect(resultPoint.longitude).toBeCloseTo(toRadians(originalPoint.longitude), 6);
+                expect(resultPoint.elevation).toBe(100 + i * 10); // Mock elevation pattern
             }
         });
     });

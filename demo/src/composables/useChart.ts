@@ -1,5 +1,5 @@
 import type { Path, PointFieldName } from '@lib/types';
-import { fieldToPointField, PointField } from '@lib/types';
+import { fieldToPointField } from '@lib/types';
 import {
     CategoryScale,
     Chart,
@@ -100,8 +100,8 @@ export function useChart(
         // Create distance labels
         const labels: number[] = [];
         for (let i = 0; i < pointCount; i++) {
-            const dist = path.getField(i, PointField.DIST);
-            labels.push(dist / 1000); // Convert to km
+            const distance = path.getDistance(i);
+            labels.push(distance / 1000); // Convert to km
         }
 
         // Build datasets for selected fields

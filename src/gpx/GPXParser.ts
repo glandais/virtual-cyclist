@@ -108,26 +108,26 @@ export class GPXParser {
         const lonStr = trackPointElement.getAttribute('lon');
 
         if (!latStr || !lonStr) {
-            throw new Error('Invalid track point: missing lat or lon attribute');
+            throw new Error('Invalid track point: missing latitude or longitude attribute');
         }
 
         const latDegrees = parseFloat(latStr);
         const lonDegrees = parseFloat(lonStr);
 
         if (isNaN(latDegrees) || isNaN(lonDegrees)) {
-            throw new Error('Invalid track point: lat or lon is not a valid number');
+            throw new Error('Invalid track point: latitude or longitude is not a valid number');
         }
 
         // Convert degrees to radians for internal storage
-        trackPoint.lat = toRadians(latDegrees);
-        trackPoint.lon = toRadians(lonDegrees);
+        trackPoint.latitude = toRadians(latDegrees);
+        trackPoint.longitude = toRadians(lonDegrees);
 
         // Parse elevation
         const eleElement = trackPointElement.querySelector('ele');
         if (eleElement?.textContent) {
-            const ele = parseFloat(eleElement.textContent.trim());
-            if (!isNaN(ele)) {
-                trackPoint.ele = ele;
+            const elevation = parseFloat(eleElement.textContent.trim());
+            if (!isNaN(elevation)) {
+                trackPoint.elevation = elevation;
             }
         }
 
