@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { PointFieldName } from '@lib/types';
 import { EnhanceOptions } from '@lib/types';
 import { BikeProperties, CyclistProperties } from '@lib/types/models';
 import { ref } from 'vue';
@@ -17,7 +16,7 @@ const cyclist = defineModel<CyclistProperties>('cyclist', { required: true });
 const wind = defineModel<WindDemo>('wind', { required: true });
 const enhanceOptions = defineModel<EnhanceOptions>('enhanceOptions', { required: true });
 const powerParams = defineModel<PowerParams>('powerParams', { required: true });
-const selectedFields = defineModel<Set<PointFieldName>>('selectedFields', { required: true });
+const selectedFields = defineModel<Set<string>>('selectedFields', { required: true });
 
 defineProps<{
     isOpen: boolean;

@@ -76,6 +76,7 @@ export class VirtualizeService {
             time: currentTime,
             elapsed: 0,
             speed: currentSpeed,
+            virtSpeedCurrent: currentSpeed,
         });
 
         // Main simulation loop
@@ -134,6 +135,7 @@ export class VirtualizeService {
                 time: currentTime,
                 elapsed: currentTime - startTime,
                 speed: currentSpeed,
+                virtSpeedCurrent: currentSpeed,
             });
 
             // Safety check to avoid infinite loop
@@ -145,15 +147,7 @@ export class VirtualizeService {
 
         // Post-process: back-calculate cyclist power from speed changes
         for (let i = 0; i < newPath.length - 1; i++) {
-            const cyclistPower = this.powerComputer.computeCyclistPower(
-                course,
-                newPath,
-                equivalentMass,
-                i,
-                i + 1
-            );
-            // Set power on current point
-            newPath.setPComputedPower(i, cyclistPower);
+            this.powerComputer.computeCyclistPower(course, newPath, equivalentMass, i, i + 1);
         }
         newPath.computeDerivedData();
         return newPath;

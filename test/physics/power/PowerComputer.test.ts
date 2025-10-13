@@ -304,7 +304,8 @@ describe('PowerComputer', () => {
             } as Partial<CoursePhysics> as CoursePhysics;
 
             const equivalentMass = 80.244;
-            const cyclistPower = computer.computeCyclistPower(course, path, equivalentMass, 0, 1);
+            computer.computeCyclistPower(course, path, equivalentMass, 0, 1);
+            const cyclistPower = path.getPComputedPower(0);
 
             // Acceleration from 10 to 11 m/s requires kinetic energy increase
             // ΔKE = 0.5 * 80.244 * (11² - 10²) = 0.5 * 80.244 * 21 ≈ 843W
@@ -350,7 +351,8 @@ describe('PowerComputer', () => {
             } as Partial<CoursePhysics> as CoursePhysics;
 
             const equivalentMass = 80.244;
-            const cyclistPower = computer.computeCyclistPower(course, path, equivalentMass, 0, 1);
+            computer.computeCyclistPower(course, path, equivalentMass, 0, 1);
+            const cyclistPower = path.getPComputedPower(0);
 
             // Deceleration means negative total power, but cyclist power is clamped to 0
             expect(cyclistPower).toBeGreaterThanOrEqual(0);

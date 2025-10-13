@@ -57,14 +57,14 @@ export class PointPerSecond {
             // First point - add copy at start of second if not on epoch boundary
             if (i === 0) {
                 if (msInSec1 !== 0) {
-                    this.addPointToMap(newPointsMap, epochSec1, { type: 'copy', index: i });
+                    newPointsMap.set(epochSec1, { type: 'copy', index: i });
                 }
             }
 
             // Last point - add copy at end of second if not on epoch boundary
             if (i === originalCount - 1) {
                 if (msInSec1 !== 0) {
-                    this.addPointToMap(newPointsMap, epochSec1 + 1, { type: 'copy', index: i });
+                    newPointsMap.set(epochSec1 + 1, { type: 'copy', index: i });
                 }
             } else {
                 const time2 = path.getTime(i + 1);
@@ -86,7 +86,7 @@ export class PointPerSecond {
                         // Interpolation coefficient (0.0 to 1.0)
                         const coef = timeToEpoch / duration12;
 
-                        this.addPointToMap(newPointsMap, epoch, {
+                        newPointsMap.set(epoch, {
                             type: 'interpolate',
                             index1: i,
                             index2: i + 1,
@@ -108,17 +108,6 @@ export class PointPerSecond {
      */
     static computeOnePointPerSecondForPaths(paths: Paths): void {
         paths.tracks = paths.tracks.map(track => this.computeOnePointPerSecond(track));
-    }
-
-    /**
-     * Adds a point specification to the map.
-     */
-    private static addPointToMap(
-        map: Map<number, InterpolationData>,
-        epochSecond: number,
-        data: InterpolationData
-    ): void {
-        map.set(epochSecond, data);
     }
 
     /**

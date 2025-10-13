@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { DEFAULT_CYCLIST_POWER_W } from '@/constants';
-import { EnhanceOptions, PointFieldName } from '@/types';
+import { EnhanceOptions } from '@/types';
 import {
     BikeProperties,
     CyclistProperties,
@@ -17,9 +17,7 @@ import { useGPXDemo } from '~/composables/useGPXDemo';
 import { useHoverSync } from '~/composables/useHoverSync';
 import { PowerParams, PowerSourceType, WindDemo } from './types';
 
-const selectedFields = ref(
-    new Set<PointFieldName>([PointFieldName.elevation, PointFieldName.speed])
-);
+const selectedFields = ref(new Set<string>(['elevation', 'speed']));
 const isConfigOpen = ref(false);
 const bike: Ref<BikeProperties> = ref(getDefaultBikeProperties());
 const cyclist: Ref<CyclistProperties> = ref(getDefaultCyclistProperties());

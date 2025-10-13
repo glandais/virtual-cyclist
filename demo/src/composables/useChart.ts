@@ -1,4 +1,4 @@
-import type { Path, PointFieldName } from '@lib/types';
+import type { Path } from '@lib/types';
 import { fieldToPointField } from '@lib/types';
 import {
     CategoryScale,
@@ -36,7 +36,7 @@ Chart.register(
 export function useChart(
     canvasRef: Ref<HTMLCanvasElement | null>,
     currentPath: Ref<Path | null>,
-    selectedFields: Ref<Set<PointFieldName>>,
+    selectedFields: Ref<Set<string>>,
     hoveredInfo: Ref<HoverInfo | null>,
     onHoverChange: (index: number | null) => void
 ) {
@@ -218,7 +218,7 @@ export function useChart(
             }
 
             datasets.push({
-                label: fieldDef.label,
+                label: fieldDef.shortDescription,
                 data,
                 borderColor: fieldDef.color,
                 //backgroundColor: category.color + '33',

@@ -118,6 +118,7 @@ export abstract class CyclistPowerProviderBase implements CyclistPowerProvider {
      */
     getPowerW(course: CoursePhysics, path: Path, pointIndex: number): number {
         let optimalPower = this.getOptimalPower(course, path, pointIndex);
+        path.setPCyclistProvidedOptimalPower(pointIndex, optimalPower);
 
         // Apply harmonic variations if enabled
         if (this.useHarmonics) {
@@ -130,7 +131,7 @@ export abstract class CyclistPowerProviderBase implements CyclistPowerProvider {
             }
         }
         // Store debug value
-        path.setPCyclistProvidedOptimalPower(pointIndex, optimalPower);
+        path.setPCyclistProvidedOptimalPowerWithHarmonics(pointIndex, optimalPower);
 
         const powerNeeded = -PowerComputer.INSTANCE.getNewPower(course, path, pointIndex, false);
         path.setPCyclistPowerNeeded(pointIndex, powerNeeded);

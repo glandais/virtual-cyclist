@@ -1,8 +1,6 @@
-import type { Path, PointFieldName } from '@lib/types';
+import type { FieldDefinition, Path } from '@lib/types';
 
-export interface FieldDefinition {
-    label: string;
-    unit: string;
+export interface DemoFieldDefinition extends FieldDefinition {
     color: string;
 }
 
@@ -10,13 +8,13 @@ export interface CategoryConfig {
     name: string;
     axis: string;
     unit: string;
-    fields: { [K in PointFieldName]?: FieldDefinition };
+    fields: Record<string, DemoFieldDefinition>;
 }
 
 export interface AppState {
     currentPath: Path | null;
     isProcessing: boolean;
-    selectedFields: Set<PointFieldName>;
+    selectedFields: Set<string>;
 }
 
 export interface WindDemo {

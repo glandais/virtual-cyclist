@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { Path, PointFieldName } from '@lib/types';
+import type { Path } from '@lib/types';
 import { computed, onMounted, ref, toRef } from 'vue';
 import { useChart } from '~/composables/useChart';
 import type { HoverInfo } from '~/composables/useHoverSync';
 
 const props = defineProps<{
     currentPath: Path | null;
-    selectedFields: Set<PointFieldName>;
+    selectedFields: Set<string>;
     isProcessing: boolean;
     hoveredInfo: HoverInfo | null;
 }>();

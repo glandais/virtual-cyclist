@@ -174,7 +174,6 @@ export class PowerComputer {
      * @param equivalentMass Equivalent mass including rotational inertia (kg)
      * @param pointIndex1 Index of first point
      * @param pointIndex2 Index of second point
-     * @returns Estimated cyclist muscular power in watts
      */
     computeCyclistPower(
         course: CoursePhysics,
@@ -182,7 +181,7 @@ export class PowerComputer {
         equivalentMass: number,
         pointIndex1: number,
         pointIndex2: number
-    ): number {
+    ): void {
         // Calculate resistance powers (without cyclist)
         const power = this.getNewPower(course, path, pointIndex1, false);
 
@@ -204,7 +203,8 @@ export class PowerComputer {
         // Convert wheel power to muscular power (before drivetrain losses)
         cyclistPower = cyclistPower / course.bike.efficiency;
 
-        return cyclistPower;
+        // Set power on current point
+        path.setPComputedPower(pointIndex1, cyclistPower);
     }
 
     /**
