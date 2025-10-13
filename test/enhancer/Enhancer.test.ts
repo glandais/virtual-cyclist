@@ -6,9 +6,9 @@ describe('Enhancer', () => {
 <gpx version="1.1">
   <trk>
     <trkseg>
-      <trkpt latitude="45.0" longitude="6.0"><elevation>1000</elevation><time>2024-01-01T00:00:00Z</time></trkpt>
-      <trkpt latitude="45.001" longitude="6.0"><elevation>1005</elevation><time>2024-01-01T00:00:10Z</time></trkpt>
-      <trkpt latitude="45.002" longitude="6.0"><elevation>1010</elevation><time>2024-01-01T00:00:20Z</time></trkpt>
+      <trkpt lat="45.0" lon="6.0"><ele>1000</ele><time>2024-01-01T00:00:00Z</time></trkpt>
+      <trkpt lat="45.001" lon="6.0"><ele>1005</ele><time>2024-01-01T00:00:10Z</time></trkpt>
+      <trkpt lat="45.002" lon="6.0"><ele>1010</ele><time>2024-01-01T00:00:20Z</time></trkpt>
     </trkseg>
   </trk>
 </gpx>`;
