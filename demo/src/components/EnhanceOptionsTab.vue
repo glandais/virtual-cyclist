@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { EnhanceOptions } from '@lib/types';
+import Checkbox from 'primevue/checkbox';
 import SliderInput from './SliderInput.vue';
 
 const props = defineProps<{
@@ -29,93 +30,125 @@ const updateSimplifyField = <K extends keyof NonNullable<EnhanceOptions['simplif
 </script>
 
 <template>
-    <div class="enhance-options-tab">
-        <h3>🔧 Enhancement Pipeline Options</h3>
+    <div class="p-4">
+        <h3 class="text-xl font-semibold text-gray-800 mb-3">🔧 Enhancement Pipeline Options</h3>
 
-        <p class="description">
+        <p class="text-gray-600 text-sm mb-6">
             Configure which processing steps are applied to the GPX track during enhancement.
         </p>
 
-        <div class="options-group">
-            <h4>Processing Steps</h4>
+        <div class="mb-8">
+            <h4 class="text-lg font-semibold text-gray-700 mb-4">Processing Steps</h4>
 
-            <label class="checkbox-option">
-                <input
-                    type="checkbox"
-                    :checked="modelValue.fixElevation ?? true"
-                    @change="updateField('fixElevation', !modelValue.fixElevation)"
-                />
-                <span class="option-content">
-                    <strong>Fix Elevation Data</strong>
-                    <small>Correct elevation using external elevation service</small>
-                </span>
-            </label>
+            <div class="flex flex-col gap-3">
+                <label
+                    class="flex items-start gap-3 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 hover:border-blue-500 transition-all"
+                >
+                    <Checkbox
+                        :binary="true"
+                        :modelValue="modelValue.fixElevation ?? true"
+                        @update:modelValue="updateField('fixElevation', !modelValue.fixElevation)"
+                        class="mt-1"
+                    />
+                    <span class="flex flex-col gap-1">
+                        <strong class="text-gray-800">Fix Elevation Data</strong>
+                        <small class="text-gray-600 text-sm"
+                            >Correct elevation using external elevation service</small
+                        >
+                    </span>
+                </label>
 
-            <label class="checkbox-option">
-                <input
-                    type="checkbox"
-                    :checked="modelValue.computeMaxSpeeds ?? true"
-                    @change="updateField('computeMaxSpeeds', !modelValue.computeMaxSpeeds)"
-                />
-                <span class="option-content">
-                    <strong>Compute Maximum Safe Speeds</strong>
-                    <small
-                        >Calculate cornering and braking limits (auto-enabled if virtualization is
-                        on)</small
-                    >
-                </span>
-            </label>
+                <label
+                    class="flex items-start gap-3 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 hover:border-blue-500 transition-all"
+                >
+                    <Checkbox
+                        :binary="true"
+                        :modelValue="modelValue.computeMaxSpeeds ?? true"
+                        @update:modelValue="
+                            updateField('computeMaxSpeeds', !modelValue.computeMaxSpeeds)
+                        "
+                        class="mt-1"
+                    />
+                    <span class="flex flex-col gap-1">
+                        <strong class="text-gray-800">Compute Maximum Safe Speeds</strong>
+                        <small class="text-gray-600 text-sm"
+                            >Calculate cornering and braking limits (auto-enabled if virtualization
+                            is on)</small
+                        >
+                    </span>
+                </label>
 
-            <label class="checkbox-option">
-                <input
-                    type="checkbox"
-                    :checked="modelValue.virtualizeTrack ?? true"
-                    @change="updateField('virtualizeTrack', !modelValue.virtualizeTrack)"
-                />
-                <span class="option-content">
-                    <strong>Virtualize Track</strong>
-                    <small
-                        >Simulate realistic cycling speeds using physics-based calculations</small
-                    >
-                </span>
-            </label>
+                <label
+                    class="flex items-start gap-3 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 hover:border-blue-500 transition-all"
+                >
+                    <Checkbox
+                        :binary="true"
+                        :modelValue="modelValue.virtualizeTrack ?? true"
+                        @update:modelValue="
+                            updateField('virtualizeTrack', !modelValue.virtualizeTrack)
+                        "
+                        class="mt-1"
+                    />
+                    <span class="flex flex-col gap-1">
+                        <strong class="text-gray-800">Virtualize Track</strong>
+                        <small class="text-gray-600 text-sm"
+                            >Simulate realistic cycling speeds using physics-based
+                            calculations</small
+                        >
+                    </span>
+                </label>
 
-            <label class="checkbox-option">
-                <input
-                    type="checkbox"
-                    :checked="modelValue.computeOnePointPerSecond ?? true"
-                    @change="
-                        updateField(
-                            'computeOnePointPerSecond',
-                            !modelValue.computeOnePointPerSecond
-                        )
-                    "
-                />
-                <span class="option-content">
-                    <strong>Resample to 1Hz</strong>
-                    <small>Standardize track to one point per second for consistent analysis</small>
-                </span>
-            </label>
+                <label
+                    class="flex items-start gap-3 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 hover:border-blue-500 transition-all"
+                >
+                    <Checkbox
+                        :binary="true"
+                        :modelValue="modelValue.computeOnePointPerSecond ?? true"
+                        @update:modelValue="
+                            updateField(
+                                'computeOnePointPerSecond',
+                                !modelValue.computeOnePointPerSecond
+                            )
+                        "
+                        class="mt-1"
+                    />
+                    <span class="flex flex-col gap-1">
+                        <strong class="text-gray-800">Resample to 1Hz</strong>
+                        <small class="text-gray-600 text-sm"
+                            >Standardize track to one point per second for consistent
+                            analysis</small
+                        >
+                    </span>
+                </label>
+            </div>
         </div>
 
-        <div class="simplify-section">
-            <h4>Path Simplification</h4>
+        <div class="pt-6 border-t-2 border-gray-200">
+            <h4 class="text-lg font-semibold text-gray-700 mb-4">Path Simplification</h4>
 
-            <label class="checkbox-option">
-                <input
-                    type="checkbox"
-                    :checked="modelValue.simplifyPath?.enable ?? true"
-                    @change="
+            <label
+                class="flex items-start gap-3 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 hover:border-blue-500 transition-all mb-6"
+            >
+                <Checkbox
+                    :binary="true"
+                    :modelValue="modelValue.simplifyPath?.enable ?? true"
+                    @update:modelValue="
                         updateSimplifyField('enable', !(modelValue.simplifyPath?.enable ?? true))
                     "
+                    class="mt-1"
                 />
-                <span class="option-content">
-                    <strong>Enable Path Simplification</strong>
-                    <small>Reduce point count using Douglas-Peucker algorithm</small>
+                <span class="flex flex-col gap-1">
+                    <strong class="text-gray-800">Enable Path Simplification</strong>
+                    <small class="text-gray-600 text-sm"
+                        >Reduce point count using Douglas-Peucker algorithm</small
+                    >
                 </span>
             </label>
 
-            <div v-if="modelValue.simplifyPath?.enable ?? true" class="simplify-parameters">
+            <div
+                v-if="modelValue.simplifyPath?.enable ?? true"
+                class="p-6 bg-gray-50 rounded-lg border-l-4 border-blue-500"
+            >
                 <SliderInput
                     :model-value="modelValue.simplifyPath?.tolerance ?? 10"
                     @update:model-value="updateSimplifyField('tolerance', $event)"
@@ -137,8 +170,8 @@ const updateSimplifyField = <K extends keyof NonNullable<EnhanceOptions['simplif
                     tooltip="Factor for elevation weighting in 3D distance calculation"
                 />
 
-                <div class="simplify-info">
-                    <p class="info-text">
+                <div class="mt-6 p-4 bg-green-50 rounded-md">
+                    <p class="text-gray-800 text-sm m-0">
                         Current settings will simplify the path using a tolerance of
                         <strong>{{ modelValue.simplifyPath?.tolerance ?? 10 }}m</strong> with
                         elevation weighted
@@ -149,99 +182,3 @@ const updateSimplifyField = <K extends keyof NonNullable<EnhanceOptions['simplif
         </div>
     </div>
 </template>
-
-<style scoped>
-.enhance-options-tab {
-    padding: 1rem;
-}
-
-h3 {
-    margin: 0 0 1rem 0;
-    color: #333;
-    font-size: 1.3rem;
-}
-
-h4 {
-    margin: 1.5rem 0 1rem 0;
-    color: #555;
-    font-size: 1.1rem;
-}
-
-.description {
-    margin: 0 0 1.5rem 0;
-    color: #666;
-    font-size: 0.95rem;
-}
-
-.options-group {
-    margin-bottom: 2rem;
-}
-
-.checkbox-option {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    padding: 1rem;
-    margin-bottom: 0.75rem;
-    background: #f5f5f5;
-    border: 2px solid #ddd;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.checkbox-option:hover {
-    background: #ebebeb;
-    border-color: #0066cc;
-}
-
-.checkbox-option input[type='checkbox'] {
-    margin-top: 0.2rem;
-    cursor: pointer;
-}
-
-.checkbox-option input[type='checkbox']:checked ~ .option-content strong {
-    color: #0066cc;
-}
-
-.option-content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.option-content strong {
-    font-size: 1rem;
-}
-
-.option-content small {
-    color: #666;
-    font-size: 0.85rem;
-}
-
-.simplify-section {
-    padding-top: 1.5rem;
-    border-top: 2px solid #ddd;
-}
-
-.simplify-parameters {
-    margin-top: 1.5rem;
-    padding: 1.5rem;
-    background: #f9f9f9;
-    border-radius: 6px;
-    border-left: 4px solid #0066cc;
-}
-
-.simplify-info {
-    margin-top: 1.5rem;
-    padding: 1rem;
-    background: #e8f5e9;
-    border-radius: 6px;
-}
-
-.info-text {
-    margin: 0;
-    color: #333;
-    font-size: 0.9rem;
-}
-</style>

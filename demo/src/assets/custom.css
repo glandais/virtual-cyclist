@@ -1,0 +1,80 @@
+/* Virtual Cyclist Interactive Demo - Custom Styles */
+/* Only contains custom visualizations not provided by Tailwind/PrimeVue */
+
+/* ============================================
+   Compass Visualization
+   Used in WindTab for wind direction display
+   ============================================ */
+
+.compass {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border: 3px solid rgb(31 41 55); /* gray-800 */
+    border-radius: 50%;
+    background: linear-gradient(
+        180deg,
+        rgb(219 234 254) 0%,
+        rgb(255 255 255) 100%
+    ); /* blue-100 to white */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wind-arrow {
+    font-size: 3rem;
+    color: rgb(37 99 235); /* blue-600 */
+    transition: transform 0.3s ease;
+    transform-origin: center center;
+    line-height: 1;
+}
+
+.compass-labels {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.compass-n,
+.compass-e,
+.compass-s,
+.compass-w {
+    position: absolute;
+    font-weight: bold;
+    color: rgb(75 85 99); /* gray-600 */
+    font-size: 0.9rem;
+}
+
+.compass-n {
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.compass-e {
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.compass-s {
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.compass-w {
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* ============================================
+   Leaflet Map Container
+   Required for proper Leaflet map rendering
+   ============================================ */
+
+.leaflet-map {
+    z-index: 0;
+}

@@ -37,6 +37,7 @@ module.exports = [
                 HTMLCanvasElement: 'readonly',
                 HTMLInputElement: 'readonly',
                 HTMLSelectElement: 'readonly',
+                structuredClone: 'readonly',
             },
         },
         plugins: {

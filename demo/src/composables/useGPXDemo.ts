@@ -9,20 +9,14 @@ import { GPXParser } from '@lib/gpx';
 import { aeroProviderConstant } from '@lib/physics/power/aero/aero';
 import { rhoProviderEstimate } from '@lib/physics/power/aero/rho';
 import { WindProviderConstant } from '@lib/physics/power/aero/wind';
-import type { CoursePhysics, EnhanceOptions } from '@lib/types/course';
-import { Bike, BikeProperties, Cyclist, CyclistProperties } from '@lib/types/models';
+import type { CoursePhysics } from '@lib/types/course';
+import { Bike, Cyclist } from '@lib/types/models';
 import { Path } from '@lib/types/path';
 import type { Ref } from 'vue';
 import { ref } from 'vue';
-import { PowerParams, PowerSourceType, WindDemo } from '~/types';
+import { Config, PowerSourceType } from '~/types';
 
-export function useGPXDemo(
-    bike: Ref<BikeProperties>,
-    cyclist: Ref<CyclistProperties>,
-    wind: Ref<WindDemo>,
-    enhanceOptions: Ref<EnhanceOptions>,
-    powerParams: Ref<PowerParams>
-): {
+export function useGPXDemo(config: Ref<Config>): {
     currentPath: Ref<Path | null>;
     isProcessing: Ref<boolean>;
     statusText: Ref<string>;
@@ -43,7 +37,7 @@ export function useGPXDemo(
     };
 
     const getCourse = (path: Path): CoursePhysics => {
-        const powerParamsValue = powerParams.value;
+        const powerParamsValue = config.value.power;
         let powerProvider: CyclistPowerProvider;
         switch (powerParamsValue.type) {
             case PowerSourceType.constant:
@@ -70,11 +64,11 @@ export function useGPXDemo(
         }
         return {
             path,
-            bike: Bike.getBike(bike.value),
-            cyclist: Cyclist.getCyclist(cyclist.value),
+            bike: Bike.getBike(config.value.bike),
+            cyclist: Cyclist.getCyclist(config.value.cyclist),
             rhoProvider: rhoProviderEstimate,
             aeroProvider: aeroProviderConstant,
-            windProvider: new WindProviderConstant(wind.value),
+            windProvider: new WindProviderConstant(config.value.wind),
             cyclistPowerProvider: powerProvider,
         };
     };
@@ -149,7 +143,7 @@ export function useGPXDemo(
 
         try {
             const course = getCourse(originalPath.value);
-            currentPath.value = await Enhancer.enhanceCourse(course, enhanceOptions.value);
+            currentPath.value = await Enhancer.enhanceCourse(course, config.value.enhance);
 
             console.log('Path enhancement completed');
         } catch (error) {

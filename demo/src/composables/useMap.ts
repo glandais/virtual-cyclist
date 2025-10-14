@@ -173,6 +173,17 @@ export function useMap(
         }
     };
 
+    const fitBounds = () => {
+        if (!mapInstance.value || !routeLayer.value) {
+            return;
+        }
+
+        // Fit map to route bounds
+        mapInstance.value.fitBounds(routeLayer.value.getBounds(), {
+            padding: [50, 50],
+        });
+    };
+
     const destroyMap = () => {
         if (mapInstance.value) {
             mapInstance.value.remove();
@@ -197,6 +208,7 @@ export function useMap(
         mapInstance,
         createMap,
         updateRoute,
+        fitBounds,
         destroyMap,
     };
 }

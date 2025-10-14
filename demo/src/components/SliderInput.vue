@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import InputNumber from 'primevue/inputnumber';
+import Slider from 'primevue/slider';
 import { computed } from 'vue';
 
 const props = defineProps<{
@@ -19,132 +21,55 @@ const value = computed({
     get: () => props.modelValue,
     set: val => emit('update:modelValue', val),
 });
+
+const fractionDigits = computed(() => {
+    if (!props.step) {
+        return 0;
+    }
+    if (props.step >= 1) {
+        return 0;
+    }
+    if (props.step >= 0.1) {
+        return 1;
+    }
+    if (props.step >= 0.01) {
+        return 2;
+    }
+    if (props.step >= 0.001) {
+        return 3;
+    }
+    return 4;
+});
 </script>
 
 <template>
-    <div class="slider-input">
-        <label class="slider-label">
+    <div class="mb-6">
+        <label class="flex items-center gap-2 font-medium mb-3 text-gray-700">
             {{ label }}
-            <span v-if="tooltip" class="tooltip" :title="tooltip">ⓘ</span>
+            <span v-if="tooltip" class="cursor-help text-blue-500" :title="tooltip">ⓘ</span>
         </label>
 
-        <div class="slider-controls">
-            <input
-                type="range"
-                v-model.number="value"
-                :min="min"
-                :max="max"
-                :step="step || 1"
-                class="slider"
-            />
-            <input
-                type="number"
-                v-model.number="value"
-                :min="min"
-                :max="max"
-                :step="step || 1"
-                class="number-input"
-            />
-            <span v-if="unit" class="unit">{{ unit }}</span>
+        <div class="flex items-center gap-3 mb-2">
+            <Slider v-model="value" :min="min" :max="max" :step="step || 1" class="flex-1" />
+            <div class="flex items-center gap-2 min-w-[150px] justify-end">
+                <InputNumber
+                    v-model="value"
+                    :min="min"
+                    :max="max"
+                    :step="step || 1"
+                    :minFractionDigits="fractionDigits"
+                    :maxFractionDigits="fractionDigits"
+                    :useGrouping="false"
+                    locale="en-US"
+                    pt:input:class="text-right w-full"
+                    :suffix="unit ? ` ${unit}` : undefined"
+                />
+            </div>
         </div>
 
-        <div class="range-labels">
+        <div class="flex justify-between text-xs text-gray-500 px-1">
             <span>{{ min }}</span>
             <span>{{ max }}</span>
         </div>
     </div>
 </template>
-
-<style scoped>
-.slider-input {
-    margin-bottom: 1.5rem;
-}
-
-.slider-label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-    color: #333;
-}
-
-.tooltip {
-    cursor: help;
-    color: #0066cc;
-    font-size: 0.9em;
-}
-
-.slider-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.25rem;
-}
-
-.slider {
-    flex: 1;
-    height: 6px;
-    border-radius: 3px;
-    background: #ddd;
-    outline: none;
-    -webkit-appearance: none;
-}
-
-.slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #0066cc;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.slider::-webkit-slider-thumb:hover {
-    background: #0052a3;
-}
-
-.slider::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #0066cc;
-    cursor: pointer;
-    border: none;
-    transition: background 0.2s;
-}
-
-.slider::-moz-range-thumb:hover {
-    background: #0052a3;
-}
-
-.number-input {
-    width: 80px;
-    padding: 0.4rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.95rem;
-    text-align: center;
-}
-
-.number-input:focus {
-    outline: none;
-    border-color: #0066cc;
-}
-
-.unit {
-    min-width: 40px;
-    color: #666;
-    font-size: 0.9rem;
-}
-
-.range-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.85rem;
-    color: #666;
-    padding: 0 0.25rem;
-}
-</style>

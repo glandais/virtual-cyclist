@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { Path } from '@lib/types';
+import Panel from 'primevue/panel';
+import Select from 'primevue/select';
 import { computed, ref, watch } from 'vue';
 
 const props = defineProps<{
@@ -13,14 +15,22 @@ const emit = defineEmits<{
     fileUpload: [file: File];
 }>();
 
-const selectedGPX = ref('');
-const fileInput = ref<HTMLInputElement | null>(null);
-const isFileInfoExpanded = ref(true);
+const gpxOptions = [
+    { label: 'Sample Route', value: 'gpx/sample.gpx' },
+    { label: 'Stelvio descent', value: 'gpx/stelvio.gpx' },
+    { label: 'Amazfit Track', value: 'gpx/amazfit.gpx' },
+    { label: 'Garmin Track', value: 'gpx/garmin.gpx' },
+    { label: 'Movescount Track', value: 'gpx/movescount.gpx' },
+    { label: 'Sports Tracker', value: 'gpx/sports-tracker.gpx' },
+    { label: 'Strava Track', value: 'gpx/strava.gpx' },
+];
 
-const onGPXChange = (event: Event) => {
-    const target = event.target as HTMLSelectElement;
-    if (target.value) {
-        emit('gpxSelect', target.value);
+const selectedGPX = ref<string | null>(null);
+const fileInput = ref<HTMLInputElement | null>(null);
+
+const onGPXChange = (value: string | null) => {
+    if (value) {
+        emit('gpxSelect', value);
         if (fileInput.value) {
             fileInput.value.value = '';
         }
@@ -31,7 +41,7 @@ const onFileChange = (event: Event) => {
     const target = event.target as HTMLInputElement;
     if (target.files && target.files[0]) {
         emit('fileUpload', target.files[0]);
-        selectedGPX.value = '';
+        selectedGPX.value = null;
     }
 };
 
@@ -60,28 +70,28 @@ watch(
 </script>
 
 <template>
-    <section class="file-section">
-        <div class="file-controls">
-            <div class="file-group">
-                <label for="gpx-select">Choose sample GPX:</label>
-                <select
+    <section class="p-6 bg-gray-50 border-b border-gray-200">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-4">
+            <div class="flex flex-col gap-2">
+                <label for="gpx-select" class="font-semibold text-gray-700"
+                    >Choose sample GPX:</label
+                >
+                <Select
                     id="gpx-select"
                     v-model="selectedGPX"
+                    :options="gpxOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Select a sample file..."
                     :disabled="isProcessing"
-                    @change="onGPXChange"
-                >
-                    <option value="">Select a sample file...</option>
-                    <option value="gpx/sample.gpx">Sample Route</option>
-                    <option value="gpx/stelvio.gpx">Stelvio descent</option>
-                    <option value="gpx/amazfit.gpx">Amazfit Track</option>
-                    <option value="gpx/garmin.gpx">Garmin Track</option>
-                    <option value="gpx/movescount.gpx">Movescount Track</option>
-                    <option value="gpx/sports-tracker.gpx">Sports Tracker</option>
-                    <option value="gpx/strava.gpx">Strava Track</option>
-                </select>
+                    @update:modelValue="onGPXChange"
+                    class="w-full"
+                />
             </div>
-            <div class="file-group">
-                <label for="gpx-upload">Or upload your own:</label>
+            <div class="flex flex-col gap-2">
+                <label for="gpx-upload" class="font-semibold text-gray-700"
+                    >Or upload your own:</label
+                >
                 <input
                     id="gpx-upload"
                     ref="fileInput"
@@ -89,36 +99,41 @@ watch(
                     accept=".gpx"
                     :disabled="isProcessing"
                     @change="onFileChange"
+                    class="px-3 py-2 border-2 border-gray-300 rounded-lg text-base transition-colors focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
                 />
             </div>
         </div>
-        <div v-if="fileInfo" id="file-info" class="file-info show">
-            <div class="file-info-header" @click="isFileInfoExpanded = !isFileInfoExpanded">
-                <h4>📄 {{ fileName }}</h4>
-                <button class="toggle-button" :class="{ collapsed: !isFileInfoExpanded }">
-                    {{ isFileInfoExpanded ? '▼' : '▶' }}
-                </button>
-            </div>
-            <Transition name="expand">
-                <div v-show="isFileInfoExpanded" class="info-grid">
-                    <div class="info-item">
-                        <div class="label">Info</div>
-                        <div class="value">
-                            {{ fileInfo.pointCount.toLocaleString() }} /
-                            {{ fileInfo.distance.toFixed(1) }} km
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <div class="label">Elevation</div>
-                        <div class="value">
-                            +{{ fileInfo.elevationGain.toFixed(0) }}m /
-                            {{ fileInfo.elevationLoss.toFixed(0) }}m [{{
-                                fileInfo.minElevation.toFixed(0)
-                            }}, {{ fileInfo.maxElevation.toFixed(0) }}]m
-                        </div>
+        <Panel
+            v-if="fileInfo"
+            id="file-info"
+            toggleable
+            :collapsed="true"
+            class="mt-4"
+            pt:root:class="bg-blue-50 border-blue-200"
+            pt:header:class="text-blue-900"
+            pt:content:class="pt-0"
+        >
+            <template #header>
+                <span class="font-semibold">📄 {{ fileName }}</span>
+            </template>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white p-2 rounded text-center">
+                    <div class="text-sm text-gray-600">Info</div>
+                    <div class="text-base font-semibold text-blue-900">
+                        {{ fileInfo.pointCount.toLocaleString() }} pts /
+                        {{ fileInfo.distance.toFixed(1) }} km
                     </div>
                 </div>
-            </Transition>
-        </div>
+                <div class="bg-white p-2 rounded text-center">
+                    <div class="text-sm text-gray-600">Elevation</div>
+                    <div class="text-base font-semibold text-blue-900">
+                        +{{ fileInfo.elevationGain.toFixed(0) }}m / -{{
+                            fileInfo.elevationLoss.toFixed(0)
+                        }}m [{{ fileInfo.minElevation.toFixed(0) }},
+                        {{ fileInfo.maxElevation.toFixed(0) }}]m
+                    </div>
+                </div>
+            </div>
+        </Panel>
     </section>
 </template>

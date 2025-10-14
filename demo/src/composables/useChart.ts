@@ -61,6 +61,7 @@ export function useChart(
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: false,
                 interaction: {
                     mode: 'index',
                     intersect: false,
@@ -232,12 +233,18 @@ export function useChart(
         chartInstance.value.data.labels = labels;
         chartInstance.value.data.datasets = datasets;
         chartInstance.value.options.scales = scales;
-        chartInstance.value.update();
+        chartInstance.value.update('none');
     };
 
     const resetZoom = () => {
         if (chartInstance.value) {
             chartInstance.value.resetZoom();
+        }
+    };
+
+    const resize = () => {
+        if (chartInstance.value) {
+            chartInstance.value.resize();
         }
     };
 
@@ -258,6 +265,7 @@ export function useChart(
         createChart,
         updateChart,
         resetZoom,
+        resize,
         hasData,
     };
 }

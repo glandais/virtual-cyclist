@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Checkbox from 'primevue/checkbox';
 import { fieldConfig } from '~/config/fieldConfig';
 
 const props = defineProps<{
@@ -21,29 +22,38 @@ const toggleField = (fieldKey: string) => {
 </script>
 
 <template>
-    <section class="data-panel">
-        <h3>📊 Data Fields to Display</h3>
-        <div class="field-categories">
+    <section class="p-6 bg-white border-b border-gray-200">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">📊 Data Fields to Display</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div
                 v-for="(category, categoryKey) in fieldConfig"
                 :key="categoryKey"
-                class="field-category"
+                class="bg-gray-50 rounded-lg p-4 border-2 border-gray-200"
             >
-                <h4>{{ category.name }}</h4>
-                <div class="field-checkboxes">
+                <h4
+                    class="text-base font-semibold text-gray-800 mb-3 pb-2 border-b-2 border-gray-300"
+                >
+                    {{ category.name }}
+                </h4>
+                <div class="flex flex-col gap-3">
                     <div
                         v-for="(field, fieldKey) in category.fields"
                         :key="fieldKey"
-                        class="field-checkbox"
+                        class="flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 transition-colors"
                     >
-                        <input
-                            :id="`field-${fieldKey}`"
-                            type="checkbox"
-                            :checked="selectedFields.has(fieldKey)"
-                            @change="toggleField(fieldKey)"
+                        <Checkbox
+                            :inputId="`field-${fieldKey}`"
+                            :binary="true"
+                            :modelValue="selectedFields.has(fieldKey)"
+                            @update:modelValue="toggleField(fieldKey)"
                         />
-                        <label :for="`field-${fieldKey}`">{{ field!.shortDescription }}</label>
-                        <span class="field-unit">{{ field!.unit }}</span>
+                        <label
+                            :for="`field-${fieldKey}`"
+                            class="cursor-pointer font-medium text-sm flex-1"
+                        >
+                            {{ field!.shortDescription }}
+                        </label>
+                        <span class="text-xs text-gray-500 italic">{{ field!.unit }}</span>
                     </div>
                 </div>
             </div>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Checkbox from 'primevue/checkbox';
 import { fieldConfig } from '~/config/fieldConfig';
 
 const props = defineProps<{
@@ -21,111 +22,46 @@ const toggleField = (fieldKey: string) => {
 </script>
 
 <template>
-    <div class="fields-tab">
-        <h3>📊 Data Fields to Display</h3>
-        <p class="description">Select which data fields should be displayed on the chart.</p>
-        <div class="field-categories">
+    <div class="p-4">
+        <h3 class="text-xl font-semibold text-gray-800 mb-3">📊 Data Fields to Display</h3>
+        <p class="text-gray-600 text-sm mb-6">
+            Select which data fields should be displayed on the chart.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div
                 v-for="(category, categoryKey) in fieldConfig"
                 :key="categoryKey"
-                class="field-category"
+                class="bg-gray-50 rounded-lg p-4 border-2 border-gray-200"
             >
-                <h4>{{ category.name }}</h4>
-                <div class="field-checkboxes">
+                <h4
+                    class="text-base font-semibold text-gray-800 mb-3 pb-2 border-b-2 border-gray-300"
+                >
+                    {{ category.name }}
+                </h4>
+
+                <div class="flex flex-col gap-3">
                     <div
                         v-for="(field, fieldKey) in category.fields"
                         :key="fieldKey"
-                        class="field-checkbox"
+                        class="flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 transition-colors"
                     >
-                        <input
-                            :id="`field-${fieldKey}`"
-                            type="checkbox"
-                            :checked="modelValue.has(fieldKey)"
-                            @change="toggleField(fieldKey)"
+                        <Checkbox
+                            :inputId="`field-${fieldKey}`"
+                            :binary="true"
+                            :modelValue="modelValue.has(fieldKey)"
+                            @update:modelValue="toggleField(fieldKey)"
                         />
-                        <label :for="`field-${fieldKey}`">{{ field!.shortDescription }}</label>
-                        <span class="field-unit">{{ field!.unit }}</span>
+                        <label
+                            :for="`field-${fieldKey}`"
+                            class="cursor-pointer font-medium text-sm flex-1"
+                        >
+                            {{ field!.shortDescription }}
+                        </label>
+                        <span class="text-xs text-gray-500 italic">{{ field!.unit }}</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </template>
-
-<style scoped>
-.fields-tab {
-    padding: 1rem;
-}
-
-h3 {
-    margin: 0 0 1rem 0;
-    color: #333;
-    font-size: 1.3rem;
-}
-
-.description {
-    margin: 0 0 1.5rem 0;
-    color: #666;
-    font-size: 0.95rem;
-}
-
-.field-categories {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-}
-
-.field-category {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 1rem;
-    border: 2px solid #e9ecef;
-}
-
-.field-category h4 {
-    margin: 0 0 1rem 0;
-    color: #2c3e50;
-    border-bottom: 2px solid #dee2e6;
-    padding-bottom: 0.5rem;
-    font-size: 1.1rem;
-}
-
-.field-checkboxes {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.field-checkbox {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem;
-    border-radius: 6px;
-    transition: background-color 0.2s;
-}
-
-.field-checkbox:hover {
-    background: #e9ecef;
-}
-
-.field-checkbox input[type='checkbox'] {
-    width: 18px;
-    height: 18px;
-    accent-color: #0066cc;
-    cursor: pointer;
-}
-
-.field-checkbox label {
-    cursor: pointer;
-    font-weight: 500;
-    flex: 1;
-    font-size: 0.95rem;
-}
-
-.field-unit {
-    font-size: 0.8rem;
-    color: #6c757d;
-    font-style: italic;
-}
-</style>
