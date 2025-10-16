@@ -41,7 +41,7 @@ console.log(`Loaded ${path.getPointCount()} points`);
 console.log(`Distance: ${(path.getTotalDistance() / 1000).toFixed(1)} km`);
 
 // Enhance with physics-based simulation
-const enhancedPath = await Enhancer.enhancePath(path);
+const enhancedPath = await Enhancer.enhanceCourseDefault(path);
 
 // Access computed data
 for (let i = 0; i < enhancedPath.getPointCount(); i++) {
@@ -99,6 +99,37 @@ const customCyclist = new Cyclist(
 );
 ```
 
+### Course vs CoursePhysics
+
+The library uses two related interfaces:
+
+- **`Course`**: Basic course with path, cyclist, and bike
+- **`CoursePhysics`**: Extends Course with physics providers (air density, aerodynamics, wind, power)
+
+```typescript
+import { Course, CoursePhysics } from '@glandais/virtual-cyclist';
+
+// Basic Course - just the essentials
+const course: Course = {
+    path,
+    cyclist: Cyclist.getDefault(),
+    bike: Bike.getDefault(),
+};
+
+// CoursePhysics - includes all physics simulation providers
+const coursePhysics: CoursePhysics = {
+    ...course,
+    rhoProvider: rhoProviderEstimate, // Air density
+    aeroProvider: aeroProviderConstant, // Aerodynamics
+    windProvider: windProviderNone, // Wind
+    cyclistPowerProvider: new PowerProviderConstant(280, false), // Power
+};
+
+// Most physics methods require CoursePhysics
+MaxSpeedComputer.computeMaxSpeeds(coursePhysics);
+VirtualizeService.virtualizeTrack(coursePhysics);
+```
+
 ### Maximum Speed Computation
 
 ```typescript
@@ -131,7 +162,7 @@ import {
     aeroProviderConstant,
     rhoProviderEstimate,
     windProviderNone,
-    powerProviderConstant,
+    PowerProviderConstant,
 } from '@glandais/virtual-cyclist';
 
 const simulatedPath = VirtualizeService.virtualizeTrack({
@@ -141,17 +172,71 @@ const simulatedPath = VirtualizeService.virtualizeTrack({
     rhoProvider: rhoProviderEstimate, // Air density
     aeroProvider: aeroProviderConstant, // Aerodynamics
     windProvider: windProviderNone, // Wind conditions
-    cyclistPowerProvider: powerProviderConstant, // Power output
+    cyclistPowerProvider: new PowerProviderConstant(280, false), // Power output
 });
 
 // Get realistic speed and power at each point
 for (let i = 0; i < simulatedPath.getPointCount(); i++) {
     console.log({
         speed: simulatedPath.getSpeed(i) * 3.6, // km/h
-        power: simulatedPath.getPCyclistRaw(i), // watts
+        power: simulatedPath.getPCyclistProvidedMuscular(i), // watts
         time: simulatedPath.getElapsed(i), // seconds
     });
 }
+```
+
+#### Available Providers
+
+**Air Density Providers:**
+
+```typescript
+import {
+    rhoProviderEstimate, // Estimates air density from elevation (default)
+    rhoProviderDefault, // Fixed air density (1.225 kg/m³ at sea level)
+} from '@glandais/virtual-cyclist';
+```
+
+**Aerodynamics Providers:**
+
+```typescript
+import {
+    aeroProviderConstant, // Constant aerodynamic coefficient (default)
+} from '@glandais/virtual-cyclist';
+```
+
+**Wind Providers:**
+
+```typescript
+import {
+    windProviderNone, // No wind (default)
+    WindProviderConstant, // Constant wind speed and direction
+} from '@glandais/virtual-cyclist';
+
+// Example: 5 m/s headwind from north
+const windProvider = new WindProviderConstant(5, 0); // speed, bearing in radians
+```
+
+**Cyclist Power Providers:**
+
+```typescript
+import {
+    PowerProviderConstant, // Constant power output
+    PowerProviderConstantWithTiring, // Power with fatigue simulation
+    powerProviderFromData, // Use power data from GPX file
+    muscularPowerProvider, // Advanced muscular power model
+} from '@glandais/virtual-cyclist';
+
+// Constant power: 280W, no harmonics
+const constantPower = new PowerProviderConstant(280, false);
+
+// Power with tiring: 280W base, 10% fatigue after 1 hour
+const tiringPower = new PowerProviderConstantWithTiring(280, 0.1, 3600, false);
+
+// Use power from GPX data
+const gpxPower = powerProviderFromData;
+
+// Advanced muscular model
+const muscularPower = muscularPowerProvider;
 ```
 
 ### Complete Enhancement Pipeline
@@ -160,7 +245,7 @@ for (let i = 0; i < simulatedPath.getPointCount(); i++) {
 import { Enhancer } from '@glandais/virtual-cyclist';
 
 // All-in-one: elevation correction + max speeds + simulation + simplification
-const enhancedPath = await Enhancer.enhancePath(path);
+const enhancedPath = await Enhancer.enhanceCourseDefault(path);
 
 // The enhanced path includes:
 // - Corrected elevation data
@@ -168,6 +253,70 @@ const enhancedPath = await Enhancer.enhancePath(path);
 // - Physics-based virtual cyclist simulation
 // - Resampled to 1 point per second
 // - Douglas-Peucker simplified (10m tolerance)
+
+// Or use the full API with custom CoursePhysics
+import { Cyclist, Bike } from '@glandais/virtual-cyclist';
+import {
+    rhoProviderEstimate,
+    aeroProviderConstant,
+    windProviderNone,
+    PowerProviderConstant,
+} from '@glandais/virtual-cyclist';
+
+const coursePhysics = {
+    path,
+    cyclist: Cyclist.getDefault(),
+    bike: Bike.getDefault(),
+    rhoProvider: rhoProviderEstimate,
+    aeroProvider: aeroProviderConstant,
+    windProvider: windProviderNone,
+    cyclistPowerProvider: new PowerProviderConstant(280, false),
+};
+
+const enhancedPath = await Enhancer.enhanceCourse(coursePhysics);
+```
+
+### Customizing Enhancement Options
+
+Control exactly which enhancement steps to apply:
+
+```typescript
+import { Enhancer, EnhanceOptions } from '@glandais/virtual-cyclist';
+
+const options: EnhanceOptions = {
+    fixElevation: true, // Fix GPS elevation data (default: true)
+    computeMaxSpeeds: true, // Calculate maximum safe speeds (default: true)
+    virtualizeTrack: true, // Simulate realistic cycling (default: true)
+    computeOnePointPerSecond: true, // Resample to 1Hz (default: true)
+    simplifyPath: {
+        enable: true, // Use Douglas-Peucker simplification (default: true)
+        tolerance: 10, // Maximum deviation in meters (default: 10)
+        zExaggeration: 3, // Elevation exaggeration factor (default: 3)
+    },
+};
+
+const coursePhysics = {
+    path,
+    cyclist: Cyclist.getDefault(),
+    bike: Bike.getDefault(),
+    rhoProvider: rhoProviderEstimate,
+    aeroProvider: aeroProviderConstant,
+    windProvider: windProviderNone,
+    cyclistPowerProvider: new PowerProviderConstant(280, false),
+};
+
+const enhancedPath = await Enhancer.enhanceCourse(coursePhysics, options);
+
+// Or skip certain steps:
+const quickEnhance: EnhanceOptions = {
+    fixElevation: false, // Skip elevation correction
+    computeMaxSpeeds: true,
+    virtualizeTrack: false, // Skip simulation
+    computeOnePointPerSecond: false,
+    simplifyPath: { enable: false },
+};
+
+const quickPath = await Enhancer.enhanceCourse(coursePhysics, quickEnhance);
 ```
 
 ### Elevation Correction
@@ -314,9 +463,61 @@ The demo includes sample tracks from various devices:
 
 Virtual Cyclist uses **chunked array storage** for memory efficiency:
 
-- Each point stores 31 numeric fields in Float64Array
-- Fields include: lat, lon, elevation, speed, power, heart rate, cadence, etc.
+- Each point stores **37 numeric fields** in Float64Array across **12 categories**
 - Access via generated getter/setter methods
+- Code-generated from field definitions for type safety
+
+#### Field Categories
+
+The library tracks comprehensive cycling data organized into these categories:
+
+1. **Coordinates** - Latitude, longitude, distance
+2. **Temporal** - Timestamps and elapsed time
+3. **Angles** - Bearing and directional data
+4. **🏔️ Elevation** - Altitude information
+5. **📐 Grade** - Road slope percentage
+6. **Radius** - Turning radius for cornering
+7. **Aero coef** - Aerodynamic coefficients
+8. **Cyclist wind** - Wind bearing and angle
+9. **⚡ Power Physics** - Aerodynamic, gravitational, rolling resistance, bearing power
+10. **⚡ Power Cyclist** - Input power, optimal power, muscular power, wheel power
+11. **⚡ Power Post processed** - Computed power from kinetic energy
+12. **Speed & Motion** - Current speed, max speed, virtual speed
+13. **Environmental** - Temperature, wind speed, wind direction
+14. **Physiological** - Heart rate, cadence
+
+Example field access:
+
+```typescript
+const point = path.getPoint(index);
+console.log({
+    // Coordinates
+    lat: path.getLatitudeDeg(index),
+    lon: path.getLongitudeDeg(index),
+    distance: path.getDistance(index),
+
+    // Elevation & Grade
+    elevation: path.getElevation(index),
+    grade: path.getGrade(index),
+
+    // Speed & Motion
+    speed: path.getSpeed(index),
+    speedMax: path.getSpeedMax(index),
+
+    // Power
+    pAero: path.getPAero(index),
+    pGravity: path.getPGravity(index),
+    pRollingResistance: path.getPRollingResistance(index),
+
+    // Physiological
+    heartRate: path.getHeartRate(index),
+    cadence: path.getCadence(index),
+
+    // Environmental
+    temperature: path.getTemperature(index),
+    windSpeed: path.getWindSpeed(index),
+});
+```
 
 ### Coordinate Systems
 
@@ -330,11 +531,13 @@ Virtual Cyclist uses **chunked array storage** for memory efficiency:
 
 ```bash
 # Modify field definitions
-vim src/codegen/field-definitions.ts
+vim src/types/path/fieldDefinitions.ts
 
 # Regenerate files
 npm run generate
 ```
+
+The field definitions define all 37 fields with their names, types, units, and categories. The code generator creates type-safe getters and setters for efficient array-based storage.
 
 ## Build Formats
 

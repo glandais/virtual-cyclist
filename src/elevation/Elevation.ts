@@ -1,32 +1,24 @@
-import ElevationProvider, { Coordinates, CoordinatesElevation } from '@glandais/elevation';
+import ElevationProvider, { CoordinatesElevation, ElevationSmoother } from '@glandais/elevation';
 
-import { EMPTY_POINT, Path } from '@/types/path/';
-import { toRadians } from '@/utils/';
+import { Path } from '@/types/path/';
 
 const elevationProvider = new ElevationProvider();
 
 export class Elevation {
-    public static async fixElevation(path: Path): Promise<Path> {
-        const coordinates: Coordinates[] = Array.from(path.coordinatesIterator());
-        const resultCoordinates: CoordinatesElevation[] =
-            await elevationProvider.getElevationsAlong(coordinates, {
-                filterOptions: {
-                    enabled: false,
-                },
-                smoothingOptions: {
-                    enabled: true,
-                    windowSize: 150,
-                },
-            });
+    public static async fixElevation(path: Path, loadElevations = true): Promise<Path> {
+        let coordinatesElevation: CoordinatesElevation[] = Array.from(path.coordinatesIterator());
+        if (loadElevations) {
+            await elevationProvider.setElevations(coordinatesElevation);
+        }
+        coordinatesElevation = ElevationSmoother.smooth(coordinatesElevation, 150);
         const result = new Path(path.name);
 
         // Add all corrected coordinates to the result path
-        for (let i = 0; i < resultCoordinates.length; i++) {
-            const coord = resultCoordinates[i];
+        for (let i = 0; i < path.length; i++) {
+            const data = path.getPointData(i);
+            const coord = coordinatesElevation[i];
             result.addPoint({
-                ...EMPTY_POINT,
-                latitude: toRadians(coord.latitude),
-                longitude: toRadians(coord.longitude),
+                ...data,
                 elevation: coord.elevation,
             });
         }

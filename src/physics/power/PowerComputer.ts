@@ -1,4 +1,4 @@
-import { DT, MINIMAL_SPEED } from '@/constants/';
+import { MINIMAL_SPEED } from '@/constants/';
 import { Course, CoursePhysics } from '@/types/course/';
 import { Path } from '@/types/path/';
 import { aeroPowerProvider } from './aero';
@@ -18,7 +18,6 @@ import { rollingResistancePowerProvider, wheelBearingsPowerProvider } from './ro
  *
  * **Speed Integration:**
  * - Uses energy conservation for speed calculations
- * - Applies modified trapezoidal rule for numerical stability
  * - Enforces minimum speed constraints
  *
  * **Time Stepping:**
@@ -44,11 +43,6 @@ import { rollingResistancePowerProvider, wheelBearingsPowerProvider } from './ro
  * Solving for new speed:
  * ```
  * v₂ = √(2ΔtP/M_eq + v₁²)
- * ```
- *
- * Distance traveled (trapezoidal rule):
- * ```
- * Δx = (v₁ + v₂) × Δt / 2
  * ```
  *
  * Uses singleton pattern since it's stateless and can be shared across simulations.
@@ -93,7 +87,7 @@ export class PowerComputer {
      * Calculates distance traveled given power, mass, speed, and time step.
      *
      * Uses energy conservation to determine new speed, then calculates
-     * distance using the trapezoidal rule (average of old and new speeds).
+     * distance.
      *
      * Physics:
      * 1. Power × time = change in kinetic energy
@@ -115,9 +109,7 @@ export class PowerComputer {
             Math.sqrt((dt * pSum) / (0.5 * equivalentMass) + currentSpeed * currentSpeed),
             MINIMAL_SPEED
         );
-
-        // Trapezoidal rule for distance
-        return ((newSpeed + currentSpeed) * dt) / 2;
+        return newSpeed * dt;
     }
 
     /**
@@ -139,9 +131,21 @@ export class PowerComputer {
      * @returns Time step in seconds
      */
     getDt(pSum: number, equivalentMass: number, currentSpeed: number, dx: number): number {
-        let dt1 = -0.1;
-        let dt2 = DT + 0.1;
+        let dt = 0.1;
+        while (this.getDx(pSum, equivalentMass, currentSpeed, dt) <= dx) {
+            dt = dt + 0.1;
+        }
+        return this.getDtInner(pSum, equivalentMass, currentSpeed, dx, dt - 0.1, dt);
+    }
 
+    getDtInner(
+        pSum: number,
+        equivalentMass: number,
+        currentSpeed: number,
+        dx: number,
+        dt1: number,
+        dt2: number
+    ): number {
         while (dt2 - dt1 >= dx / 10_000_000.0) {
             const dtMiddle = (dt1 + dt2) / 2;
             const dxMiddle = this.getDx(pSum, equivalentMass, currentSpeed, dtMiddle);
@@ -179,32 +183,32 @@ export class PowerComputer {
         course: CoursePhysics,
         path: Path,
         equivalentMass: number,
-        pointIndex1: number,
-        pointIndex2: number
+        i: number
     ): void {
+        if (i === 0) {
+            path.setPComputedPower(i, 0);
+            return;
+        }
         // Calculate resistance powers (without cyclist)
-        const power = this.getNewPower(course, path, pointIndex1, false);
-
-        const s1 = path.getSpeed(pointIndex1);
-        const s2 = path.getSpeed(pointIndex2);
-        const dt = this.getDtBetweenPoints(path, pointIndex1, pointIndex2);
+        const power = this.getNewPower(course, path, i - 1, false);
+        const s1 = path.getSpeed(i - 1);
+        const s2 = path.getSpeed(i);
+        const dt = path.getDt(i) / 1000;
 
         // Calculate total power from kinetic energy change
         const totPower = this.getTotPower(equivalentMass, s1, s2, dt);
-        path.setPComputedTotalPower(pointIndex1, totPower);
+        path.setPComputedTotalPower(i, totPower);
 
         // Cyclist wheel power = total - resistances
-        let cyclistPower = totPower - power;
-        path.setPComputedWheelPower(pointIndex1, cyclistPower);
-
-        // Ensure non-negative
-        cyclistPower = Math.max(0.0, cyclistPower);
+        const powerWheel = totPower - power;
+        path.setPComputedWheelPower(i, powerWheel);
 
         // Convert wheel power to muscular power (before drivetrain losses)
-        cyclistPower = cyclistPower / course.bike.efficiency;
+        // Ensure non-negative
+        const computedPower = Math.max(0.0, powerWheel) / course.bike.efficiency;
 
         // Set power on current point
-        path.setPComputedPower(pointIndex1, cyclistPower);
+        path.setPComputedPower(i, computedPower);
     }
 
     /**

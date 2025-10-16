@@ -62,6 +62,18 @@ function generatePointFile() {
     lines.push('}');
     lines.push('');
 
+    lines.push('export const POINT_FIELDS: PointField[] = [');
+    for (const category of FIELD_DEFINITIONS) {
+        lines.push(`    // ${category.name} (${category.fields.length} properties)`);
+
+        for (const field of category.fields) {
+            lines.push(`    PointField.${field.name}, // ${field.shortDescription}`);
+        }
+        lines.push('');
+    }
+    lines.push('];');
+    lines.push('');
+
     lines.push('export const fieldToPointField: Record<string, PointField> = {');
 
     for (const category of FIELD_DEFINITIONS) {
@@ -169,9 +181,6 @@ function generateAbstractPathFile() {
     lines.push('');
     console.log('\n// getPointData method:');
     generateGetPointDataMethod(lines);
-    lines.push('');
-    console.log('\n// interpolatePoint method:');
-    generateInterpolatePointMethod(lines);
     lines.push('');
     console.log('='.repeat(80));
     lines.push('}');
@@ -297,60 +306,6 @@ function generateGetPointDataMethod(lines: string[]) {
         for (const field of category.fields) {
             const pascalName = toPascalCase(field.prop);
             lines.push(`            ${field.prop}: this.get${pascalName}(pointIndex),`);
-        }
-    }
-
-    lines.push('        };');
-    lines.push('    }');
-}
-
-/**
- * Generate interpolatePoint method implementation
- */
-function generateInterpolatePointMethod(lines: string[]) {
-    console.log('🔨 Generating interpolatePoint method...');
-
-    lines.push('        // Helper function for strict NaN handling');
-    lines.push(
-        '        protected interpolateValue(v1: number, v2: number, coef: number): number {'
-    );
-    lines.push('            if (isNaN(v1) || isNaN(v2)) {');
-    lines.push('                return NaN;');
-    lines.push('            }');
-    lines.push('            return v1 + (v2 - v1) * coef;');
-    lines.push('        };');
-    lines.push('');
-
-    lines.push('    /**');
-    lines.push('     * Interpolates a new point between two existing points.');
-    lines.push('     *');
-    lines.push('     * Uses linear interpolation for all numeric fields:');
-    lines.push('     * - result = p1 + (p2 - p1) × coef');
-    lines.push('     *');
-    lines.push('     * **NaN Handling (STRICT):**');
-    lines.push('     * - If either p1 or p2 value is NaN, result is NaN');
-    lines.push('     * - This ensures data integrity for incomplete GPS data');
-    lines.push('     *');
-    lines.push('     * @param index1 Index of first point');
-    lines.push('     * @param index2 Index of second point');
-    lines.push('     * @param coef Interpolation coefficient (0 = p1, 1 = p2, 0.5 = midpoint)');
-    lines.push('     * @returns Interpolated point');
-    lines.push('     */');
-    lines.push(
-        '    public interpolatePoint(index1: number, index2: number, coef: number): Point {'
-    );
-    lines.push('        const p1 = this.getPointData(index1);');
-    lines.push('        const p2 = this.getPointData(index2);');
-    lines.push('');
-    lines.push('        return {');
-
-    for (const category of FIELD_DEFINITIONS) {
-        lines.push(`            // ${category.name}`);
-
-        for (const field of category.fields) {
-            lines.push(
-                `            ${field.prop}: this.interpolateValue(p1.${field.prop}, p2.${field.prop}, coef),`
-            );
         }
     }
 

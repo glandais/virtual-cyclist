@@ -55,19 +55,37 @@ npm run generate         # Regenerate Point.ts and Path.ts from field definition
 
 **Critical**: `Point.ts` and `GeneratedPath.ts` are auto-generated files. Never edit them directly.
 
-- Field definitions are in `src/codegen/field-definitions.ts`
+- Field definitions are in `src/types/path/fieldDefinitions.ts`
 - Generator script: `src/codegen/generate-point-path.ts`
-- To modify point/path fields: edit `field-definitions.ts` → run `npm run generate`
-- Generated files use chunked array storage for memory efficiency (31 numeric fields per point)
+- To modify point/path fields: edit `fieldDefinitions.ts` → run `npm run generate`
+- Generated files use chunked array storage for memory efficiency (37 numeric fields per point across 12 categories)
 
 ### Core Components
 
 **Path Data Structure** (`src/types/path/`)
 
-- `Point.ts` and `GeneratedPath.ts`: Auto-generated from field definitions
+- `Point.ts` and `GeneratedPath.ts`: Auto-generated from field definitions (37 fields across 12 categories)
 - `Path.ts`: Extends GeneratedPath with computed statistics and GPS bounds
 - `AbstractPath.ts`: Base implementation for chunked array storage
+- `fieldDefinitions.ts`: Source of truth for all 37 point fields
 - Uses ECEF (Earth-Centered Earth-Fixed) coordinates for 3D calculations
+
+**Field Categories** (37 fields total):
+
+1. Coordinates (latitude, longitude, distance)
+2. Temporal (time, elapsed)
+3. Angles (bearing)
+4. Elevation
+5. Grade
+6. Radius
+7. Aero coefficient
+8. Cyclist wind (bearing, alpha)
+9. Power Physics (aero, gravity, rolling, bearings)
+10. Power Cyclist (input, optimal, muscular, wheel)
+11. Power Post-processed (computed totals)
+12. Speed & Motion (speed, speedMax, speedMaxIncline, virtSpeedCurrent)
+13. Environmental (temperature, wind)
+14. Physiological (heart rate, cadence)
 
 **Physics Engine** (`src/physics/`)
 
@@ -80,6 +98,43 @@ npm run generate         # Regenerate Point.ts and Path.ts from field definition
     - Rolling resistance (tire, surface type)
     - Gravity (climbing/descending)
     - Wheel bearings friction
+
+**Available Physics Providers:**
+
+**Air Density (Rho) Providers** (`src/physics/power/aero/rho/`):
+
+- `rhoProviderEstimate`: Estimates air density from elevation (default)
+- `rhoProviderDefault`: Fixed air density (1.225 kg/m³ at sea level)
+
+**Aerodynamics Providers** (`src/physics/power/aero/aero/`):
+
+- `aeroProviderConstant`: Constant aerodynamic coefficient (default)
+
+**Wind Providers** (`src/physics/power/aero/wind/`):
+
+- `windProviderNone`: No wind (default)
+- `WindProviderConstant`: Constant wind speed and direction
+
+**Cyclist Power Providers** (`src/physics/power/cyclist/`):
+
+- `PowerProviderConstant`: Constant power output
+- `PowerProviderConstantWithTiring`: Power with fatigue simulation over time
+- `powerProviderFromData`: Uses power data from GPX file
+- `muscularPowerProvider`: Advanced muscular power model
+
+Example CoursePhysics configuration:
+
+```typescript
+const coursePhysics: CoursePhysics = {
+    path,
+    cyclist: Cyclist.getDefault(),
+    bike: Bike.getDefault(),
+    rhoProvider: rhoProviderEstimate, // Air density from elevation
+    aeroProvider: aeroProviderConstant, // Constant aerodynamics
+    windProvider: windProviderNone, // No wind
+    cyclistPowerProvider: new PowerProviderConstant(280, false), // 280W constant
+};
+```
 
 **GPX Processing** (`src/gpx/`)
 
@@ -103,7 +158,41 @@ npm run generate         # Regenerate Point.ts and Path.ts from field definition
 
 - `Cyclist.ts`: Rider parameters (weight, max speed, power, lean angle)
 - `Bike.ts`: Equipment parameters (weight, CdA, rolling resistance)
-- `Course.ts`: Combines Path + Cyclist + Bike
+
+**Course Types** (`src/types/course/`)
+
+- `Course`: Basic interface with path, cyclist, bike
+- `CoursePhysics`: Extends Course with physics providers (rho, aero, wind, power)
+- `EnhanceOptions`: Customization options for enhancement pipeline
+
+**EnhanceOptions Interface:**
+
+```typescript
+interface EnhanceOptions {
+    fixElevation?: boolean; // Default: true - Fix GPS elevation data
+    computeMaxSpeeds?: boolean; // Default: true - Calculate maximum safe speeds
+    virtualizeTrack?: boolean; // Default: true - Simulate realistic cycling
+    computeOnePointPerSecond?: boolean; // Default: true - Resample to 1Hz
+    simplifyPath?: {
+        enable?: boolean; // Default: true - Use Douglas-Peucker simplification
+        tolerance?: number; // Default: 10 - Maximum deviation in meters
+        zExaggeration?: number; // Default: 3 - Elevation exaggeration factor
+    };
+}
+```
+
+**Enhancer API:**
+
+```typescript
+// Simple: Uses default CoursePhysics configuration
+Enhancer.enhanceCourseDefault(path: Path, options?: EnhanceOptions): Promise<Path>
+
+// Full control: Provide custom CoursePhysics
+Enhancer.enhanceCourse(course: CoursePhysics, options?: EnhanceOptions): Promise<Path>
+
+// Helper: Get default CoursePhysics for a path
+Enhancer.getDefaultCourse(path: Path): CoursePhysics
+```
 
 ### Module Path Aliases
 
@@ -147,10 +236,16 @@ import { test } from '#/mocks/mock'; // test/mocks/mock
 
 1. **Coordinate Systems**: The codebase uses both GPS (lat/lon/elevation) and ECEF for accurate 3D calculations. When working with geometry, prefer ECEF via `EcefConverter`.
 
-2. **Memory Efficiency**: Point data uses chunked array storage (Float64Array) rather than objects. Access via generated getter/setter methods only.
+2. **Memory Efficiency**: Point data uses chunked array storage (Float64Array) with 37 fields per point across 12 categories, rather than objects. Access via generated getter/setter methods only. Never directly manipulate the underlying arrays.
 
 3. **Physics Accuracy**: Speed calculations are based on real bicycle dynamics. Don't simplify formulas without validating against physics research.
 
 4. **Logging**: Use `Logger.ts` which respects `__DEV__` flag. Production builds strip all logging code.
 
 5. **Test Mocking**: `@glandais/elevation` is mocked in tests (see `test/__mocks__/`). Real elevation data requires external service.
+
+6. **Code Generation**: `Point.ts` and `GeneratedPath.ts` are auto-generated from `src/types/path/fieldDefinitions.ts`. To add/modify fields, edit the field definitions and run `npm run generate`. Never edit generated files directly.
+
+7. **API Methods**: Use `Enhancer.enhanceCourseDefault(path)` for simple enhancement or `Enhancer.enhanceCourse(coursePhysics, options)` for full control. The old `enhancePath` method no longer exists.
+
+8. **CoursePhysics Requirements**: Physics simulation methods (`MaxSpeedComputer`, `VirtualizeService`) require `CoursePhysics` interface with all providers (rho, aero, wind, cyclistPower), not just basic `Course`.

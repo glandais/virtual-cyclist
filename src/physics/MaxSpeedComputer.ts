@@ -1,7 +1,6 @@
-import { CIRC, G } from '@/constants/';
+import { G } from '@/constants/';
 import { Bike, Cyclist } from '@/types/models/';
 import { Path } from '@/types/path/';
-import { Vector3D } from '@/utils/';
 
 /**
  * Course configuration for MaxSpeedComputer using actual class instances
@@ -62,7 +61,7 @@ export class MaxSpeedComputer {
                 path.setSpeedMax(i, 2);
             } else {
                 // Middle points: compute max speed based on cornering
-                this.computeMaxSpeedByIncline(course, i - 1, i, i + 1);
+                this.computeMaxSpeedByIncline(course, i);
             }
 
             // Store the incline-limited speed for debugging
@@ -86,6 +85,36 @@ export class MaxSpeedComputer {
         }
     }
 
+    private static computeRadiusWindowed(path: Path, i: number, k = 2): number {
+        const mini = Math.max(0, i - k);
+        const maxi = Math.min(path.length - 1, i + k);
+        // Sum bearing changes over window
+        const totalBearingChange = this.normalizeAngleDiff(
+            path.getBearing(maxi) - path.getBearing(mini)
+        );
+
+        // Total distance over window
+        const totalDistance = path.getDistance(maxi) - path.getDistance(mini);
+
+        if (Math.abs(totalBearingChange) < 0.001) {
+            return 150;
+        }
+
+        const radius = totalDistance / Math.abs(totalBearingChange);
+        return Math.max(5, Math.min(150, radius));
+    }
+
+    private static normalizeAngleDiff(angle: number): number {
+        // Wrap to [-π, π] to handle bearing wraparound
+        while (angle > Math.PI) {
+            angle -= 2 * Math.PI;
+        }
+        while (angle < -Math.PI) {
+            angle += 2 * Math.PI;
+        }
+        return angle;
+    }
+
     /**
      * Compute maximum cornering speed for a point based on the turning radius
      * defined by three consecutive points (previous, current, next).
@@ -97,36 +126,11 @@ export class MaxSpeedComputer {
      * @param currentIndex Index of current point
      * @param nextIndex Index of next point
      */
-    private static computeMaxSpeedByIncline(
-        course: MaxSpeedCourse,
-        prevIndex: number,
-        currentIndex: number,
-        nextIndex: number
-    ): void {
+    private static computeMaxSpeedByIncline(course: MaxSpeedCourse, currentIndex: number): void {
         const path = course.path;
         const cyclist = course.cyclist;
 
-        // Transform GPS coordinates to local Cartesian system
-        const tPrev = this.transform(path, prevIndex, currentIndex);
-        const tCurrent = new Vector3D(0, 0, 0); // Current point is origin
-        const tNext = this.transform(path, nextIndex, currentIndex);
-
-        // Find center of circle passing through the three points
-        const circleCenter = this.getCircleCenter(tPrev, tCurrent, tNext);
-
-        if (circleCenter === null) {
-            path.setRadius(currentIndex, 150.0);
-            // Points are collinear or identical - no turning constraint
-            path.setSpeedMax(currentIndex, cyclist.getMaxSpeedMs());
-            return;
-        }
-
-        // Calculate turning radius
-        const radiusVector = circleCenter.subtract(tCurrent);
-        let radius = Math.hypot(radiusVector.x, radiusVector.y);
-
-        // Add 2m safety margin for trajectory uncertainty
-        radius = radius + 2;
+        const radius = this.computeRadiusWindowed(path, currentIndex, 10);
 
         // Store radius for debugging/analysis
         path.setRadius(currentIndex, radius);
@@ -184,74 +188,5 @@ export class MaxSpeedComputer {
         // Solve for maximum v0: v0² = vf² - 2×a×distance (a is negative)
         const newMaxSpeedPrevious = Math.sqrt(vf * vf - 2 * a * distance);
         path.setSpeedMax(prevIndex, newMaxSpeedPrevious);
-    }
-
-    /**
-     * Find the center of a circle passing through three points.
-     * Used to determine the turning radius for cornering speed calculations.
-     *
-     * Solves the system of linear equations to find the circumcenter.
-     * Returns null if points are collinear (infinite radius).
-     *
-     * @param a First point (Vector3D)
-     * @param b Second point (Vector3D)
-     * @param c Third point (Vector3D)
-     * @returns Circle center as Vector3D, or null if points are collinear
-     */
-    private static getCircleCenter(a: Vector3D, b: Vector3D, c: Vector3D): Vector3D | null {
-        const ax = a.x,
-            ay = a.y;
-        const bx = b.x,
-            by = b.y;
-        const cx = c.x,
-            cy = c.y;
-
-        // Set up linear system for circumcenter calculation
-        const A = bx - ax;
-        const B = by - ay;
-        const C = cx - ax;
-        const D = cy - ay;
-
-        const E = A * (ax + bx) + B * (ay + by);
-        const F = C * (ax + cx) + D * (ay + cy);
-
-        // Denominator of the solution
-        const G = 2 * (A * (cy - by) - B * (cx - bx));
-
-        if (Math.abs(G) < 0.001) {
-            // Points are collinear (determinant ≈ 0)
-            return null;
-        }
-
-        // Solve for circumcenter coordinates
-        const px = (D * E - B * F) / G;
-        const py = (A * F - C * E) / G;
-
-        return new Vector3D(px, py, 0);
-    }
-
-    /**
-     * Transform GPS coordinates to local Cartesian coordinates relative to a reference point.
-     * Uses equirectangular projection for small distances (appropriate for cycling routes).
-     *
-     * Formula:
-     * - x = (lon_diff / 360°) × circumference × cos(ref_lat)
-     * - y = (lat_diff / 360°) × circumference
-     *
-     * @param path Path containing GPS coordinates
-     * @param pointIndex Index of point to transform
-     * @param refIndex Index of reference point (origin)
-     * @returns Local Cartesian coordinates as Vector3D
-     */
-    private static transform(path: Path, pointIndex: number, refIndex: number): Vector3D {
-        const lonRad = path.getLongitude(pointIndex) - path.getLongitude(refIndex);
-        const latRad = path.getLatitude(pointIndex) - path.getLatitude(refIndex);
-
-        // Convert radians to meters using Earth's circumference
-        // latitude/longitude are already in radians, so direct scaling by circumference
-        const x = (lonRad * CIRC * Math.cos(path.getLatitude(refIndex))) / (2 * Math.PI);
-        const y = (latRad * CIRC) / (2 * Math.PI);
-
-        return new Vector3D(x, y, 0);
     }
 }

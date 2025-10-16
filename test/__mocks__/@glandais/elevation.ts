@@ -11,8 +11,27 @@ export interface CoordinatesElevation extends Coordinates {
     elevation: number;
 }
 
+// Mock ElevationSmoother class
+export class ElevationSmoother {
+    static smooth(
+        coordinates: CoordinatesElevation[],
+        _windowSize: number
+    ): CoordinatesElevation[] {
+        // Simple mock: return coordinates unchanged
+        // In real implementation, this would apply a smoothing algorithm
+        return coordinates;
+    }
+}
+
 // Mock ElevationProvider class
-export class MockElevationProvider {
+export default class ElevationProvider {
+    async setElevations(coordinates: CoordinatesElevation[]): Promise<void> {
+        // Mock implementation: modify coordinates in-place with simple elevation pattern
+        coordinates.forEach((coord, index) => {
+            coord.elevation = 100 + index * 10;
+        });
+    }
+
     async getElevationsAlong(
         coordinates: Coordinates[],
         _options?: {
@@ -29,10 +48,7 @@ export class MockElevationProvider {
 }
 
 // Mock the default export
-const mockElevationProvider = new MockElevationProvider();
-
-// Default export to match @glandais/elevation
-export default MockElevationProvider;
+const mockElevationProvider = new ElevationProvider();
 
 export class Elevation {
     public static async fixElevation(path: Path): Promise<Path> {

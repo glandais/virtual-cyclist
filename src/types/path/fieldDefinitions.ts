@@ -45,7 +45,6 @@ export const FIELD_DEFINITIONS: FieldCategory[] = [
     {
         id: 'coordinates',
         name: 'Coordinates',
-        notSelectable: true,
         fields: [
             {
                 name: 'LATITUDE',
@@ -72,6 +71,13 @@ export const FIELD_DEFINITIONS: FieldCategory[] = [
                 longDescription: '',
                 unit: 'meters',
             },
+            {
+                name: 'DX',
+                prop: 'dx',
+                shortDescription: 'dx (meters)',
+                longDescription: '',
+                unit: 'meters',
+            },
         ],
     },
     {
@@ -92,6 +98,13 @@ export const FIELD_DEFINITIONS: FieldCategory[] = [
                 name: 'ELAPSED',
                 prop: 'elapsed',
                 shortDescription: 'Elapsed duration (ms)',
+                longDescription: '',
+                unit: 'ms',
+            },
+            {
+                name: 'DT',
+                prop: 'dt',
+                shortDescription: 'dt (ms)',
                 longDescription: '',
                 unit: 'ms',
             },

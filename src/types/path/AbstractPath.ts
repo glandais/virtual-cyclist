@@ -10,10 +10,10 @@ import { FIELDS_PER_POINT, PointField } from './Point';
  * including spatial coordinates, physics calculations, and environmental conditions.
  */
 export abstract class AbstractPath {
-    private readonly CHUNK_SIZE = 1000; // Points per chunk
-    private readonly INITIAL_CHUNKS = 2; // Start with 2 chunks (2000 points capacity)
+    readonly CHUNK_SIZE = 1000; // Points per chunk
+    readonly INITIAL_CHUNKS = 2; // Start with 2 chunks (2000 points capacity)
 
-    private chunks: Float64Array[] = [];
+    chunks: Float64Array[] = [];
     protected pointCount = 0;
 
     constructor(public name: string) {

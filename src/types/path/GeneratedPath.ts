@@ -41,6 +41,14 @@ export abstract class GeneratedPath extends AbstractPath {
         super.setField(pointIndex, PointField.DISTANCE, value);
     }
 
+    getDx(pointIndex: number): number {
+        return super.getField(pointIndex, PointField.DX);
+    }
+
+    setDx(pointIndex: number, value: number): void {
+        super.setField(pointIndex, PointField.DX, value);
+    }
+
     // === Temporal Accessors ===
 
     getTime(pointIndex: number): number {
@@ -62,6 +70,14 @@ export abstract class GeneratedPath extends AbstractPath {
 
     setElapsed(pointIndex: number, value: number): void {
         super.setField(pointIndex, PointField.ELAPSED, value);
+    }
+
+    getDt(pointIndex: number): number {
+        return super.getField(pointIndex, PointField.DT);
+    }
+
+    setDt(pointIndex: number, value: number): void {
+        super.setField(pointIndex, PointField.DT, value);
     }
 
     // === Angles Accessors ===
@@ -322,7 +338,7 @@ export abstract class GeneratedPath extends AbstractPath {
 
     /**
      * Adds a new point with the provided data.
-     * @param data Complete point data with all 34 properties
+     * @param data Complete point data with all 36 properties
      * @returns The index of the newly added point
      */
     addPoint(data: Point): number {
@@ -337,10 +353,12 @@ export abstract class GeneratedPath extends AbstractPath {
         this.setLatitude(pointIndex, data.latitude);
         this.setLongitude(pointIndex, data.longitude);
         this.setDistance(pointIndex, data.distance);
+        this.setDx(pointIndex, data.dx);
 
         // Temporal
         this.setTime(pointIndex, data.time);
         this.setElapsed(pointIndex, data.elapsed);
+        this.setDt(pointIndex, data.dt);
 
         // Angles
         this.setBearing(pointIndex, data.bearing);
@@ -410,9 +428,11 @@ export abstract class GeneratedPath extends AbstractPath {
             latitude: this.getLatitude(pointIndex),
             longitude: this.getLongitude(pointIndex),
             distance: this.getDistance(pointIndex),
+            dx: this.getDx(pointIndex),
             // Temporal
             time: this.getTime(pointIndex),
             elapsed: this.getElapsed(pointIndex),
+            dt: this.getDt(pointIndex),
             // Angles
             bearing: this.getBearing(pointIndex),
             // 🏔️ Elevation
@@ -455,117 +475,6 @@ export abstract class GeneratedPath extends AbstractPath {
             // Physiological
             heartRate: this.getHeartRate(pointIndex),
             cadence: this.getCadence(pointIndex),
-        };
-    }
-
-    // Helper function for strict NaN handling
-    protected interpolateValue(v1: number, v2: number, coef: number): number {
-        if (isNaN(v1) || isNaN(v2)) {
-            return NaN;
-        }
-        return v1 + (v2 - v1) * coef;
-    }
-
-    /**
-     * Interpolates a new point between two existing points.
-     *
-     * Uses linear interpolation for all numeric fields:
-     * - result = p1 + (p2 - p1) × coef
-     *
-     * **NaN Handling (STRICT):**
-     * - If either p1 or p2 value is NaN, result is NaN
-     * - This ensures data integrity for incomplete GPS data
-     *
-     * @param index1 Index of first point
-     * @param index2 Index of second point
-     * @param coef Interpolation coefficient (0 = p1, 1 = p2, 0.5 = midpoint)
-     * @returns Interpolated point
-     */
-    public interpolatePoint(index1: number, index2: number, coef: number): Point {
-        const p1 = this.getPointData(index1);
-        const p2 = this.getPointData(index2);
-
-        return {
-            // Coordinates
-            latitude: this.interpolateValue(p1.latitude, p2.latitude, coef),
-            longitude: this.interpolateValue(p1.longitude, p2.longitude, coef),
-            distance: this.interpolateValue(p1.distance, p2.distance, coef),
-            // Temporal
-            time: this.interpolateValue(p1.time, p2.time, coef),
-            elapsed: this.interpolateValue(p1.elapsed, p2.elapsed, coef),
-            // Angles
-            bearing: this.interpolateValue(p1.bearing, p2.bearing, coef),
-            // 🏔️ Elevation
-            elevation: this.interpolateValue(p1.elevation, p2.elevation, coef),
-            // 📐 Grade
-            grade: this.interpolateValue(p1.grade, p2.grade, coef),
-            // Radius
-            radius: this.interpolateValue(p1.radius, p2.radius, coef),
-            // Aero coef
-            aeroCoef: this.interpolateValue(p1.aeroCoef, p2.aeroCoef, coef),
-            // Cyclist wind
-            windBearing: this.interpolateValue(p1.windBearing, p2.windBearing, coef),
-            windAlpha: this.interpolateValue(p1.windAlpha, p2.windAlpha, coef),
-            // ⚡ Power Physics
-            pAero: this.interpolateValue(p1.pAero, p2.pAero, coef),
-            pGravity: this.interpolateValue(p1.pGravity, p2.pGravity, coef),
-            pRollingResistance: this.interpolateValue(
-                p1.pRollingResistance,
-                p2.pRollingResistance,
-                coef
-            ),
-            pWheelBearings: this.interpolateValue(p1.pWheelBearings, p2.pWheelBearings, coef),
-            // ⚡ Power Cyclist
-            pInputPower: this.interpolateValue(p1.pInputPower, p2.pInputPower, coef),
-            pCyclistProvidedOptimalPower: this.interpolateValue(
-                p1.pCyclistProvidedOptimalPower,
-                p2.pCyclistProvidedOptimalPower,
-                coef
-            ),
-            pCyclistProvidedOptimalPowerWithHarmonics: this.interpolateValue(
-                p1.pCyclistProvidedOptimalPowerWithHarmonics,
-                p2.pCyclistProvidedOptimalPowerWithHarmonics,
-                coef
-            ),
-            pCyclistPowerNeeded: this.interpolateValue(
-                p1.pCyclistPowerNeeded,
-                p2.pCyclistPowerNeeded,
-                coef
-            ),
-            pCyclistProvidedMuscular: this.interpolateValue(
-                p1.pCyclistProvidedMuscular,
-                p2.pCyclistProvidedMuscular,
-                coef
-            ),
-            PCyclistProvidedWheel: this.interpolateValue(
-                p1.PCyclistProvidedWheel,
-                p2.PCyclistProvidedWheel,
-                coef
-            ),
-            // ⚡ Power Post processed
-            pComputedTotalPower: this.interpolateValue(
-                p1.pComputedTotalPower,
-                p2.pComputedTotalPower,
-                coef
-            ),
-            pComputedWheelPower: this.interpolateValue(
-                p1.pComputedWheelPower,
-                p2.pComputedWheelPower,
-                coef
-            ),
-            pComputedPower: this.interpolateValue(p1.pComputedPower, p2.pComputedPower, coef),
-            // Speed & Motion
-            speed: this.interpolateValue(p1.speed, p2.speed, coef),
-            speedMax: this.interpolateValue(p1.speedMax, p2.speedMax, coef),
-            speedMaxIncline: this.interpolateValue(p1.speedMaxIncline, p2.speedMaxIncline, coef),
-            virtSpeedCurrent: this.interpolateValue(p1.virtSpeedCurrent, p2.virtSpeedCurrent, coef),
-            // Environmental
-            temperature: this.interpolateValue(p1.temperature, p2.temperature, coef),
-            windSpeed: this.interpolateValue(p1.windSpeed, p2.windSpeed, coef),
-            windDirection: this.interpolateValue(p1.windDirection, p2.windDirection, coef),
-            // Physiological
-            heartRate: this.interpolateValue(p1.heartRate, p2.heartRate, coef),
-            cadence: this.interpolateValue(p1.cadence, p2.cadence, coef),
         };
     }
 }

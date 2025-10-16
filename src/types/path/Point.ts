@@ -6,81 +6,151 @@
 /**
  * Enum defining the index of each field in the chunked array storage.
  * Based on PropertyKeys.java from gpx2web project.
- * Each point has exactly 34 numeric values stored contiguously.
+ * Each point has exactly 36 numeric values stored contiguously.
  */
 export enum PointField {
-    // Coordinates (3 properties)
+    // Coordinates (4 properties)
     LATITUDE = 0, // Latitude (radians)
     LONGITUDE = 1, // Longitude (radians)
     DISTANCE = 2, // Distance (meters)
+    DX = 3, // dx (meters)
 
-    // Temporal (2 properties)
-    TIME = 3, // Timestamp (ms since epoch)
-    ELAPSED = 4, // Elapsed duration (ms)
+    // Temporal (3 properties)
+    TIME = 4, // Timestamp (ms since epoch)
+    ELAPSED = 5, // Elapsed duration (ms)
+    DT = 6, // dt (ms)
 
     // Angles (1 properties)
-    BEARING = 5, // Direction bearing (radians)
+    BEARING = 7, // Direction bearing (radians)
 
     // 🏔️ Elevation (1 properties)
-    ELEVATION = 6, // Elevation (meters)
+    ELEVATION = 8, // Elevation (meters)
 
     // 📐 Grade (1 properties)
-    GRADE = 7, // Road grade/slope (%)
+    GRADE = 9, // Road grade/slope (%)
 
     // Radius (1 properties)
-    RADIUS = 8, // Turn radius (meters)
+    RADIUS = 10, // Turn radius (meters)
 
     // Aero coef (1 properties)
-    AERO_COEF = 9, // Aerodynamic coefficient
+    AERO_COEF = 11, // Aerodynamic coefficient
 
     // Cyclist wind (2 properties)
-    WIND_BEARING = 10, // Wind bearing (radians)
-    WIND_ALPHA = 11, // Wind angle (radians)
+    WIND_BEARING = 12, // Wind bearing (radians)
+    WIND_ALPHA = 13, // Wind angle (radians)
 
     // ⚡ Power Physics (4 properties)
-    P_AERO = 12, // Aerodynamic power
-    P_GRAVITY = 13, // Gravitational power
-    P_ROLLING_RESISTANCE = 14, // Rolling resistance power
-    P_WHEEL_BEARINGS = 15, // Wheel bearings power
+    P_AERO = 14, // Aerodynamic power
+    P_GRAVITY = 15, // Gravitational power
+    P_ROLLING_RESISTANCE = 16, // Rolling resistance power
+    P_WHEEL_BEARINGS = 17, // Wheel bearings power
 
     // ⚡ Power Cyclist (6 properties)
-    P_INPUT_POWER = 16, // GPX input power
-    P_CYCLIST_PROVIDED_OPTIMAL_POWER = 17, // Optimal power
-    P_CYCLIST_PROVIDED_OPTIMAL_POWER_HARMONICS = 18, // Optimal power with harmonics
-    P_CYCLIST_PROVIDED_POWER_NEEDED = 19, // Power needed
-    P_CYCLIST_PROVIDED_MUSCULAR = 20, // Raw cyclist power
-    P_CYCLIST_PROVIDED_WHEEL = 21, // Cyclist power transmitted to ground
+    P_INPUT_POWER = 18, // GPX input power
+    P_CYCLIST_PROVIDED_OPTIMAL_POWER = 19, // Optimal power
+    P_CYCLIST_PROVIDED_OPTIMAL_POWER_HARMONICS = 20, // Optimal power with harmonics
+    P_CYCLIST_PROVIDED_POWER_NEEDED = 21, // Power needed
+    P_CYCLIST_PROVIDED_MUSCULAR = 22, // Raw cyclist power
+    P_CYCLIST_PROVIDED_WHEEL = 23, // Cyclist power transmitted to ground
 
     // ⚡ Power Post processed (3 properties)
-    P_COMPUTED_TOTAL_POWER = 22, // Power from kinetic energy change
-    P_COMPUTED_WHEEL_POWER = 23, // Wheel power from kinetic energy change
-    POWER = 24, // Total power (watts)
+    P_COMPUTED_TOTAL_POWER = 24, // Power from kinetic energy change
+    P_COMPUTED_WHEEL_POWER = 25, // Wheel power from kinetic energy change
+    POWER = 26, // Total power (watts)
 
     // Speed & Motion (4 properties)
-    SPEED = 25, // Current speed (m/s)
-    SPEED_MAX = 26, // Maximum speed (m/s)
-    SPEED_MAX_INCLINE = 27, // Max speed on incline (m/s)
-    VIRT_SPEED_CURRENT = 28, // Virtual current speed (m/s)
+    SPEED = 27, // Current speed (m/s)
+    SPEED_MAX = 28, // Maximum speed (m/s)
+    SPEED_MAX_INCLINE = 29, // Max speed on incline (m/s)
+    VIRT_SPEED_CURRENT = 30, // Virtual current speed (m/s)
 
     // Environmental (3 properties)
-    TEMPERATURE = 29, // Temperature (celsius)
-    WIND_SPEED = 30, // Wind speed (m/s)
-    WIND_DIRECTION = 31, // Wind direction (radians)
+    TEMPERATURE = 31, // Temperature (celsius)
+    WIND_SPEED = 32, // Wind speed (m/s)
+    WIND_DIRECTION = 33, // Wind direction (radians)
 
     // Physiological (2 properties)
-    HEART_RATE = 32, // Heart rate (bpm)
-    CADENCE = 33, // Pedaling cadence (rpm)
+    HEART_RATE = 34, // Heart rate (bpm)
+    CADENCE = 35, // Pedaling cadence (rpm)
 }
 
+export const POINT_FIELDS: PointField[] = [
+    // Coordinates (4 properties)
+    PointField.LATITUDE, // Latitude (radians)
+    PointField.LONGITUDE, // Longitude (radians)
+    PointField.DISTANCE, // Distance (meters)
+    PointField.DX, // dx (meters)
+
+    // Temporal (3 properties)
+    PointField.TIME, // Timestamp (ms since epoch)
+    PointField.ELAPSED, // Elapsed duration (ms)
+    PointField.DT, // dt (ms)
+
+    // Angles (1 properties)
+    PointField.BEARING, // Direction bearing (radians)
+
+    // 🏔️ Elevation (1 properties)
+    PointField.ELEVATION, // Elevation (meters)
+
+    // 📐 Grade (1 properties)
+    PointField.GRADE, // Road grade/slope (%)
+
+    // Radius (1 properties)
+    PointField.RADIUS, // Turn radius (meters)
+
+    // Aero coef (1 properties)
+    PointField.AERO_COEF, // Aerodynamic coefficient
+
+    // Cyclist wind (2 properties)
+    PointField.WIND_BEARING, // Wind bearing (radians)
+    PointField.WIND_ALPHA, // Wind angle (radians)
+
+    // ⚡ Power Physics (4 properties)
+    PointField.P_AERO, // Aerodynamic power
+    PointField.P_GRAVITY, // Gravitational power
+    PointField.P_ROLLING_RESISTANCE, // Rolling resistance power
+    PointField.P_WHEEL_BEARINGS, // Wheel bearings power
+
+    // ⚡ Power Cyclist (6 properties)
+    PointField.P_INPUT_POWER, // GPX input power
+    PointField.P_CYCLIST_PROVIDED_OPTIMAL_POWER, // Optimal power
+    PointField.P_CYCLIST_PROVIDED_OPTIMAL_POWER_HARMONICS, // Optimal power with harmonics
+    PointField.P_CYCLIST_PROVIDED_POWER_NEEDED, // Power needed
+    PointField.P_CYCLIST_PROVIDED_MUSCULAR, // Raw cyclist power
+    PointField.P_CYCLIST_PROVIDED_WHEEL, // Cyclist power transmitted to ground
+
+    // ⚡ Power Post processed (3 properties)
+    PointField.P_COMPUTED_TOTAL_POWER, // Power from kinetic energy change
+    PointField.P_COMPUTED_WHEEL_POWER, // Wheel power from kinetic energy change
+    PointField.POWER, // Total power (watts)
+
+    // Speed & Motion (4 properties)
+    PointField.SPEED, // Current speed (m/s)
+    PointField.SPEED_MAX, // Maximum speed (m/s)
+    PointField.SPEED_MAX_INCLINE, // Max speed on incline (m/s)
+    PointField.VIRT_SPEED_CURRENT, // Virtual current speed (m/s)
+
+    // Environmental (3 properties)
+    PointField.TEMPERATURE, // Temperature (celsius)
+    PointField.WIND_SPEED, // Wind speed (m/s)
+    PointField.WIND_DIRECTION, // Wind direction (radians)
+
+    // Physiological (2 properties)
+    PointField.HEART_RATE, // Heart rate (bpm)
+    PointField.CADENCE, // Pedaling cadence (rpm)
+];
+
 export const fieldToPointField: Record<string, PointField> = {
-    // Coordinates (3 properties)
+    // Coordinates (4 properties)
     latitude: PointField.LATITUDE, // Latitude (radians)
     longitude: PointField.LONGITUDE, // Longitude (radians)
     distance: PointField.DISTANCE, // Distance (meters)
+    dx: PointField.DX, // dx (meters)
 
-    // Temporal (2 properties)
+    // Temporal (3 properties)
     time: PointField.TIME, // Timestamp (ms since epoch)
     elapsed: PointField.ELAPSED, // Elapsed duration (ms)
+    dt: PointField.DT, // dt (ms)
 
     // Angles (1 properties)
     bearing: PointField.BEARING, // Direction bearing (radians)
@@ -140,10 +210,10 @@ export const fieldToPointField: Record<string, PointField> = {
 /**
  * Total number of fields per point in the chunked storage.
  */
-export const FIELDS_PER_POINT = 34;
+export const FIELDS_PER_POINT = 36;
 
 /**
- * Interface representing a complete point with all 34 properties.
+ * Interface representing a complete point with all 36 properties.
  * All values are stored as numbers with appropriate unit conversions.
  *
  * Note: Angles are stored in RADIANS for efficient physics calculations.
@@ -153,10 +223,12 @@ export interface Point {
     readonly latitude: number; // Latitude (radians)
     readonly longitude: number; // Longitude (radians)
     readonly distance: number; // Distance (meters)
+    readonly dx: number; // dx (meters)
 
     // Temporal
     readonly time: number; // Timestamp (ms since epoch)
     readonly elapsed: number; // Elapsed duration (ms)
+    readonly dt: number; // dt (ms)
 
     // Angles
     readonly bearing: number; // Direction bearing (radians)
@@ -223,9 +295,11 @@ export const EMPTY_POINT: Point = {
     latitude: NaN,
     longitude: NaN,
     distance: NaN,
+    dx: NaN,
     // Temporal
     time: NaN,
     elapsed: NaN,
+    dt: NaN,
     // Angles
     bearing: NaN,
     // 🏔️ Elevation

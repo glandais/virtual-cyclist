@@ -1,4 +1,4 @@
-import { Path, Paths, Point } from '@/types/path/';
+import { Path, Paths, POINT_FIELDS } from '@/types/path/';
 
 /**
  * Service for resampling GPS tracks to ensure one point per second.
@@ -128,18 +128,18 @@ export class PointPerSecond {
 
             if (data.type === 'copy') {
                 // Copy existing point with updated time
-                const point = originalPath.getPointData(data.index);
-                const updatedPoint: Point = { ...point, time: epochTimeMs };
-                newPath.addPoint(updatedPoint);
+                const i = newPath.addFrom(originalPath, data.index, POINT_FIELDS);
+                newPath.setTime(i, epochTimeMs);
             } else {
                 // Interpolate between two points
-                const interpolated = originalPath.interpolatePoint(
+                const i = newPath.addInterpolatedFrom(
+                    originalPath,
                     data.index1,
                     data.index2,
-                    data.coef
+                    data.coef,
+                    POINT_FIELDS
                 );
-                const updatedPoint: Point = { ...interpolated, time: epochTimeMs };
-                newPath.addPoint(updatedPoint);
+                newPath.setTime(i, epochTimeMs);
             }
         }
         newPath.computeDerivedData();

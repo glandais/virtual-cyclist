@@ -3,6 +3,29 @@ import vue from '@vitejs/plugin-vue';
 import path from 'path';
 import { defineConfig } from 'vite';
 
+function manualChunks(id) {
+    if (id.includes('node_modules/primevue')) {
+        return 'primevue1';
+    }
+    if (id.includes('node_modules/@primevue')) {
+        return 'primevue2';
+    }
+    if (id.includes('node_modules/@primeuix')) {
+        return 'primeuix';
+    }
+    if (id.includes('node_modules/leaflet')) {
+        return 'leaflet';
+    }
+    if (id.includes('node_modules/chart.js')) {
+        return 'chartjs';
+    }
+    if (id.includes('node_modules')) {
+        // console.log(id);
+        return 'vendor';
+    }
+    return null;
+}
+
 export default defineConfig({
     plugins: [vue(), tailwindcss()],
     resolve: {
@@ -23,6 +46,9 @@ export default defineConfig({
         emptyOutDir: true,
         rollupOptions: {
             external: [],
+            output: {
+                manualChunks: manualChunks,
+            }
         },
     },
     server: {

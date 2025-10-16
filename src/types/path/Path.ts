@@ -1,6 +1,7 @@
+import { MINIMAL_SPEED } from '@/constants/';
 import { toDegrees } from '@/utils/';
 import { GeneratedPath } from './GeneratedPath';
-import { Point } from './Point';
+import { FIELDS_PER_POINT, Point, PointField } from './Point';
 
 export class Path extends GeneratedPath {
     // Computed statistics
@@ -50,7 +51,7 @@ export class Path extends GeneratedPath {
     *coordinatesIterator(): IterableIterator<{
         latitude: number;
         longitude: number;
-        elevation?: number;
+        elevation: number;
     }> {
         for (let i = 0; i < this.pointCount; i++) {
             yield {
@@ -215,56 +216,68 @@ export class Path extends GeneratedPath {
 
         // Second pass: compute grades, speeds, and bearings
         for (let i = 0; i < this.pointCount; i++) {
-            const currentDist = this.getDistance(i);
-            const currentEle = this.getElevation(i);
-            const currentTime = this.getTime(i);
-            this.setElapsed(i, (currentTime - this.timeStart) / 1000);
+            const distance = this.getDistance(i);
+            const elevation = this.getElevation(i);
+            const time = this.getTime(i);
+            this.setElapsed(i, (time - this.timeStart) / 1000);
 
-            // Find next point with different distance (forward-looking calculation)
-            let maxIndex = i + 1;
-            while (
-                maxIndex < this.pointCount &&
-                Math.abs(this.getDistance(maxIndex) - currentDist) < 0.001
-            ) {
-                maxIndex++;
-            }
-            maxIndex = Math.min(this.pointCount - 1, maxIndex);
+            if (this.pointCount > 0) {
+                const im1 = Math.max(0, i - 1);
+                const ip1 = Math.min(this.pointCount - 1, i + 1);
+                this.setBearing(i, this.computeBearing(im1, ip1));
 
-            const distDiff = this.getDistance(maxIndex) - currentDist;
+                const dDistance = this.getDistance(ip1) - this.getDistance(im1);
+                const dElevation = this.getElevation(ip1) - this.getElevation(im1);
 
-            if (distDiff > 0) {
                 // Calculate grade
-                const elevationDiff = this.getElevation(maxIndex) - currentEle;
-                const grade = elevationDiff / distDiff;
+                const grade = dElevation / dDistance;
                 this.setGrade(i, grade);
+            }
+
+            if (i === 0) {
+                this.setSpeed(0, MINIMAL_SPEED);
+                if (i + 1 < this.pointCount) {
+                    const dDistance = distance - this.getDistance(i + 1);
+                    const dElevation = elevation - this.getElevation(i + 1);
+
+                    // Calculate grade
+                    const grade = dElevation / dDistance;
+                    this.setGrade(i, grade);
+
+                    this.setBearing(i, this.computeBearing(0, 1));
+                }
+                this.setDx(i, 0);
+                this.setDt(i, 0);
+            }
+            if (i > 0) {
+                const im1 = i - 1;
+
+                const dDistance = distance - this.getDistance(im1);
+                const dTime = time - this.getTime(im1);
 
                 // Calculate speed
-                const timeDiff = this.getTime(maxIndex) - currentTime;
-                if (timeDiff > 0) {
-                    const speed = (distDiff * 1000) / timeDiff; // m/s (timeDiff is in ms)
-                    this.setSpeed(i, speed);
-                }
-
-                // Calculate bearing
-                const currentLat = this.getLatitude(i);
-                const currentLon = this.getLongitude(i);
-                const targetLat = this.getLatitude(maxIndex);
-                const targetLon = this.getLongitude(maxIndex);
-
-                const fromProj = this.project(currentLat, currentLon);
-                const toProj = this.project(targetLat, targetLon);
-
-                const dy = toProj.y - fromProj.y;
-                const dx = toProj.x - fromProj.x;
-                const bearing = Math.atan2(-dy, dx); // Negative dy for correct bearing
-                this.setBearing(i, bearing);
-            } else {
-                // No distance change, set defaults
-                this.setGrade(i, 0);
-                this.setBearing(i, 0);
-                // Keep existing speed if any
+                const speed = (dDistance * 1000) / dTime; // m/s (timeDiff is in ms)
+                this.setSpeed(i, speed);
+                this.setDx(i, dDistance);
+                this.setDt(i, dTime);
             }
         }
+    }
+
+    computeBearing(from: number, to: number): number {
+        // Calculate bearing
+        const currentLat = this.getLatitude(from);
+        const currentLon = this.getLongitude(from);
+        const targetLat = this.getLatitude(to);
+        const targetLon = this.getLongitude(to);
+
+        const fromProj = this.project(currentLat, currentLon);
+        const toProj = this.project(targetLat, targetLon);
+
+        const dy = toProj.y - fromProj.y;
+        const dx = toProj.x - fromProj.x;
+        const bearing = Math.atan2(-dy, dx); // Negative dy for correct bearing
+        return bearing;
     }
 
     /**
@@ -302,6 +315,84 @@ export class Path extends GeneratedPath {
             x: longitude * Math.cos(latitude),
             y: latitude,
         };
+    }
+
+    /**
+     * PERFORMANCE OPTIMIZATION: Directly interpolate between two points and write to a new index.
+     * Avoids creating intermediate Point objects.
+     *
+     * @param targetIndex Index where interpolated point will be written (must be valid)
+     * @param index1 First source point index
+     * @param index2 Second source point index
+     * @param coef Interpolation coefficient (0 = index1, 1 = index2)
+     * @param fieldsToInterpolate Array of PointField values to interpolate (others will be NaN)
+     */
+    public addInterpolatedFrom(
+        from: Path,
+        index1: number,
+        index2: number,
+        coef: number,
+        fieldsToInterpolate: PointField[]
+    ): number {
+        const pointIndex = this.pointCount;
+        this.ensureCapacity(pointIndex + 1);
+
+        // Increment point count first so bounds checking works
+        this.pointCount++;
+
+        const chunk1Index = Math.floor(index1 / this.CHUNK_SIZE);
+        const point1InChunk = index1 % this.CHUNK_SIZE;
+        const base1Offset = point1InChunk * FIELDS_PER_POINT;
+        const chunk1 = from.chunks[chunk1Index];
+
+        const chunk2Index = Math.floor(index2 / this.CHUNK_SIZE);
+        const point2InChunk = index2 % this.CHUNK_SIZE;
+        const base2Offset = point2InChunk * FIELDS_PER_POINT;
+        const chunk2 = from.chunks[chunk2Index];
+
+        const targetChunkIndex = Math.floor(pointIndex / this.CHUNK_SIZE);
+        const targetPointInChunk = pointIndex % this.CHUNK_SIZE;
+        const targetBaseOffset = targetPointInChunk * FIELDS_PER_POINT;
+        const targetChunk = this.chunks[targetChunkIndex];
+
+        // Interpolate only specified fields
+        for (const field of fieldsToInterpolate) {
+            const v1 = chunk1[base1Offset + field];
+            const v2 = chunk2[base2Offset + field];
+
+            // Strict NaN handling - if either is NaN, result is NaN
+            if (isNaN(v1) || isNaN(v2)) {
+                targetChunk[targetBaseOffset + field] = NaN;
+            } else {
+                targetChunk[targetBaseOffset + field] = v1 + (v2 - v1) * coef;
+            }
+        }
+        return pointIndex;
+    }
+
+    public addFrom(from: Path, index: number, fieldsToInterpolate: PointField[]): number {
+        const pointIndex = this.pointCount;
+        this.ensureCapacity(pointIndex + 1);
+
+        // Increment point count first so bounds checking works
+        this.pointCount++;
+
+        const chunkIndex = Math.floor(index / this.CHUNK_SIZE);
+        const pointInChunk = index % this.CHUNK_SIZE;
+        const baseOffset = pointInChunk * FIELDS_PER_POINT;
+        const chunk = from.chunks[chunkIndex];
+
+        const targetChunkIndex = Math.floor(pointIndex / this.CHUNK_SIZE);
+        const targetPointInChunk = pointIndex % this.CHUNK_SIZE;
+        const targetBaseOffset = targetPointInChunk * FIELDS_PER_POINT;
+        const targetChunk = this.chunks[targetChunkIndex];
+
+        // Interpolate only specified fields
+        for (const field of fieldsToInterpolate) {
+            targetChunk[targetBaseOffset + field] = chunk[baseOffset + field];
+        }
+
+        return pointIndex;
     }
 }
 
