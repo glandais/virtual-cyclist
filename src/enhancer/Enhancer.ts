@@ -66,15 +66,29 @@ export class Enhancer {
         logger.info('Point count : %s', path.length);
 
         logger.timeLevel(LogLevel.INFO, 'PointPerDistance.compute');
-        path = PointPerDistance.compute(path, 1.0, 2.0, this.INPUT_GPX_FIELDS);
+        path = PointPerDistance.compute(path, -1.0, 30.0, this.INPUT_GPX_FIELDS);
         logger.timeEndLevel(LogLevel.INFO, 'PointPerDistance.compute');
 
         logger.info('Point count : %s', path.length);
 
         // Step 1: Fix elevation
-        logger.timeLevel(LogLevel.INFO, 'Elevation.fixElevation');
-        path = await Elevation.fixElevation(path, opts.fixElevation);
-        logger.timeEndLevel(LogLevel.INFO, 'Elevation.fixElevation');
+        if (opts.fixElevation) {
+            logger.timeLevel(LogLevel.INFO, 'Elevation.fixElevation');
+            path = await Elevation.fixElevation(path);
+            logger.timeEndLevel(LogLevel.INFO, 'Elevation.fixElevation');
+            logger.info('Point count : %s', path.length);
+        }
+
+        logger.timeLevel(LogLevel.INFO, 'PointPerDistance.compute');
+        path = PointPerDistance.compute(path, 1.0, 2.0, this.INPUT_GPX_FIELDS);
+        logger.timeEndLevel(LogLevel.INFO, 'PointPerDistance.compute');
+
+        logger.info('Point count : %s', path.length);
+
+        logger.timeLevel(LogLevel.INFO, 'Elevation.smoothElevation');
+        path = await Elevation.smoothElevation(path);
+        logger.timeEndLevel(LogLevel.INFO, 'Elevation.smoothElevation');
+
         logger.info('Point count : %s', path.length);
 
         // Step 2: Compute max speeds

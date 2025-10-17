@@ -11,14 +11,17 @@ export interface MaxSpeedCourse {
     readonly bike: Bike;
 }
 
+const MAX_RADIUS = 200;
+
 /**
  * MaxSpeedComputer calculates maximum safe speeds for cycling based on:
  * 1. Cornering physics (lean angle limits)
  * 2. Braking constraints (deceleration limits)
  *
- * Uses a two-pass algorithm:
- * - Forward pass: Compute cornering speed limits using circle geometry
- * - Reverse pass: Apply braking constraints working backwards
+ * Uses a single backward pass algorithm that combines both constraints:
+ * - For each point (working backwards): compute v_max = min(cornering_limit, braking_limit)
+ * - Cornering limit: v = √(g × radius × tan(max_lean_angle))
+ * - Braking limit: max speed that can safely brake to next point's speed
  *
  * Based on bicycle dynamics and physics research.
  */
@@ -28,61 +31,62 @@ export class MaxSpeedComputer {
     /**
      * Compute maximum safe speeds for all points in the course.
      *
+     * Single backward pass: Calculate maximum speeds based on both cornering physics
+     * and braking constraints. Works backwards through the path, ensuring each point's
+     * speed is limited by both local geometry (cornering) and ability to brake to
+     * the next point's speed.
+     *
+     * At each point i: v_max[i] = min(cornering_limit[i], max_speed_can_brake_to_v[i+1])
+     *
      * @param course Course containing path, cyclist, and bike parameters
      */
     static computeMaxSpeeds(course: MaxSpeedCourse): void {
-        // First pass, forward: max speed by incline/cornering
-        this.firstPass(course);
+        const path = course.path;
+        const pointCount = path.getPointCount();
 
-        // Second pass, reverse: max speed with braking constraints
-        this.secondPass(course);
+        // Start from the end and work backwards
+        for (let i = pointCount - 1; i >= 0; i--) {
+            if (i === pointCount - 1) {
+                // Last point: stop (2 m/s minimum for stability)
+                path.setSpeedMax(i, 2);
+            } else {
+                // Compute cornering speed limit for this point
+                const corneringLimit = this.computeCorneringLimit(course, i);
+
+                // Compute maximum speed that can brake to next point's speed
+                const brakingLimit = this.computeBrakingLimit(course, i, i + 1);
+
+                // Final speed is the minimum of both constraints
+                path.setSpeedMax(i, Math.min(corneringLimit, brakingLimit));
+            }
+        }
         course.path.computeDerivedData();
     }
 
     /**
-     * First pass: Calculate maximum cornering speeds based on lean angle physics.
-     * Works forward through the path, computing speeds limited by turning radius.
+     * Compute maximum cornering speed limit for a point based on turning radius
+     * and lean angle physics.
      *
-     * Formula: v_max = √(g × radius × tan(max_lean_angle))
+     * Uses bicycle dynamics: v_max = √(g × radius × tan(max_lean_angle))
      *
-     * @param course Course to process
+     * @param course Course containing cyclist parameters
+     * @param currentIndex Index of current point
+     * @returns Maximum speed limited by cornering physics
      */
-    protected static firstPass(course: MaxSpeedCourse): void {
+    private static computeCorneringLimit(course: MaxSpeedCourse, currentIndex: number): number {
         const path = course.path;
         const cyclist = course.cyclist;
-        const pointCount = path.getPointCount();
 
-        for (let i = 0; i < pointCount; i++) {
-            if (i === 0) {
-                // First point: use cyclist's maximum speed
-                path.setSpeedMax(i, cyclist.getMaxSpeedMs());
-            } else if (i === pointCount - 1) {
-                // Last point: stop (2 m/s minimum for stability)
-                path.setSpeedMax(i, 2);
-            } else {
-                // Middle points: compute max speed based on cornering
-                this.computeMaxSpeedByIncline(course, i);
-            }
+        const radius = this.computeRadiusWindowed(path, currentIndex, 10);
 
-            // Store the incline-limited speed for debugging
-            path.setSpeedMaxIncline(i, path.getSpeedMax(i));
-        }
-    }
+        // Calculate maximum cornering speed using bicycle dynamics
+        // v_max = √(g × radius × tan(max_lean_angle))
+        const vMax = Math.sqrt(G * radius * cyclist.getTanMaxAngle());
 
-    /**
-     * Second pass: Apply braking constraints working backwards through the path.
-     * Ensures that the cyclist can brake safely from any speed to the required
-     * speed at the next point.
-     *
-     * @param course Course to process
-     */
-    protected static secondPass(course: MaxSpeedCourse): void {
-        const path = course.path;
-        const pointCount = path.getPointCount();
-
-        for (let i = pointCount - 1; i > 0; i--) {
-            this.computeMaxSpeedByBraking(course, i - 1, i);
-        }
+        // Return the smaller of cornering limit or cyclist's absolute max speed
+        const result = Math.min(cyclist.getMaxSpeedMs(), vMax);
+        path.setSpeedMaxIncline(currentIndex, result);
+        return result;
     }
 
     private static computeRadiusWindowed(path: Path, i: number, k = 2): number {
@@ -97,11 +101,16 @@ export class MaxSpeedComputer {
         const totalDistance = path.getDistance(maxi) - path.getDistance(mini);
 
         if (Math.abs(totalBearingChange) < 0.001) {
-            return 150;
+            // Store radius for debugging/analysis
+            path.setRadius(i, MAX_RADIUS);
+            return MAX_RADIUS;
         }
 
         const radius = totalDistance / Math.abs(totalBearingChange);
-        return Math.max(5, Math.min(150, radius));
+        const result = Math.max(5, Math.min(MAX_RADIUS, radius));
+        // Store radius for debugging/analysis
+        path.setRadius(i, result);
+        return result;
     }
 
     private static normalizeAngleDiff(angle: number): number {
@@ -116,77 +125,36 @@ export class MaxSpeedComputer {
     }
 
     /**
-     * Compute maximum cornering speed for a point based on the turning radius
-     * defined by three consecutive points (previous, current, next).
+     * Compute maximum speed at a point that allows safe braking to the next point.
+     * Uses kinematic equation to determine the maximum initial velocity that can
+     * decelerate to the target velocity within the available distance.
      *
-     * Uses bicycle dynamics: v_max = √(g × radius × tan(max_lean_angle))
+     * Formula: v₀ = √(vf² + 2 × a × distance)
+     * where a is the braking deceleration (positive value)
      *
-     * @param course Course containing cyclist parameters
-     * @param prevIndex Index of previous point
-     * @param currentIndex Index of current point
-     * @param nextIndex Index of next point
+     * @param course Course containing cyclist braking parameters
+     * @param currentIndex Index of current point (where we're computing max speed)
+     * @param nextIndex Index of next point (target speed to brake to)
+     * @returns Maximum speed that can safely brake to next point's speed
      */
-    private static computeMaxSpeedByIncline(course: MaxSpeedCourse, currentIndex: number): void {
-        const path = course.path;
-        const cyclist = course.cyclist;
-
-        const radius = this.computeRadiusWindowed(path, currentIndex, 10);
-
-        // Store radius for debugging/analysis
-        path.setRadius(currentIndex, radius);
-
-        // Calculate maximum cornering speed using bicycle dynamics
-        // v_max = √(g × radius × tan(max_lean_angle))
-        const vMax = Math.sqrt(G * radius * cyclist.getTanMaxAngle());
-
-        // Apply the smaller of cornering limit or cyclist's absolute max speed
-        path.setSpeedMax(currentIndex, Math.min(cyclist.getMaxSpeedMs(), vMax));
-    }
-
-    /**
-     * Apply braking constraint between two consecutive points.
-     * Ensures that the cyclist can brake from the previous point's speed
-     * to the current point's required speed within the available distance.
-     *
-     * Uses kinematic equation: v₀² = v_f² + 2 × a × distance
-     *
-     * @param course Course containing cyclist parameters
-     * @param prevIndex Index of previous point
-     * @param currentIndex Index of current point
-     */
-    private static computeMaxSpeedByBraking(
+    private static computeBrakingLimit(
         course: MaxSpeedCourse,
-        prevIndex: number,
-        currentIndex: number
-    ): void {
+        currentIndex: number,
+        nextIndex: number
+    ): number {
         const path = course.path;
         const cyclist = course.cyclist;
 
-        const v0 = path.getSpeedMax(prevIndex); // Current speed at previous point
-        const vf = path.getSpeedMax(currentIndex); // Required speed at current point
-        const a = -cyclist.getMaxBrakeMS2(); // Braking deceleration (negative)
-
-        if (vf >= v0) {
-            // No braking needed (target speed is higher or equal)
-            return;
-        }
+        const vf = path.getSpeedMax(nextIndex); // Target speed at next point
+        const a = cyclist.getMaxBrakeMS2(); // Braking deceleration (positive value)
 
         // Distance available for braking
-        const distance = path.getDistance(currentIndex) - path.getDistance(prevIndex);
+        const distance = path.getDistance(nextIndex) - path.getDistance(currentIndex);
 
-        // Check if we can brake from v0 to vf in the available distance
-        // Using kinematic equation: vf² = v0² + 2×a×d
-        // Rearranging: required_distance = (vf² - v0²) / (2×a)
-        const requiredDistance = (vf * vf - v0 * v0) / (2 * a);
+        // Calculate maximum initial speed that can brake to vf in the available distance
+        // Using kinematic equation: v0² = vf² + 2×a×distance
+        const maxSpeed = Math.sqrt(vf * vf + 2 * a * distance);
 
-        if (requiredDistance <= distance) {
-            // Sufficient distance available for braking
-            return;
-        }
-
-        // Insufficient distance - reduce the maximum speed at previous point
-        // Solve for maximum v0: v0² = vf² - 2×a×distance (a is negative)
-        const newMaxSpeedPrevious = Math.sqrt(vf * vf - 2 * a * distance);
-        path.setSpeedMax(prevIndex, newMaxSpeedPrevious);
+        return maxSpeed;
     }
 }
