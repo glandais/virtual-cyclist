@@ -1,3 +1,15 @@
+## [1.2.2](https://github.com/glandais/virtual-cyclist/compare/v1.2.1...v1.2.2) (2025-10-17)
+
+
+### Bug Fixes
+
+* more accurate speeds ([df86a0a](https://github.com/glandais/virtual-cyclist/commit/df86a0a72fc51e03762e94201ff37516c5f52766))
+
+
+### Performance Improvements
+
+* elevation and max speed ([b399bb5](https://github.com/glandais/virtual-cyclist/commit/b399bb551bbb5a18d748815ad5e1bfcdb6096aaa))
+
 ## [1.2.1](https://github.com/glandais/virtual-cyclist/compare/v1.2.0...v1.2.1) (2025-10-17)
 
 
