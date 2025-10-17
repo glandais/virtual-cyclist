@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/glandais/virtual-cyclist/compare/v1.1.1...v1.2.0) (2025-10-17)
+
+
+### Features
+
+* improve computations ([5b301a3](https://github.com/glandais/virtual-cyclist/commit/5b301a38c86413835f597143f29e3f85b9f13df4))
+
 ## [1.1.1](https://github.com/glandais/virtual-cyclist/compare/v1.1.0...v1.1.1) (2025-10-06)
 
 
