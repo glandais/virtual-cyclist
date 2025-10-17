@@ -272,14 +272,19 @@ function generateAddPointMethod(lines: string[]) {
     lines.push('        // Increment point count first so bounds checking works');
     lines.push('        this.pointCount++;');
     lines.push('');
+    lines.push('        const chunkIndex = Math.floor(pointIndex / this.CHUNK_SIZE);');
+    lines.push('        const pointInChunk = pointIndex % this.CHUNK_SIZE;');
+    lines.push('        const fieldOffset = pointInChunk * FIELDS_PER_POINT;');
+    lines.push('');
     lines.push('        // Set all fields from the provided data');
 
     for (const category of FIELD_DEFINITIONS) {
         lines.push(`        // ${category.name}`);
 
         for (const field of category.fields) {
-            const pascalName = toPascalCase(field.prop);
-            lines.push(`        this.set${pascalName}(pointIndex, data.${field.prop});`);
+            lines.push(
+                `        this.chunks[chunkIndex][fieldOffset + PointField.${field.name}] = data.${field.prop};`
+            );
         }
         lines.push('');
     }
@@ -298,14 +303,18 @@ function generateGetPointDataMethod(lines: string[]) {
     lines.push('     * Gets all data for a specific point.');
     lines.push('     */');
     lines.push('    getPointData(pointIndex: number): Point {');
+    lines.push('        const chunkIndex = Math.floor(pointIndex / this.CHUNK_SIZE);');
+    lines.push('        const pointInChunk = pointIndex % this.CHUNK_SIZE;');
+    lines.push('        const fieldOffset = pointInChunk * FIELDS_PER_POINT;');
     lines.push('        return {');
 
     for (const category of FIELD_DEFINITIONS) {
         lines.push(`            // ${category.name}`);
 
         for (const field of category.fields) {
-            const pascalName = toPascalCase(field.prop);
-            lines.push(`            ${field.prop}: this.get${pascalName}(pointIndex),`);
+            lines.push(
+                `            ${field.prop}: this.chunks[chunkIndex][fieldOffset + PointField.${field.name}],`
+            );
         }
     }
 

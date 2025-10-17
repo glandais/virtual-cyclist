@@ -15,12 +15,9 @@ export class Elevation {
 
         // Add all corrected coordinates to the result path
         for (let i = 0; i < path.length; i++) {
-            const data = path.getPointData(i);
             const coord = coordinatesElevation[i];
-            result.addPoint({
-                ...data,
-                elevation: coord.elevation,
-            });
+            result.addFrom(path, i);
+            result.setElevation(i, coord.elevation);
         }
         result.computeDerivedData();
         return result;

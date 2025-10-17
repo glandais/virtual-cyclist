@@ -48,7 +48,7 @@ export default defineConfig({
             external: [],
             output: {
                 manualChunks: manualChunks,
-            }
+            },
         },
     },
     server: {

@@ -1,4 +1,3 @@
-import { DT } from '@/constants/';
 import { PowerComputer } from '@/physics/power/';
 import { AeroProvider } from '@/physics/power/aero/aero/';
 import { rhoProviderDefault } from '@/physics/power/aero/rho/';
@@ -205,7 +204,7 @@ describe('PowerComputer', () => {
             const dt = computer.callGetDt(pSum, mass, speed, targetDx);
 
             expect(dt).toBeGreaterThan(0);
-            expect(dt).toBeLessThan(DT);
+            expect(dt).toBeLessThan(1.0);
 
             const calculatedDx = computer.callGetDx(pSum, mass, speed, dt);
             expect(calculatedDx).toBeCloseTo(targetDx, 5);

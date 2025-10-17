@@ -1,7 +1,7 @@
 import { MINIMAL_SPEED } from '@/constants/';
 import { toDegrees } from '@/utils/';
 import { GeneratedPath } from './GeneratedPath';
-import { FIELDS_PER_POINT, Point, PointField } from './Point';
+import { FIELDS_PER_POINT, Point, POINT_FIELDS } from './Point';
 
 export class Path extends GeneratedPath {
     // Computed statistics
@@ -318,8 +318,7 @@ export class Path extends GeneratedPath {
     }
 
     /**
-     * PERFORMANCE OPTIMIZATION: Directly interpolate between two points and write to a new index.
-     * Avoids creating intermediate Point objects.
+     * Directly interpolate between two points and write to a new index.
      *
      * @param targetIndex Index where interpolated point will be written (must be valid)
      * @param index1 First source point index
@@ -332,7 +331,7 @@ export class Path extends GeneratedPath {
         index1: number,
         index2: number,
         coef: number,
-        fieldsToInterpolate: PointField[]
+        fieldsToInterpolate = POINT_FIELDS
     ): number {
         const pointIndex = this.pointCount;
         this.ensureCapacity(pointIndex + 1);
@@ -370,7 +369,7 @@ export class Path extends GeneratedPath {
         return pointIndex;
     }
 
-    public addFrom(from: Path, index: number, fieldsToInterpolate: PointField[]): number {
+    public addFrom(from: Path, index: number, fields = POINT_FIELDS): number {
         const pointIndex = this.pointCount;
         this.ensureCapacity(pointIndex + 1);
 
@@ -388,7 +387,7 @@ export class Path extends GeneratedPath {
         const targetChunk = this.chunks[targetChunkIndex];
 
         // Interpolate only specified fields
-        for (const field of fieldsToInterpolate) {
+        for (const field of fields) {
             targetChunk[targetBaseOffset + field] = chunk[baseOffset + field];
         }
 

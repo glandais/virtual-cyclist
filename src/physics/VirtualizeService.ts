@@ -58,8 +58,7 @@ export class VirtualizeService {
         const inputPath = course.path;
 
         // Get distances array for binary search
-        const dists = inputPath.getAllDistances();
-        const distsLength = dists.length;
+        const pathLength = inputPath.length;
 
         // Initialize with first point at minimal speed
         let i = 0;
@@ -80,7 +79,7 @@ export class VirtualizeService {
         i++;
         let iteration = 0;
         // Main simulation loop
-        while (i < distsLength - 1) {
+        while (i < pathLength - 1) {
             const pSum = this.powerComputer.getNewPower(course, path, i - 1, true);
             const dx = inputPath.getDistance(i) - inputPath.getDistance(i - 1);
             let dt = this.powerComputer.getDt(pSum, equivalentMass, speed, dx);

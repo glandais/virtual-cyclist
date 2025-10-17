@@ -13,17 +13,18 @@ export class PointPerDistance {
         if (originalCount === 0) {
             return new Path(path.name);
         }
+        const dists = path.getAllDistances();
 
         const newPath = new Path(path.name);
 
         // Always add the first point
         newPath.addFrom(path, 0, fields);
-        let lastAddedDistance = path.getDistance(0);
+        let lastAddedDistance = dists[0];
         let lastAddedIndex = 0; // Track the original index of the last added point
 
         // Process remaining points
         for (let i = 1; i < originalCount; i++) {
-            const currentDistance = path.getDistance(i);
+            const currentDistance = dists[i];
             const gap = currentDistance - lastAddedDistance;
 
             if (gap < minDist) {
@@ -46,14 +47,14 @@ export class PointPerDistance {
                     // Find which original segment contains this target distance
                     // Start from lastAddedIndex and search forward
                     let index1 = lastAddedIndex;
-                    while (index1 < i - 1 && path.getDistance(index1 + 1) < targetDistance) {
+                    while (index1 < i - 1 && dists[index1 + 1] < targetDistance) {
                         index1++;
                     }
                     const index2 = index1 + 1;
 
                     // Calculate interpolation coefficient based on distance
-                    const dist1 = path.getDistance(index1);
-                    const dist2 = path.getDistance(index2);
+                    const dist1 = dists[index1];
+                    const dist2 = dists[index2];
                     const coef = (targetDistance - dist1) / (dist2 - dist1);
 
                     // Interpolate and add the point

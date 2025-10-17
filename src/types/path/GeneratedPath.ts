@@ -5,7 +5,7 @@
 
 import { toDegrees } from '@/utils/';
 import { AbstractPath } from './AbstractPath';
-import { Point, PointField } from './Point';
+import { FIELDS_PER_POINT, Point, PointField } from './Point';
 export abstract class GeneratedPath extends AbstractPath {
     // === Coordinates Accessors ===
 
@@ -348,73 +348,84 @@ export abstract class GeneratedPath extends AbstractPath {
         // Increment point count first so bounds checking works
         this.pointCount++;
 
+        const chunkIndex = Math.floor(pointIndex / this.CHUNK_SIZE);
+        const pointInChunk = pointIndex % this.CHUNK_SIZE;
+        const fieldOffset = pointInChunk * FIELDS_PER_POINT;
+
         // Set all fields from the provided data
         // Coordinates
-        this.setLatitude(pointIndex, data.latitude);
-        this.setLongitude(pointIndex, data.longitude);
-        this.setDistance(pointIndex, data.distance);
-        this.setDx(pointIndex, data.dx);
+        this.chunks[chunkIndex][fieldOffset + PointField.LATITUDE] = data.latitude;
+        this.chunks[chunkIndex][fieldOffset + PointField.LONGITUDE] = data.longitude;
+        this.chunks[chunkIndex][fieldOffset + PointField.DISTANCE] = data.distance;
+        this.chunks[chunkIndex][fieldOffset + PointField.DX] = data.dx;
 
         // Temporal
-        this.setTime(pointIndex, data.time);
-        this.setElapsed(pointIndex, data.elapsed);
-        this.setDt(pointIndex, data.dt);
+        this.chunks[chunkIndex][fieldOffset + PointField.TIME] = data.time;
+        this.chunks[chunkIndex][fieldOffset + PointField.ELAPSED] = data.elapsed;
+        this.chunks[chunkIndex][fieldOffset + PointField.DT] = data.dt;
 
         // Angles
-        this.setBearing(pointIndex, data.bearing);
+        this.chunks[chunkIndex][fieldOffset + PointField.BEARING] = data.bearing;
 
         // 🏔️ Elevation
-        this.setElevation(pointIndex, data.elevation);
+        this.chunks[chunkIndex][fieldOffset + PointField.ELEVATION] = data.elevation;
 
         // 📐 Grade
-        this.setGrade(pointIndex, data.grade);
+        this.chunks[chunkIndex][fieldOffset + PointField.GRADE] = data.grade;
 
         // Radius
-        this.setRadius(pointIndex, data.radius);
+        this.chunks[chunkIndex][fieldOffset + PointField.RADIUS] = data.radius;
 
         // Aero coef
-        this.setAeroCoef(pointIndex, data.aeroCoef);
+        this.chunks[chunkIndex][fieldOffset + PointField.AERO_COEF] = data.aeroCoef;
 
         // Cyclist wind
-        this.setWindBearing(pointIndex, data.windBearing);
-        this.setWindAlpha(pointIndex, data.windAlpha);
+        this.chunks[chunkIndex][fieldOffset + PointField.WIND_BEARING] = data.windBearing;
+        this.chunks[chunkIndex][fieldOffset + PointField.WIND_ALPHA] = data.windAlpha;
 
         // ⚡ Power Physics
-        this.setPAero(pointIndex, data.pAero);
-        this.setPGravity(pointIndex, data.pGravity);
-        this.setPRollingResistance(pointIndex, data.pRollingResistance);
-        this.setPWheelBearings(pointIndex, data.pWheelBearings);
+        this.chunks[chunkIndex][fieldOffset + PointField.P_AERO] = data.pAero;
+        this.chunks[chunkIndex][fieldOffset + PointField.P_GRAVITY] = data.pGravity;
+        this.chunks[chunkIndex][fieldOffset + PointField.P_ROLLING_RESISTANCE] =
+            data.pRollingResistance;
+        this.chunks[chunkIndex][fieldOffset + PointField.P_WHEEL_BEARINGS] = data.pWheelBearings;
 
         // ⚡ Power Cyclist
-        this.setPInputPower(pointIndex, data.pInputPower);
-        this.setPCyclistProvidedOptimalPower(pointIndex, data.pCyclistProvidedOptimalPower);
-        this.setPCyclistProvidedOptimalPowerWithHarmonics(
-            pointIndex,
-            data.pCyclistProvidedOptimalPowerWithHarmonics
-        );
-        this.setPCyclistPowerNeeded(pointIndex, data.pCyclistPowerNeeded);
-        this.setPCyclistProvidedMuscular(pointIndex, data.pCyclistProvidedMuscular);
-        this.setPCyclistProvidedWheel(pointIndex, data.PCyclistProvidedWheel);
+        this.chunks[chunkIndex][fieldOffset + PointField.P_INPUT_POWER] = data.pInputPower;
+        this.chunks[chunkIndex][fieldOffset + PointField.P_CYCLIST_PROVIDED_OPTIMAL_POWER] =
+            data.pCyclistProvidedOptimalPower;
+        this.chunks[chunkIndex][
+            fieldOffset + PointField.P_CYCLIST_PROVIDED_OPTIMAL_POWER_HARMONICS
+        ] = data.pCyclistProvidedOptimalPowerWithHarmonics;
+        this.chunks[chunkIndex][fieldOffset + PointField.P_CYCLIST_PROVIDED_POWER_NEEDED] =
+            data.pCyclistPowerNeeded;
+        this.chunks[chunkIndex][fieldOffset + PointField.P_CYCLIST_PROVIDED_MUSCULAR] =
+            data.pCyclistProvidedMuscular;
+        this.chunks[chunkIndex][fieldOffset + PointField.P_CYCLIST_PROVIDED_WHEEL] =
+            data.PCyclistProvidedWheel;
 
         // ⚡ Power Post processed
-        this.setPComputedTotalPower(pointIndex, data.pComputedTotalPower);
-        this.setPComputedWheelPower(pointIndex, data.pComputedWheelPower);
-        this.setPComputedPower(pointIndex, data.pComputedPower);
+        this.chunks[chunkIndex][fieldOffset + PointField.P_COMPUTED_TOTAL_POWER] =
+            data.pComputedTotalPower;
+        this.chunks[chunkIndex][fieldOffset + PointField.P_COMPUTED_WHEEL_POWER] =
+            data.pComputedWheelPower;
+        this.chunks[chunkIndex][fieldOffset + PointField.POWER] = data.pComputedPower;
 
         // Speed & Motion
-        this.setSpeed(pointIndex, data.speed);
-        this.setSpeedMax(pointIndex, data.speedMax);
-        this.setSpeedMaxIncline(pointIndex, data.speedMaxIncline);
-        this.setVirtSpeedCurrent(pointIndex, data.virtSpeedCurrent);
+        this.chunks[chunkIndex][fieldOffset + PointField.SPEED] = data.speed;
+        this.chunks[chunkIndex][fieldOffset + PointField.SPEED_MAX] = data.speedMax;
+        this.chunks[chunkIndex][fieldOffset + PointField.SPEED_MAX_INCLINE] = data.speedMaxIncline;
+        this.chunks[chunkIndex][fieldOffset + PointField.VIRT_SPEED_CURRENT] =
+            data.virtSpeedCurrent;
 
         // Environmental
-        this.setTemperature(pointIndex, data.temperature);
-        this.setWindSpeed(pointIndex, data.windSpeed);
-        this.setWindDirection(pointIndex, data.windDirection);
+        this.chunks[chunkIndex][fieldOffset + PointField.TEMPERATURE] = data.temperature;
+        this.chunks[chunkIndex][fieldOffset + PointField.WIND_SPEED] = data.windSpeed;
+        this.chunks[chunkIndex][fieldOffset + PointField.WIND_DIRECTION] = data.windDirection;
 
         // Physiological
-        this.setHeartRate(pointIndex, data.heartRate);
-        this.setCadence(pointIndex, data.cadence);
+        this.chunks[chunkIndex][fieldOffset + PointField.HEART_RATE] = data.heartRate;
+        this.chunks[chunkIndex][fieldOffset + PointField.CADENCE] = data.cadence;
 
         return pointIndex;
     }
@@ -423,58 +434,70 @@ export abstract class GeneratedPath extends AbstractPath {
      * Gets all data for a specific point.
      */
     getPointData(pointIndex: number): Point {
+        const chunkIndex = Math.floor(pointIndex / this.CHUNK_SIZE);
+        const pointInChunk = pointIndex % this.CHUNK_SIZE;
+        const fieldOffset = pointInChunk * FIELDS_PER_POINT;
         return {
             // Coordinates
-            latitude: this.getLatitude(pointIndex),
-            longitude: this.getLongitude(pointIndex),
-            distance: this.getDistance(pointIndex),
-            dx: this.getDx(pointIndex),
+            latitude: this.chunks[chunkIndex][fieldOffset + PointField.LATITUDE],
+            longitude: this.chunks[chunkIndex][fieldOffset + PointField.LONGITUDE],
+            distance: this.chunks[chunkIndex][fieldOffset + PointField.DISTANCE],
+            dx: this.chunks[chunkIndex][fieldOffset + PointField.DX],
             // Temporal
-            time: this.getTime(pointIndex),
-            elapsed: this.getElapsed(pointIndex),
-            dt: this.getDt(pointIndex),
+            time: this.chunks[chunkIndex][fieldOffset + PointField.TIME],
+            elapsed: this.chunks[chunkIndex][fieldOffset + PointField.ELAPSED],
+            dt: this.chunks[chunkIndex][fieldOffset + PointField.DT],
             // Angles
-            bearing: this.getBearing(pointIndex),
+            bearing: this.chunks[chunkIndex][fieldOffset + PointField.BEARING],
             // 🏔️ Elevation
-            elevation: this.getElevation(pointIndex),
+            elevation: this.chunks[chunkIndex][fieldOffset + PointField.ELEVATION],
             // 📐 Grade
-            grade: this.getGrade(pointIndex),
+            grade: this.chunks[chunkIndex][fieldOffset + PointField.GRADE],
             // Radius
-            radius: this.getRadius(pointIndex),
+            radius: this.chunks[chunkIndex][fieldOffset + PointField.RADIUS],
             // Aero coef
-            aeroCoef: this.getAeroCoef(pointIndex),
+            aeroCoef: this.chunks[chunkIndex][fieldOffset + PointField.AERO_COEF],
             // Cyclist wind
-            windBearing: this.getWindBearing(pointIndex),
-            windAlpha: this.getWindAlpha(pointIndex),
+            windBearing: this.chunks[chunkIndex][fieldOffset + PointField.WIND_BEARING],
+            windAlpha: this.chunks[chunkIndex][fieldOffset + PointField.WIND_ALPHA],
             // ⚡ Power Physics
-            pAero: this.getPAero(pointIndex),
-            pGravity: this.getPGravity(pointIndex),
-            pRollingResistance: this.getPRollingResistance(pointIndex),
-            pWheelBearings: this.getPWheelBearings(pointIndex),
+            pAero: this.chunks[chunkIndex][fieldOffset + PointField.P_AERO],
+            pGravity: this.chunks[chunkIndex][fieldOffset + PointField.P_GRAVITY],
+            pRollingResistance:
+                this.chunks[chunkIndex][fieldOffset + PointField.P_ROLLING_RESISTANCE],
+            pWheelBearings: this.chunks[chunkIndex][fieldOffset + PointField.P_WHEEL_BEARINGS],
             // ⚡ Power Cyclist
-            pInputPower: this.getPInputPower(pointIndex),
-            pCyclistProvidedOptimalPower: this.getPCyclistProvidedOptimalPower(pointIndex),
+            pInputPower: this.chunks[chunkIndex][fieldOffset + PointField.P_INPUT_POWER],
+            pCyclistProvidedOptimalPower:
+                this.chunks[chunkIndex][fieldOffset + PointField.P_CYCLIST_PROVIDED_OPTIMAL_POWER],
             pCyclistProvidedOptimalPowerWithHarmonics:
-                this.getPCyclistProvidedOptimalPowerWithHarmonics(pointIndex),
-            pCyclistPowerNeeded: this.getPCyclistPowerNeeded(pointIndex),
-            pCyclistProvidedMuscular: this.getPCyclistProvidedMuscular(pointIndex),
-            PCyclistProvidedWheel: this.getPCyclistProvidedWheel(pointIndex),
+                this.chunks[chunkIndex][
+                    fieldOffset + PointField.P_CYCLIST_PROVIDED_OPTIMAL_POWER_HARMONICS
+                ],
+            pCyclistPowerNeeded:
+                this.chunks[chunkIndex][fieldOffset + PointField.P_CYCLIST_PROVIDED_POWER_NEEDED],
+            pCyclistProvidedMuscular:
+                this.chunks[chunkIndex][fieldOffset + PointField.P_CYCLIST_PROVIDED_MUSCULAR],
+            PCyclistProvidedWheel:
+                this.chunks[chunkIndex][fieldOffset + PointField.P_CYCLIST_PROVIDED_WHEEL],
             // ⚡ Power Post processed
-            pComputedTotalPower: this.getPComputedTotalPower(pointIndex),
-            pComputedWheelPower: this.getPComputedWheelPower(pointIndex),
-            pComputedPower: this.getPComputedPower(pointIndex),
+            pComputedTotalPower:
+                this.chunks[chunkIndex][fieldOffset + PointField.P_COMPUTED_TOTAL_POWER],
+            pComputedWheelPower:
+                this.chunks[chunkIndex][fieldOffset + PointField.P_COMPUTED_WHEEL_POWER],
+            pComputedPower: this.chunks[chunkIndex][fieldOffset + PointField.POWER],
             // Speed & Motion
-            speed: this.getSpeed(pointIndex),
-            speedMax: this.getSpeedMax(pointIndex),
-            speedMaxIncline: this.getSpeedMaxIncline(pointIndex),
-            virtSpeedCurrent: this.getVirtSpeedCurrent(pointIndex),
+            speed: this.chunks[chunkIndex][fieldOffset + PointField.SPEED],
+            speedMax: this.chunks[chunkIndex][fieldOffset + PointField.SPEED_MAX],
+            speedMaxIncline: this.chunks[chunkIndex][fieldOffset + PointField.SPEED_MAX_INCLINE],
+            virtSpeedCurrent: this.chunks[chunkIndex][fieldOffset + PointField.VIRT_SPEED_CURRENT],
             // Environmental
-            temperature: this.getTemperature(pointIndex),
-            windSpeed: this.getWindSpeed(pointIndex),
-            windDirection: this.getWindDirection(pointIndex),
+            temperature: this.chunks[chunkIndex][fieldOffset + PointField.TEMPERATURE],
+            windSpeed: this.chunks[chunkIndex][fieldOffset + PointField.WIND_SPEED],
+            windDirection: this.chunks[chunkIndex][fieldOffset + PointField.WIND_DIRECTION],
             // Physiological
-            heartRate: this.getHeartRate(pointIndex),
-            cadence: this.getCadence(pointIndex),
+            heartRate: this.chunks[chunkIndex][fieldOffset + PointField.HEART_RATE],
+            cadence: this.chunks[chunkIndex][fieldOffset + PointField.CADENCE],
         };
     }
 }

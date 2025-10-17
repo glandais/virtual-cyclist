@@ -120,6 +120,6 @@
         "vue-tsc": "^3.1.0"
     },
     "dependencies": {
-        "@glandais/elevation": "^3.1.2"
+        "@glandais/elevation": "^3.1.3"
     }
 }

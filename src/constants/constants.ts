@@ -23,12 +23,6 @@ export const G = 9.8;
  */
 export const MINIMAL_SPEED = 2.0 / 3.6;
 
-/**
- * Default simulation time step (seconds)
- * Used for numerical integration in physics calculations
- */
-export const DT = 1.0;
-
 // ============================================================================
 // GEODETIC CONSTANTS (WGS-84)
 // ============================================================================

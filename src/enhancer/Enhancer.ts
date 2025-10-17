@@ -14,13 +14,12 @@ import { createLogger, Logger, LogLevel } from '@/utils/';
 const logger: Logger = createLogger('enhancer/Enhancer');
 
 export class Enhancer {
-    static FIELDS: PointField[] = [
+    static INPUT_GPX_FIELDS: PointField[] = [
         PointField.LATITUDE,
         PointField.LONGITUDE,
         PointField.ELEVATION,
         PointField.TIME,
         PointField.P_INPUT_POWER,
-        PointField.SPEED,
         PointField.TEMPERATURE,
         PointField.HEART_RATE,
         PointField.CADENCE,
@@ -67,7 +66,7 @@ export class Enhancer {
         logger.info('Point count : %s', path.length);
 
         logger.timeLevel(LogLevel.INFO, 'PointPerDistance.compute');
-        path = PointPerDistance.compute(path, 1.0, 2.0, this.FIELDS);
+        path = PointPerDistance.compute(path, 1.0, 2.0, this.INPUT_GPX_FIELDS);
         logger.timeEndLevel(LogLevel.INFO, 'PointPerDistance.compute');
 
         logger.info('Point count : %s', path.length);
