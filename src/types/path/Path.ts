@@ -1,4 +1,3 @@
-import { MINIMAL_SPEED } from '@/constants/';
 import { toDegrees } from '@/utils/';
 import { GeneratedPath } from './GeneratedPath';
 import { FIELDS_PER_POINT, Point, POINT_FIELDS } from './Point';
@@ -216,50 +215,26 @@ export class Path extends GeneratedPath {
 
         // Second pass: compute grades, speeds, and bearings
         for (let i = 0; i < this.pointCount; i++) {
-            const distance = this.getDistance(i);
-            const elevation = this.getElevation(i);
             const time = this.getTime(i);
             this.setElapsed(i, (time - this.timeStart) / 1000);
 
-            if (this.pointCount > 0) {
+            if (this.pointCount > 1) {
                 const im1 = Math.max(0, i - 1);
                 const ip1 = Math.min(this.pointCount - 1, i + 1);
                 this.setBearing(i, this.computeBearing(im1, ip1));
 
-                const dDistance = this.getDistance(ip1) - this.getDistance(im1);
-                const dElevation = this.getElevation(ip1) - this.getElevation(im1);
+                const dDistance = (this.getDistance(ip1) - this.getDistance(im1)) / 2;
+                const dElevation = (this.getElevation(ip1) - this.getElevation(im1)) / 2;
 
                 // Calculate grade
                 const grade = dElevation / dDistance;
                 this.setGrade(i, grade);
-            }
 
-            if (i === 0) {
-                this.setSpeed(0, MINIMAL_SPEED);
-                if (i + 1 < this.pointCount) {
-                    const dDistance = distance - this.getDistance(i + 1);
-                    const dElevation = elevation - this.getElevation(i + 1);
+                const dTime = (this.getTime(ip1) - this.getTime(im1)) / 2000.0;
 
-                    // Calculate grade
-                    const grade = dElevation / dDistance;
-                    this.setGrade(i, grade);
-
-                    this.setBearing(i, this.computeBearing(0, 1));
-                }
-                this.setDx(i, 0);
-                this.setDt(i, 0);
-            }
-            if (i > 0) {
-                const im1 = i - 1;
-
-                const dDistance = distance - this.getDistance(im1);
-                const dTime = time - this.getTime(im1);
-
-                // Calculate speed
-                const speed = (dDistance * 1000) / dTime; // m/s (timeDiff is in ms)
-                this.setSpeed(i, speed);
                 this.setDx(i, dDistance);
                 this.setDt(i, dTime);
+                this.setSpeed(i, dDistance / dTime);
             }
         }
     }

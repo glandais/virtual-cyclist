@@ -83,7 +83,7 @@ export class VirtualizeService {
             const pSum = this.powerComputer.getNewPower(course, path, i - 1, true);
             const dx = inputPath.getDistance(i) - inputPath.getDistance(i - 1);
             let dt = this.powerComputer.getDt(pSum, equivalentMass, speed, dx);
-            let speedNew = dx / dt;
+            let speedNew = (2 * dx) / dt - speed;
 
             point = inputPath.getPointData(i);
 
@@ -92,7 +92,7 @@ export class VirtualizeService {
             if (speedNew > speedMax) {
                 speedNew = speedMax;
                 // Recalculate time with constrained speed
-                dt = dx / speedNew;
+                dt = (2 * dx) / (speedNew + speed);
             }
 
             speed = speedNew;

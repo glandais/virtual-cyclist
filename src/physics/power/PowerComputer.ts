@@ -109,7 +109,22 @@ export class PowerComputer {
             Math.sqrt((dt * pSum) / (0.5 * equivalentMass) + currentSpeed * currentSpeed),
             MINIMAL_SPEED
         );
-        return newSpeed * dt;
+        return ((currentSpeed + newSpeed) * dt) / 2;
+    }
+
+    /**
+     * Calculates total power from speed change using kinetic energy formula.
+     *
+     * P = ΔKE / Δt = 0.5 × M_eq × (v₂² - v₁²) / Δt
+     *
+     * @param equivalentMass Equivalent mass including rotational inertia (kg)
+     * @param s1 Initial speed in m/s
+     * @param s2 Final speed in m/s
+     * @param dt Time step in seconds
+     * @returns Power in watts
+     */
+    protected getTotPower(equivalentMass: number, s1: number, s2: number, dt: number): number {
+        return (0.5 * equivalentMass * (s2 * s2 - s1 * s1)) / dt;
     }
 
     /**
@@ -209,35 +224,6 @@ export class PowerComputer {
 
         // Set power on current point
         path.setPComputedPower(i, computedPower);
-    }
-
-    /**
-     * Calculates total power from speed change using kinetic energy formula.
-     *
-     * P = ΔKE / Δt = 0.5 × M_eq × (v₂² - v₁²) / Δt
-     *
-     * @param equivalentMass Equivalent mass including rotational inertia (kg)
-     * @param s1 Initial speed in m/s
-     * @param s2 Final speed in m/s
-     * @param dt Time step in seconds
-     * @returns Power in watts
-     */
-    protected getTotPower(equivalentMass: number, s1: number, s2: number, dt: number): number {
-        return (0.5 * equivalentMass * (s2 * s2 - s1 * s1)) / dt;
-    }
-
-    /**
-     * Calculates time difference between two points in seconds.
-     *
-     * @param path Path containing point data
-     * @param pointIndex1 Index of first point
-     * @param pointIndex2 Index of second point
-     * @returns Time difference in seconds
-     */
-    protected getDtBetweenPoints(path: Path, pointIndex1: number, pointIndex2: number): number {
-        const time1 = path.getTime(pointIndex1);
-        const time2 = path.getTime(pointIndex2);
-        return (time2 - time1) / 1000.0; // Convert ms to seconds
     }
 
     /**

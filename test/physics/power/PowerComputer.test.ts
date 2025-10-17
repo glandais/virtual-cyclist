@@ -116,7 +116,7 @@ describe('PowerComputer', () => {
             // dx = (v_old + v_new) * dt / 2 = (10 + 10.31) * 1 / 2 ≈ 10.15m
             expect(dx).toBeGreaterThan(10);
             expect(dx).toBeLessThan(11);
-            expect(dx).toBeCloseTo(10.308, 2);
+            expect(dx).toBeCloseTo(10.15, 2);
         });
 
         test('should handle deceleration without going below minimal speed', () => {
@@ -132,7 +132,7 @@ describe('PowerComputer', () => {
             // dx ≈ (5 + 4.95) * 1 / 2 ≈ 4.975m
             expect(dx).toBeGreaterThan(0);
             expect(dx).toBeLessThan(speed * dt);
-            expect(dx).toBeCloseTo(4.95, 2);
+            expect(dx).toBeCloseTo(4.975, 2);
         });
 
         test('should handle zero power (constant speed)', () => {
@@ -161,7 +161,7 @@ describe('PowerComputer', () => {
             // v_new ≈ 14.83 m/s
             // dx ≈ (15 + 14.83) * 1 / 2 ≈ 14.91m
             expect(dx).toBeLessThan(15);
-            expect(dx).toBeCloseTo(14.832, 2);
+            expect(dx).toBeCloseTo(14.916, 2);
         });
     });
 
@@ -175,7 +175,7 @@ describe('PowerComputer', () => {
             const dt = computer.callGetDt(pSum, mass, speed, targetDx);
 
             // Should converge to approximately 1 second
-            expect(dt).toBeCloseTo(0.986, 3);
+            expect(dt).toBeCloseTo(1.0, 3);
 
             // Verify by calculating dx with found dt
             const verifyDx = computer.callGetDx(pSum, mass, speed, dt);
