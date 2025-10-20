@@ -107,7 +107,7 @@
         "lint-staged": "^16.1.5",
         "prettier": "^3.6.2",
         "prettier-plugin-organize-imports": "^4.3.0",
-        "semantic-release": "^24.2.7",
+        "semantic-release": "^25.0.1",
         "semantic-release-plugin-update-version-in-files": "^2.0.0",
         "serve": "^14.2.4",
         "ts-jest": "^29.4.1",
