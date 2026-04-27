@@ -37,7 +37,7 @@ jobs:
           HUSKY: 0
 
       - name: Run tests
-        run: npm test
+        run: npm run test:coverage
 
       - name: Coveralls GitHub Action
         uses: coverallsapp/github-action@v2.3.7

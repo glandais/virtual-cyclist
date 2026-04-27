@@ -15,12 +15,14 @@ export default defineConfig({
     test: {
         globals: true,
         environment: 'jsdom',
+        testTimeout: 30000,
         include: ['test/**/*.test.ts'],
         exclude: ['node_modules/**', 'test/browser/**', 'dist/**'],
         setupFiles: ['test/setup.ts'],
         coverage: {
             provider: 'v8',
             reportsDirectory: 'coverage',
+            reporter: ['text', 'lcov', 'html'],
             include: ['src/**/*.ts'],
             exclude: ['src/**/*.d.ts', 'src/**/*.test.ts', 'src/utils/Logger.ts', 'src/codegen/**'],
             thresholds: {
