@@ -46,7 +46,7 @@ npm run generate         # Regenerate Point.ts and Path.ts from field definition
 - Run single test: `npm test -- <test-file-path>`
 - Run tests matching pattern: `npm test -- -t "<test-name-pattern>"`
 - Update snapshots: `npm test -- -u`
-- Test framework: Jest with ts-jest
+- Test framework: Vitest
 - Coverage thresholds: 80% for branches, functions, lines, and statements
 
 ## Architecture

@@ -51,7 +51,7 @@ describe('MuscularPowerProvider', () => {
         } as Point);
 
         const mockProvider = {
-            getPowerW: jest.fn(() => 300),
+            getPowerW: vi.fn(() => 300),
         };
 
         const course = {

@@ -37,7 +37,7 @@ const domXmlGlobals = {
     XMLSerializer: 'readonly',
 };
 
-const jestGlobals = {
+const vitestGlobals = {
     describe: 'readonly',
     it: 'readonly',
     test: 'readonly',
@@ -46,7 +46,7 @@ const jestGlobals = {
     beforeEach: 'readonly',
     afterAll: 'readonly',
     afterEach: 'readonly',
-    jest: 'readonly',
+    vi: 'readonly',
 };
 
 // ============================================================================
@@ -83,7 +83,7 @@ module.exports = [
                 ...nodeGlobals,
                 ...browserGlobals,
                 ...domXmlGlobals,
-                ...jestGlobals,
+                ...vitestGlobals,
             },
         },
         plugins: {
@@ -105,7 +105,7 @@ module.exports = [
                 ...nodeGlobals,
                 ...browserGlobals,
                 ...domXmlGlobals,
-                ...jestGlobals,
+                ...vitestGlobals,
                 performance: 'readonly',
             },
         },
