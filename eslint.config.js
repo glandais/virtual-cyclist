@@ -3,7 +3,7 @@ const tseslint = require('@typescript-eslint/eslint-plugin');
 const tsparser = require('@typescript-eslint/parser');
 const prettier = require('eslint-config-prettier');
 const prettierPlugin = require('eslint-plugin-prettier');
-const importPlugin = require('eslint-plugin-import');
+const importPlugin = require('eslint-plugin-import-x');
 
 // ============================================================================
 // SHARED GLOBALS
@@ -145,6 +145,23 @@ module.exports = [
                 },
             ],
             'import/no-duplicates': 'error',
+            'import/order': [
+                'error',
+                {
+                    groups: [
+                        'builtin',
+                        'external',
+                        'internal',
+                        'parent',
+                        'sibling',
+                        'index',
+                        'object',
+                        'type',
+                    ],
+                    'newlines-between': 'never',
+                    alphabetize: { order: 'asc', caseInsensitive: true },
+                },
+            ],
         },
         settings: {
             'import/resolver': {

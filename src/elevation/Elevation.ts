@@ -1,5 +1,4 @@
 import ElevationProvider, { CoordinatesElevation, ElevationSmoother } from '@glandais/elevation';
-
 import { Path } from '@/types/path/';
 
 const elevationProvider = new ElevationProvider();

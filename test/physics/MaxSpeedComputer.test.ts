@@ -1,6 +1,5 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
-
 import { GPXParser } from '@/gpx/';
 import { MaxSpeedComputer } from '@/physics/';
 import { Bike, Cyclist } from '@/types/models/';

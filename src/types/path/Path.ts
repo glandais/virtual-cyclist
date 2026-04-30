@@ -1,6 +1,6 @@
-import { toDegrees } from '@/utils/';
 import { GeneratedPath } from './GeneratedPath';
 import { FIELDS_PER_POINT, Point, POINT_FIELDS } from './Point';
+import { toDegrees } from '@/utils/';
 
 export class Path extends GeneratedPath {
     // Computed statistics

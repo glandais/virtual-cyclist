@@ -1,6 +1,6 @@
+import { CyclistPowerProvider } from './CyclistPowerProvider';
 import { CoursePhysics } from '@/types/course/';
 import { Path } from '@/types/path/';
-import { CyclistPowerProvider } from './CyclistPowerProvider';
 
 /**
  * Cyclist power provider that uses existing power data from GPX points.

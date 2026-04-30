@@ -3,9 +3,9 @@
 // Source: src/types/path/fieldDefinitions.ts
 // To modify: Update fieldDefinitions.ts and run: npm run generate:point
 
-import { toDegrees } from '@/utils/';
 import { AbstractPath } from './AbstractPath';
 import { FIELDS_PER_POINT, Point, PointField } from './Point';
+import { toDegrees } from '@/utils/';
 export abstract class GeneratedPath extends AbstractPath {
     // === Coordinates Accessors ===
 

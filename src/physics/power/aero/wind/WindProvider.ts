@@ -1,6 +1,6 @@
+import { Wind } from './Wind';
 import { Course } from '@/types/course/';
 import { Path } from '@/types/path/';
-import { Wind } from './Wind';
 
 /**
  * Interface for wind data providers in virtual cycling simulations.

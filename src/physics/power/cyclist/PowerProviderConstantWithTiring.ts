@@ -1,6 +1,6 @@
+import { CyclistPowerProviderBase } from './CyclistPowerProviderBase';
 import { CoursePhysics } from '@/types/course/';
 import { Path } from '@/types/path/';
-import { CyclistPowerProviderBase } from './CyclistPowerProviderBase';
 
 /**
  * Cyclist power provider with constant power that degrades over time (fatigue).

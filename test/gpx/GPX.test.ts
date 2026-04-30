@@ -1,6 +1,5 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
-
 import { GPXParser, GPXWriter } from '@/gpx/';
 
 describe('GPX Integration Tests', () => {

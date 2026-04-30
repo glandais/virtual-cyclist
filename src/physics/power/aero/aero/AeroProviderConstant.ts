@@ -1,6 +1,6 @@
+import { AeroProvider } from './AeroProvider';
 import { CoursePhysics } from '@/types/course/';
 import { Path } from '@/types/path/';
-import { AeroProvider } from './AeroProvider';
 
 /**
  * Aerodynamic coefficient provider with constant values.

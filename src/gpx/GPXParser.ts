@@ -1,7 +1,7 @@
-import { EMPTY_POINT, Path, Paths, Point, PointWritable } from '@/types/path/';
-import { toRadians } from '@/utils/';
 import { ExtensionParser } from './ExtensionParser';
 import { NamespaceResolver } from './NamespaceResolver';
+import { EMPTY_POINT, Path, Paths, Point, PointWritable } from '@/types/path/';
+import { toRadians } from '@/utils/';
 
 /**
  * Parser for GPX files with comprehensive namespace and extension support.

@@ -1,6 +1,6 @@
-import { PointWritable } from '@/types/path/';
 import { NamespaceResolver } from './NamespaceResolver';
 import { EXTENSION_FIELD_MAPPINGS, KNOWN_NAMESPACES } from './types';
+import { PointWritable } from '@/types/path/';
 
 /**
  * Extension parser for GPX files with namespace awareness.

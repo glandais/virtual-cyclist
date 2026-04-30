@@ -1,8 +1,7 @@
+import { Wind } from './wind';
 import { PowerProvider } from '@/physics/power/';
-
 import { CoursePhysics } from '@/types/course/';
 import { Path } from '@/types/path/';
-import { Wind } from './wind';
 
 /**
  * Provides aerodynamic drag power calculations for virtual cycling.

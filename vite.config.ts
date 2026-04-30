@@ -1,6 +1,5 @@
 import path, { resolve } from 'path';
 import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
 
 export default defineConfig(({ mode }) => {
     // By default, 'npm run build' runs in production mode
@@ -8,17 +7,6 @@ export default defineConfig(({ mode }) => {
     const isDev = mode === 'development';
 
     return {
-        plugins: [
-            dts({
-                tsconfigPath: 'tsconfig.json',
-                insertTypesEntry: true,
-                rollupTypes: true,
-                copyDtsFiles: false,
-                entryRoot: 'src',
-                outDir: 'dist',
-                exclude: ['test/**/*', '**/*.test.*'],
-            }),
-        ],
         define: {
             // Define __DEV__ based on build mode
             // Production build (default): __DEV__ = false, all logging code removed

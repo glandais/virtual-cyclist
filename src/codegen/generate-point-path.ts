@@ -6,9 +6,9 @@
  * Run: npm run generate:point
  */
 
-import { FIELD_DEFINITIONS, TOTAL_FIELD_COUNT } from '@/types/path/';
 import { writeFileSync } from 'fs';
 import { resolve } from 'path';
+import { FIELD_DEFINITIONS, TOTAL_FIELD_COUNT } from '@/types/path/';
 
 const PROJECT_ROOT = resolve(__dirname, '..');
 

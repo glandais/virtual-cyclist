@@ -1,8 +1,8 @@
+import { CyclistPowerProvider } from './CyclistPowerProvider';
+import { Harmonic } from './Harmonic';
 import { PowerComputer } from '@/physics/power/';
 import { CoursePhysics } from '@/types/course/';
 import { Path } from '@/types/path/';
-import { CyclistPowerProvider } from './CyclistPowerProvider';
-import { Harmonic } from './Harmonic';
 
 /**
  * Abstract base class for cyclist power providers with advanced power modeling.

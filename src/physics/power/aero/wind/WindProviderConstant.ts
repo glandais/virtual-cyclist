@@ -1,7 +1,7 @@
-import { Course } from '@/types/course/';
-import { Path } from '@/types/path/';
 import { Wind } from './Wind';
 import { WindProvider } from './WindProvider';
+import { Course } from '@/types/course/';
+import { Path } from '@/types/path/';
 
 /**
  * Wind provider that returns constant wind conditions throughout the route.

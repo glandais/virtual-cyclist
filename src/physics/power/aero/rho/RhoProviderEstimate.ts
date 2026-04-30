@@ -1,6 +1,6 @@
+import { RhoProvider } from './RhoProvider';
 import { CoursePhysics } from '@/types/course/';
 import { Path } from '@/types/path/';
-import { RhoProvider } from './RhoProvider';
 
 class RhoProviderEstimate implements RhoProvider {
     getRho(_course: CoursePhysics, path: Path, pointIndex: number): number {

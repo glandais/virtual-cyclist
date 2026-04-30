@@ -1,6 +1,5 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
-
 import { DEFAULT_CYCLIST_POWER_W } from '@/constants/';
 import { GPXParser } from '@/gpx/';
 import { VirtualizeService } from '@/physics/';
