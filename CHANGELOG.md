@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/glandais/virtual-cyclist/compare/v1.2.2...v1.2.3) (2026-04-30)
+
+
+### Bug Fixes
+
+* build ([6046216](https://github.com/glandais/virtual-cyclist/commit/6046216209e9ba749e8bac3cc8758d2373b0763c))
+
 ## [1.2.2](https://github.com/glandais/virtual-cyclist/compare/v1.2.1...v1.2.2) (2025-10-17)
 
 
