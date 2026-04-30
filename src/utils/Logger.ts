@@ -11,7 +11,7 @@ type LevelsConfig = {
     default: LogLevelConfig;
     [namespacePrefix: string]: LogLevelConfig;
 };
-import jsonLevels from './levels.json' assert { type: 'json' };
+import jsonLevels from './levels.json' with { type: 'json' };
 const levels = jsonLevels as LevelsConfig;
 
 export type LogLevelValue = 0 | 1 | 2 | 3 | 4;

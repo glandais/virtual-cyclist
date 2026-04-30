@@ -6,7 +6,7 @@
         "declaration": true,
         "declarationMap": true,
         "outDir": "./dist",
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
@@ -15,11 +15,11 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": true,
-        "baseUrl": "src",
+        "types": ["node"],
         "paths": {
-            "@": ["index.ts"],
-            "@/*": ["*"],
-            "#/*": ["../test/*"]
+            "@": ["./src/index.ts"],
+            "@/*": ["./src/*"],
+            "#/*": ["./test/*"]
         }
     },
     "include": ["src/**/*", "test/**/*"],

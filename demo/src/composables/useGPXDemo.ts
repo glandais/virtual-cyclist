@@ -130,7 +130,7 @@ export function useGPXDemo(config: Ref<Config>): {
                 distance: loadedPath.getTotalDistance(),
             });
         } catch (error) {
-            throw new Error('Failed to parse GPX: ' + (error as Error).message);
+            throw new Error('Failed to parse GPX: ' + (error as Error).message, { cause: error });
         }
     };
 
