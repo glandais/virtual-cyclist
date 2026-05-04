@@ -12,7 +12,7 @@
         "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix"
     },
     "dependencies": {
-        "@glandais/elevation": "^3.2.0",
+        "@glandais/elevation": "^3.2.2",
         "@primeuix/themes": "^2.0.3",
         "@types/leaflet": "^1.9.21",
         "chart.js": "^4.5.1",
@@ -28,7 +28,7 @@
         "@typescript-eslint/parser": "^8.59.1",
         "@vitejs/plugin-vue": "^6.0.6",
         "autoprefixer": "^10.5.0",
-        "eslint": "^10.2.1",
+        "eslint": "^10.3.0",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-prettier": "^5.5.5",
         "eslint-plugin-vue": "^10.9.0",
