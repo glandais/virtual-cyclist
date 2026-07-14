@@ -294,11 +294,12 @@ Typical value: $(0.7 \times 0.5 \times 1.225) / 2 = 0.214$ kg/m
 **Physical Meaning**: Power required to overcome air resistance increases with the cube of velocity. Doubling speed requires 8× more power to overcome drag.
 
 **Example Values**:
-| Speed | Power @ CdA=0.35 m² |
-|-------|---------------------|
-| 20 km/h (5.56 m/s) | 37 W |
-| 30 km/h (8.33 m/s) | 124 W |
-| 40 km/h (11.1 m/s) | 293 W |
+
+| Speed              | Power @ CdA=0.35 m² |
+| ------------------ | ------------------- |
+| 20 km/h (5.56 m/s) | 37 W                |
+| 30 km/h (8.33 m/s) | 124 W               |
+| 40 km/h (11.1 m/s) | 293 W               |
 
 **With Wind** (Isvan's model):
 
@@ -347,11 +348,12 @@ For grades < 10%, the approximation $\sin(\arctan(grade)) \approx grade$ is with
 **Physical Meaning**: Power to change gravitational potential energy. On climbs, this is the dominant resistance force.
 
 **Example Values** (80 kg system, 15 km/h = 4.17 m/s):
-| Grade | Power |
-|-------|-------|
-| 0% (flat) | 0 W |
-| 5% | 163 W |
-| 10% | 326 W |
+
+| Grade         | Power  |
+| ------------- | ------ |
+| 0% (flat)     | 0 W    |
+| 5%            | 163 W  |
+| 10%           | 326 W  |
 | -5% (descent) | -163 W |
 
 ### 3. Rolling Resistance Power
@@ -371,11 +373,12 @@ This accounts for reduced normal force on steep grades.
 **Physical Meaning**: Energy lost to tire deformation and road surface friction. Always resistive (negative). Linear with speed.
 
 **Example Values** (80 kg, modern road tires with Crr=0.004):
-| Speed | Power (flat) | Power (10% grade) |
-|-------|--------------|-------------------|
-| 15 km/h | 13 W | 13 W |
-| 25 km/h | 22 W | 22 W |
-| 35 km/h | 31 W | 30 W |
+
+| Speed   | Power (flat) | Power (10% grade) |
+| ------- | ------------ | ----------------- |
+| 15 km/h | 13 W         | 13 W              |
+| 25 km/h | 22 W         | 22 W              |
+| 35 km/h | 31 W         | 30 W              |
 
 Note: Grade has minimal effect on rolling resistance (<5% change at 10% grade).
 
@@ -391,11 +394,12 @@ $$P_{bearings} = -\frac{v \cdot (91 + 8.7 \cdot v)}{1000}$$
 **Physical Meaning**: Mechanical friction in wheel hubs. Empirical model with static and speed-dependent components. Always resistive.
 
 **Example Values**:
-| Speed | Power Loss |
-|-------|------------|
-| 5 m/s (18 km/h) | 0.7 W |
-| 10 m/s (36 km/h) | 1.8 W |
-| 15 m/s (54 km/h) | 3.3 W |
+
+| Speed            | Power Loss |
+| ---------------- | ---------- |
+| 5 m/s (18 km/h)  | 0.7 W      |
+| 10 m/s (36 km/h) | 1.8 W      |
+| 15 m/s (54 km/h) | 3.3 W      |
 
 Small compared to other resistances, but measurable in precise power analysis.
 
@@ -422,13 +426,14 @@ $$P = P_0 \cdot \left(1 - \frac{L \cdot h}{T_0}\right)^{\frac{g}{R \cdot L}}$$
 **Physical Meaning**: Air density decreases with altitude and increases with lower temperature, affecting aerodynamic drag.
 
 **Example Values**:
-| Altitude | Temperature | Air Density |
-|----------|-------------|-------------|
-| 0 m (sea level) | 15°C | 1.225 kg/m³ |
-| 500 m | 15°C | 1.167 kg/m³ (-4.7%) |
-| 1000 m | 15°C | 1.112 kg/m³ (-9.2%) |
-| 2000 m | 15°C | 1.007 kg/m³ (-17.8%) |
-| 0 m | 30°C | 1.164 kg/m³ (-5.0%) |
+
+| Altitude        | Temperature | Air Density          |
+| --------------- | ----------- | -------------------- |
+| 0 m (sea level) | 15°C        | 1.225 kg/m³          |
+| 500 m           | 15°C        | 1.167 kg/m³ (-4.7%)  |
+| 1000 m          | 15°C        | 1.112 kg/m³ (-9.2%)  |
+| 2000 m          | 15°C        | 1.007 kg/m³ (-17.8%) |
+| 0 m             | 30°C        | 1.164 kg/m³ (-5.0%)  |
 
 **Impact on Drag**: 10% reduction in air density → 10% reduction in drag power at same speed.
 
@@ -447,12 +452,13 @@ $$v_{max} = \sqrt{g \cdot r \cdot \tan(\theta_{max})}$$
 **Physical Meaning**: Faster speeds require larger turning radius or greater lean angle. Exceeding this speed risks tire slip.
 
 **Example Values** (35° max lean angle):
-| Radius | Max Speed |
-|--------|-----------|
+
+| Radius            | Max Speed |
+| ----------------- | --------- |
 | 10 m (tight turn) | 23.2 km/h |
-| 30 m (moderate) | 40.1 km/h |
-| 50 m (gentle) | 51.7 km/h |
-| 100 m (highway) | 73.2 km/h |
+| 30 m (moderate)   | 40.1 km/h |
+| 50 m (gentle)     | 51.7 km/h |
+| 100 m (highway)   | 73.2 km/h |
 
 **Safety Margin**: Implementation adds 2m to calculated radius, providing conservative speed limits.
 
@@ -472,11 +478,12 @@ $$v_0 = \sqrt{v_f^2 + 2 \cdot a \cdot d}$$
 **Physical Meaning**: Ensures cyclist can brake safely from any point to the next required speed. Prevents entering turns too fast.
 
 **Example Values** (0.6g braking = 5.88 m/s²):
+
 | Distance | Final Speed | Max Initial Speed |
-|----------|-------------|-------------------|
-| 10 m | 20 km/h | 28.8 km/h |
-| 50 m | 20 km/h | 50.4 km/h |
-| 100 m | 20 km/h | 69.5 km/h |
+| -------- | ----------- | ----------------- |
+| 10 m     | 20 km/h     | 28.8 km/h         |
+| 50 m     | 20 km/h     | 50.4 km/h         |
+| 100 m    | 20 km/h     | 69.5 km/h         |
 
 **Safety Note**: 0.6g is conservative limit ensuring safe braking on dry pavement with quality brakes. Professional braking can exceed 0.8g.
 
@@ -1006,13 +1013,14 @@ Net power = 273 - 287 = **-14W deficit** → slight deceleration
 **Equilibrium: approximately 37 km/h (10.3 m/s)**
 
 **Power Breakdown**:
-| Component | Power | Percentage |
-|-----------|-------|------------|
-| Cyclist (wheel) | 273 W | 100% |
-| Aerodynamic drag | -239 W | 87.5% |
-| Rolling resistance | -32 W | 11.7% |
-| Wheel bearings | -2 W | 0.7% |
-| **Net** | 0 W | 0% |
+
+| Component          | Power  | Percentage |
+| ------------------ | ------ | ---------- |
+| Cyclist (wheel)    | 273 W  | 100%       |
+| Aerodynamic drag   | -239 W | 87.5%      |
+| Rolling resistance | -32 W  | 11.7%      |
+| Wheel bearings     | -2 W   | 0.7%       |
+| **Net**            | 0 W    | 0%         |
 
 **Key Insight**: On flat terrain at moderate speeds, aerodynamic drag dominates (87.5% of resistance). Rolling resistance is significant (11.7%) but secondary.
 
@@ -1065,24 +1073,26 @@ Net power = 273 - 273 = **0W equilibrium**
 **Equilibrium: approximately 20 km/h (5.56 m/s)**
 
 **Power Breakdown**:
-| Component | Power | Percentage |
-|-----------|-------|------------|
-| Cyclist (wheel) | 273 W | 100% |
-| Gravitational | -218 W | 79.9% |
-| Aerodynamic drag | -37 W | 13.6% |
-| Rolling resistance | -17 W | 6.2% |
-| Wheel bearings | -1 W | 0.4% |
-| **Net** | 0 W | 0% |
+
+| Component          | Power  | Percentage |
+| ------------------ | ------ | ---------- |
+| Cyclist (wheel)    | 273 W  | 100%       |
+| Gravitational      | -218 W | 79.9%      |
+| Aerodynamic drag   | -37 W  | 13.6%      |
+| Rolling resistance | -17 W  | 6.2%       |
+| Wheel bearings     | -1 W   | 0.4%       |
+| **Net**            | 0 W    | 0%         |
 
 **Key Insight**: On 5% climb, gravity dominates (80% of resistance). Speed drops from 37 km/h to 20 km/h (46% reduction). Aerodynamic drag becomes secondary.
 
 **Climbing Performance**:
+
 | Grade | Equilibrium Speed | Gravity % | Aero % |
-|-------|-------------------|-----------|--------|
-| 0% | 37 km/h | 0% | 87.5% |
-| 2% | 28 km/h | 54% | 32% |
-| 5% | 20 km/h | 80% | 14% |
-| 10% | 14 km/h | 89% | 6% |
+| ----- | ----------------- | --------- | ------ |
+| 0%    | 37 km/h           | 0%        | 87.5%  |
+| 2%    | 28 km/h           | 54%       | 32%    |
+| 5%    | 20 km/h           | 80%       | 14%    |
+| 10%   | 14 km/h           | 89%       | 6%     |
 
 ### Example 3: Descending
 
@@ -1153,16 +1163,17 @@ Net power = 273 - 237 = **+36W surplus** → slight acceleration
 **Equilibrium: approximately 49 km/h (13.6 m/s)**
 
 **Power Breakdown**:
-| Component | Power | Type |
-|-----------|-------|------|
-| Gravity assistance | +320 W | Input |
-| Cyclist (wheel) | +273 W | Input |
-| **Total input** | **593 W** | |
-| Aerodynamic drag | -543 W | Resistance |
-| Rolling resistance | -43 W | Resistance |
-| Wheel bearings | -3 W | Resistance |
-| **Total resistance** | **-589 W** | |
-| **Net** | ~0 W | Equilibrium |
+
+| Component            | Power      | Type        |
+| -------------------- | ---------- | ----------- |
+| Gravity assistance   | +320 W     | Input       |
+| Cyclist (wheel)      | +273 W     | Input       |
+| **Total input**      | **593 W**  |             |
+| Aerodynamic drag     | -543 W     | Resistance  |
+| Rolling resistance   | -43 W      | Resistance  |
+| Wheel bearings       | -3 W       | Resistance  |
+| **Total resistance** | **-589 W** |             |
+| **Net**              | ~0 W       | Equilibrium |
 
 **Corner Entry Analysis**:
 
@@ -1181,12 +1192,13 @@ If corner radius were tighter (e.g., 20m):
 **Key Insight**: On gentle descents (-3%), gravity provides significant power assistance (320W), allowing higher speeds. However, aerodynamic drag increases with cube of velocity, creating natural speed limit. Tight corners require braking from descent speed.
 
 **Descent Speed Comparison**:
-| Grade | Equilibrium Speed | Gravity Assist | Corner Limit (r=30m) |
-|-------|-------------------|----------------|----------------------|
-| 0% | 37 km/h | 0 W | 40 km/h (no braking) |
-| -2% | 43 km/h | +214 W | 40 km/h (brake!) |
-| -3% | 49 km/h | +320 W | 40 km/h (brake!) |
-| -5% | 60 km/h | +533 W | 40 km/h (brake hard!) |
+
+| Grade | Equilibrium Speed | Gravity Assist | Corner Limit (r=30m)  |
+| ----- | ----------------- | -------------- | --------------------- |
+| 0%    | 37 km/h           | 0 W            | 40 km/h (no braking)  |
+| -2%   | 43 km/h           | +214 W         | 40 km/h (brake!)      |
+| -3%   | 49 km/h           | +320 W         | 40 km/h (brake!)      |
+| -5%   | 60 km/h           | +533 W         | 40 km/h (brake hard!) |
 
 ---
 
