@@ -29,7 +29,7 @@
         "oxlint": "^1.75.0",
         "postcss": "^8.5.23",
         "tailwindcss": "^4.2.4",
-        "typescript": "^6.0.3",
+        "typescript": "^7.0.2",
         "vite": "^8.1.5",
         "vue-tsc": "^3.3.8"
     }
