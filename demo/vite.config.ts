@@ -1,6 +1,6 @@
+import path from 'path';
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
-import path from 'path';
 import { defineConfig } from 'vite';
 
 function manualChunks(id) {

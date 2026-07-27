@@ -1,5 +1,5 @@
-import type { Path } from '@lib/types';
 import { computed, type Ref, ref } from 'vue';
+import type { Path } from '@lib/types';
 
 export interface HoverInfo {
     index: number;

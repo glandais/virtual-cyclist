@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line @typescript-eslint/no-explicit-any
 (global as any).__DEV__ = true;
 
 // Global mock for Logger to silence console output during tests

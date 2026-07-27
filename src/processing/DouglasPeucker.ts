@@ -1,5 +1,5 @@
-import { EcefConverter } from './EcefConverter';
 import { Path, Point } from '@/types/path/';
+import { EcefConverter } from './EcefConverter';
 
 /**
  * 3D Douglas-Peucker algorithm implementation for elevation profile simplification

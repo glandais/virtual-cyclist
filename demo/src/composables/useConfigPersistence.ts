@@ -1,6 +1,6 @@
-import type { Ref } from 'vue';
 import { watch } from 'vue';
 import { Config, DEFAULT_CONFIG } from '~/types';
+import type { Ref } from 'vue';
 
 const STORAGE_KEY = 'virtual-cyclist-config';
 const DEBOUNCE_MS = 1000;

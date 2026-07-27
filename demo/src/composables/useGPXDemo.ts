@@ -1,20 +1,20 @@
+import { Enhancer } from '@lib/enhancer';
+import { GPXParser } from '@lib/gpx';
+import { aeroProviderConstant } from '@lib/physics/power/aero/aero';
+import { rhoProviderEstimate } from '@lib/physics/power/aero/rho';
+import { WindProviderConstant } from '@lib/physics/power/aero/wind';
+import { Bike, Cyclist } from '@lib/types/models';
+import { Path } from '@lib/types/path';
+import { ref } from 'vue';
 import {
     CyclistPowerProvider,
     PowerProviderConstant,
     PowerProviderConstantWithTiring,
     powerProviderFromData,
 } from '@/physics';
-import { Enhancer } from '@lib/enhancer';
-import { GPXParser } from '@lib/gpx';
-import { aeroProviderConstant } from '@lib/physics/power/aero/aero';
-import { rhoProviderEstimate } from '@lib/physics/power/aero/rho';
-import { WindProviderConstant } from '@lib/physics/power/aero/wind';
-import type { CoursePhysics } from '@lib/types/course';
-import { Bike, Cyclist } from '@lib/types/models';
-import { Path } from '@lib/types/path';
-import type { Ref } from 'vue';
-import { ref } from 'vue';
 import { Config, PowerSourceType } from '~/types';
+import type { CoursePhysics } from '@lib/types/course';
+import type { Ref } from 'vue';
 
 export function useGPXDemo(config: Ref<Config>): {
     currentPath: Ref<Path | null>;

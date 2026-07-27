@@ -45,12 +45,12 @@
         "test": "vitest run",
         "test:watch": "vitest",
         "test:coverage": "vitest run --coverage",
-        "lint": "eslint src/ test/ --ext .ts",
-        "lint:fix": "eslint src/ test/ --ext .ts --fix",
+        "lint": "oxlint src/ test/",
+        "lint:fix": "oxlint src/ test/ --fix",
         "lint:demo": "cd demo && npm run lint",
         "lint:fix:demo": "cd demo && npm run lint:fix",
-        "format": "prettier --write .",
-        "format:check": "prettier --check .",
+        "format": "oxfmt .",
+        "format:check": "oxfmt --check .",
         "typecheck": "node ./node_modules/@typescript/native/bin/tsc --noEmit",
         "typecheck:demo": "cd demo && npm run typecheck",
         "semantic-release": "semantic-release",
@@ -76,17 +76,16 @@
     },
     "lint-staged": {
         "*.{ts,js}": [
-            "eslint --fix",
-            "prettier --write"
+            "oxlint --fix",
+            "oxfmt"
         ],
         "*.{json,md}": [
-            "prettier --write"
+            "oxfmt"
         ]
     },
     "devDependencies": {
         "@commitlint/cli": "^21.0.2",
         "@commitlint/config-conventional": "^21.0.0",
-        "@eslint/js": "^10.0.1",
         "@semantic-release/changelog": "^7.0.0",
         "@semantic-release/exec": "^7.1.0",
         "@semantic-release/git": "^11.0.1",
@@ -94,18 +93,12 @@
         "@semantic-release/npm": "^13.1.1",
         "@types/node": "^26.0.1",
         "@typescript/native": "npm:typescript@^7.0.2",
-        "@typescript-eslint/eslint-plugin": "^8.59.1",
-        "@typescript-eslint/parser": "^8.59.1",
         "@vitest/coverage-v8": "^4.0.3",
-        "eslint": "^10.2.1",
-        "eslint-config-prettier": "^10.1.8",
-        "eslint-import-resolver-typescript": "^4.4.4",
-        "eslint-plugin-import-x": "^4.16.2",
-        "eslint-plugin-prettier": "^5.5.4",
         "husky": "^9.1.7",
         "jsdom": "^30.0.0",
         "lint-staged": "^17.0.4",
-        "prettier": "^3.6.2",
+        "oxfmt": "^0.60.0",
+        "oxlint": "^1.75.0",
         "semantic-release": "^25.0.1",
         "semantic-release-plugin-update-version-in-files": "^2.0.0",
         "serve": "^14.2.4",

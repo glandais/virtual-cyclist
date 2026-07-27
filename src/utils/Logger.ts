@@ -3,7 +3,7 @@
  * All logging is completely removed in production builds via __DEV__ constant
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* oxlint-disable @typescript-eslint/no-explicit-any */
 type LogFunction = (message?: any, ...optionalParams: any[]) => void;
 
 type LogLevelConfig = 'error' | 'warn' | 'info' | 'debug' | 'trace';
