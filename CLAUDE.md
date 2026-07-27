@@ -33,7 +33,7 @@ npm run test:coverage    # Generate coverage report (80% threshold)
 npm run lint             # Lint library code
 npm run lint:fix         # Auto-fix library linting issues
 npm run lint:demo        # Lint demo code
-npm run format           # Format all files with Prettier
+npm run format           # Format all files with oxfmt
 npm run typecheck        # TypeScript type checking
 npm run typecheck:demo   # Type check demo
 
@@ -221,8 +221,8 @@ import { test } from '#/mocks/mock'; // test/mocks/mock
 ## Code Style
 
 - TypeScript strict mode enabled
-- ESLint with TypeScript plugin + Prettier integration
-- Import organization via `prettier-plugin-organize-imports`
+- oxlint (migrated from ESLint) for linting
+- oxfmt (migrated from Prettier) for formatting, including import sorting
 - Path aliases: `@/` → `src/`, `#/` → `test/`
 
 ## Git Workflow

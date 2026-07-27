@@ -1,4 +1,3 @@
-import type { Path } from '@lib/types';
 import { fieldToPointField } from '@lib/types';
 import {
     CategoryScale,
@@ -18,6 +17,7 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 import { computed, type Ref, shallowRef, watch } from 'vue';
 import { fieldConfig } from '~/config/fieldConfig';
 import type { HoverInfo } from './useHoverSync';
+import type { Path } from '@lib/types';
 
 // Register Chart.js components
 Chart.register(

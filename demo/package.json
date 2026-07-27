@@ -8,8 +8,8 @@
         "build": "vite build",
         "preview": "vite preview",
         "typecheck": "vue-tsc --noEmit",
-        "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts",
-        "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix"
+        "lint": "oxlint .",
+        "lint:fix": "oxlint . --fix"
     },
     "dependencies": {
         "@glandais/elevation": "^3.2.2",
@@ -24,16 +24,10 @@
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.3.3",
-        "@typescript-eslint/eslint-plugin": "^8.65.0",
-        "@typescript-eslint/parser": "^8.59.1",
         "@vitejs/plugin-vue": "^6.0.8",
         "autoprefixer": "^10.5.4",
-        "eslint": "^10.8.0",
-        "eslint-config-prettier": "^10.1.8",
-        "eslint-plugin-prettier": "^5.5.6",
-        "eslint-plugin-vue": "^10.10.0",
+        "oxlint": "^1.75.0",
         "postcss": "^8.5.23",
-        "prettier": "^3.9.6",
         "tailwindcss": "^4.2.4",
         "typescript": "^6.0.3",
         "vite": "^8.1.5",

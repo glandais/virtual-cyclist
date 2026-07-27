@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Path } from '@lib/types';
 import Panel from 'primevue/panel';
 import Select from 'primevue/select';
 import { computed, ref, watch } from 'vue';
+import type { Path } from '@lib/types';
 
 const props = defineProps<{
     fileName: string;

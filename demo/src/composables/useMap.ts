@@ -1,8 +1,8 @@
-import type { Path } from '@lib/types';
 import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
 import { onUnmounted, type Ref, shallowRef, watch } from 'vue';
+import 'leaflet/dist/leaflet.css';
 import type { HoverInfo } from './useHoverSync';
+import type { Path } from '@lib/types';
 
 export function useMap(
     mapContainer: Ref<HTMLElement | null>,

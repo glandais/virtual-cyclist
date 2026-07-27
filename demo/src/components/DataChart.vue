@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Path } from '@lib/types';
 import { onMounted, ref, toRef } from 'vue';
 import { useChart } from '~/composables/useChart';
+import type { Path } from '@lib/types';
 import type { HoverInfo } from '~/composables/useHoverSync';
 
 const props = defineProps<{
