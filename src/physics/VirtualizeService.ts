@@ -50,8 +50,9 @@ export class VirtualizeService {
      * physically consistent speeds, times, and power values.
      *
      * @param course Course configuration with path, cyclist, and bike parameters
+     * @param startTime Simulation start timestamp in milliseconds (defaults to now when null/undefined)
      */
-    static virtualizeTrack(course: CoursePhysics): Path {
+    static virtualizeTrack(course: CoursePhysics, startTime?: number | null): Path {
         const equivalentMass = this.powerComputer.getEquivalentMass(course);
 
         const path = new Path(course.path.name);
@@ -64,8 +65,8 @@ export class VirtualizeService {
         let i = 0;
         let point = inputPath.getPointData(i);
         let speed = MINIMAL_SPEED;
-        let time = new Date().getTime();
-        const startTime = time;
+        const start = startTime ?? new Date().getTime();
+        let time = start;
 
         // Add first point
         path.addPoint({
@@ -102,7 +103,7 @@ export class VirtualizeService {
             path.addPoint({
                 ...point,
                 time: time,
-                elapsed: time - startTime,
+                elapsed: time - start,
                 dx: dx,
                 dt: dt * 1000,
                 speed: speed,

@@ -38,6 +38,8 @@ export interface EnhanceOptions {
     readonly computeMaxSpeeds?: boolean;
     /** Simulate realistic cycling speeds using power-based calculations (default: true) */
     readonly virtualizeTrack?: boolean;
+    /** Simulation start timestamp in milliseconds (default: current time) */
+    readonly startTime?: number | null;
     /** Resample path to one point per second (default: true) */
     readonly computeOnePointPerSecond?: boolean;
     /** Simplify path using Douglas-Peucker algorithm (default: enabled with tolerance=10, zExaggeration=3) */

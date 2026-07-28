@@ -53,6 +53,7 @@ export class Enhancer {
             fixElevation: options?.fixElevation ?? true,
             computeMaxSpeeds: options?.computeMaxSpeeds ?? true,
             virtualizeTrack: options?.virtualizeTrack ?? true,
+            startTime: options?.startTime ?? null,
             computeOnePointPerSecond: options?.computeOnePointPerSecond ?? true,
             simplifyPath: {
                 enable: options?.simplifyPath?.enable ?? true,
@@ -103,7 +104,7 @@ export class Enhancer {
         // Step 3: Virtualize track
         if (opts.virtualizeTrack) {
             logger.timeLevel(LogLevel.INFO, 'VirtualizeService.virtualizeTrack');
-            path = VirtualizeService.virtualizeTrack(courseWithPath);
+            path = VirtualizeService.virtualizeTrack(courseWithPath, opts.startTime);
             logger.timeEndLevel(LogLevel.INFO, 'VirtualizeService.virtualizeTrack');
             logger.info('Point count : %s', path.length);
         }
