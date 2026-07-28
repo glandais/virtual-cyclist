@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/glandais/virtual-cyclist/compare/v1.2.3...v1.3.0) (2026-07-28)
+
+
+### Features
+
+* allow custom start time for track virtualization ([8532ba0](https://github.com/glandais/virtual-cyclist/commit/8532ba0f49b406269db7665977fb27f15f4555d1))
+
 ## [1.2.3](https://github.com/glandais/virtual-cyclist/compare/v1.2.2...v1.2.3) (2026-04-30)
 
 
