@@ -12,7 +12,7 @@
         "lint:fix": "oxlint . --fix"
     },
     "dependencies": {
-        "@glandais/elevation": "^3.2.2",
+        "@glandais/elevation": "^3.2.4",
         "@primeuix/themes": "^2.0.3",
         "@types/leaflet": "^1.9.21",
         "chart.js": "^4.5.1",
@@ -26,11 +26,11 @@
         "@tailwindcss/vite": "^4.3.3",
         "@vitejs/plugin-vue": "^6.0.8",
         "autoprefixer": "^10.5.4",
-        "oxlint": "^1.75.0",
-        "postcss": "^8.5.23",
+        "oxlint": "^1.76.0",
+        "postcss": "^8.5.25",
         "tailwindcss": "^4.2.4",
         "typescript": "^7.0.2",
-        "vite": "^8.1.5",
-        "vue-tsc": "^3.3.8"
+        "vite": "^8.2.0",
+        "vue-tsc": "^3.3.9"
     }
 }
