@@ -1,6 +1,6 @@
 # Migration ledger — PrimeVue 4 → Nuxt UI v4
 
-> **Statut global : `NOT STARTED`**
+> **Statut global : `WIP`** — branche `worktree-migrate-nuxt-ui`. Prérequis P1–P9 faits, point de contrôle P vert. Reste T1–T13.
 > Décision : remplacer PrimeVue par **Nuxt UI v4** (MIT, bâti sur Tailwind v4 + Reka UI).
 > Motif : PrimeVue v5 passe sous licence commerciale.
 > Périmètre : `demo/` uniquement — la librairie `src/` n'a aucune dépendance UI.
@@ -57,12 +57,13 @@
 |---|---|---|---|
 | P1 | Supprimer les 5 fichiers morts (`Modal`, `DataPanel`, `FieldsTab`, `VisualizationControls`, `ControlPanel`) | `DONE` | Fait disparaître `Dialog` du périmètre. Commit séparé, avant tout le reste. |
 | P2 | Retirer `primeicons` de `package.json` et de `main.css` | `DONE` | Dépendance morte, indépendante de la migration. Peut être commitée dès maintenant. |
-| P3 | `npm i @nuxt/ui vue-router` · `npm rm primevue @primeuix/themes primeicons` | `TODO` | `vue-router` est requis par `@nuxt/ui/vue-plugin` même sans routes ; créer un router minimal (`createWebHashHistory`, une route `/`). |
-| P4 | `vite.config.ts` : ajouter le plugin `ui()` de `@nuxt/ui/vite` avec `colorMode: false` | `TODO` | `colorMode: false` tant que le dark mode n'est pas un objectif — évite de réintroduire du mort. Voir T15 si on le veut. |
-| P5 | `main.ts` : remplacer `app.use(PrimeVue, {...})` + `app.use(ToastService)` par `app.use(uiPlugin)` | `TODO` | Supprime le preset Aura et `cssLayer: false`. |
-| P6 | `App.vue` : envelopper la racine dans `<UApp>` | `TODO` | Requis pour que `useToast()` / overlays fonctionnent. Remplace `<Toast />`. |
-| P7 | `main.css` : ajouter `@import "@nuxt/ui";` après `@import "tailwindcss";` | `TODO` | Vérifier l'ordre par rapport à `custom.css` (styles Leaflet/compass). |
-| P8 | `vite.config.ts` : remplacer les `manualChunks` `primevue1`/`primevue2`/`primeuix` | `TODO` | Nouveau split sur `node_modules/@nuxt/ui` + `node_modules/reka-ui`. Garder `leaflet` / `chartjs` inchangés. |
+| P3 | `npm i @nuxt/ui vue-router` · `npm rm primevue @primeuix/themes primeicons` | `DONE` | `vue-router` est requis par `@nuxt/ui/vue-plugin` même sans routes ; créer un router minimal (`createWebHashHistory`, une route `/`). |
+| P4 | `vite.config.ts` : ajouter le plugin `ui()` de `@nuxt/ui/vite` avec `colorMode: false` | `DONE` | `colorMode: false` tant que le dark mode n'est pas un objectif — évite de réintroduire du mort. Voir T15 si on le veut. |
+| P5 | `main.ts` : remplacer `app.use(PrimeVue, {...})` + `app.use(ToastService)` par `app.use(uiPlugin)` | `DONE` | Supprime le preset Aura et `cssLayer: false`. |
+| P6 | `App.vue` : envelopper la racine dans `<UApp>` | `DONE` | Requis pour que `useToast()` / overlays fonctionnent. Remplace `<Toast />`. |
+| P7 | `main.css` : ajouter `@import "@nuxt/ui";` après `@import "tailwindcss";` | `DONE` | Vérifier l'ordre par rapport à `custom.css` (styles Leaflet/compass). |
+| P8 | `vite.config.ts` : remplacer les `manualChunks` `primevue1`/`primevue2`/`primeuix` | `DONE` | Nouveau split sur `node_modules/@nuxt/ui` + `node_modules/reka-ui`. Garder `leaflet` / `chartjs` inchangés. |
+| P9 | **Rétrograder `typescript` en `^6`** | `DONE` | **Découverte hors plan.** `npm run typecheck` était **déjà cassé sur `develop`** : `vue-tsc@3.3.9` ne peut pas charger `typescript@7.0.2` (`ERR_PACKAGE_PATH_NOT_EXPORTED`, régression du bump dependabot 8f87f0c). Or `@nuxt/ui@4.10.0` plafonne son peer à `typescript@^5.6.3 \|\| ^6.0.0` — aucune version publiée ne supporte TS 7. Passer en TS 6.0.3 **répare le typecheck** et supprime le besoin de `--legacy-peer-deps`. À rouvrir quand `vue-tsc` **et** `@nuxt/ui` supporteront TS 7. |
 
 **Point de contrôle P** : `npm run typecheck && npm run lint && npm run build` passent avec l'app à moitié cassée visuellement mais Nuxt UI monté. Ne pas enchaîner tant que ce n'est pas vert.
 
@@ -84,7 +85,7 @@ Ordre imposé par le risque : `SliderInput` d'abord (16 usages en dépendent), l
 | T8 | `Tabs` (+`TabList`/`Tab`/`TabPanels`/`TabPanel`) → `UTabs` | Moyen | `TODO` | `ConfigModal.vue` : 5 onglets → API `items` array `[{label: '👤 Cyclist', slot: 'cyclist'}, ...]` avec un `<template #cyclist>` par onglet hébergeant le composant enfant. Refactor structurel, pas un renommage. Corrige au passage l'import barrel incohérent. |
 | T9 | `Accordion` (+3 sous-composants) → `UAccordion` | Moyen | `TODO` | `FieldsSidebar.vue` : `v-for` sur `fieldConfig` → construire un `computed` `items` `[{label: category.name, slot: categoryKey}]`. `multiple` → prop `type="multiple"`. `:value="Object.keys(fieldConfig)"` (tout ouvert par défaut) → `default-value` avec le même tableau. Le contenu (liste de `UCheckbox` + labels) passe dans les slots dynamiques. |
 | T10 | `Drawer` → `UDrawer` (ou `USlideover`) | Faible-moyen | `TODO` | `FieldsSidebar.vue` : `position="right"` → `direction="right"`. `header="📊 Chart Fields"` → slot `#header`. `class="!w-48/100"` (48 % de largeur, `!` pour battre la spécificité PrimeVue) → à réécrire proprement via `:ui`, le `!important` ne devrait plus être nécessaire. **Vérifier que `USlideover` n'est pas le meilleur choix** pour un panneau latéral persistant. |
-| T11 | `Toast` + `useToast()` → `UToast` + `useToast()` | Faible | `TODO` | `App.vue`, 6 appels. Renommage de champs : `severity: 'success'` → `color: 'success'` (et `'error'` → `'error'`), `summary` → `title`, `detail` → `description`, `life` → `duration`. `<Toast />` supprimé au profit de `<UApp>` (voir P6). |
+| T11 | `Toast` + `useToast()` → `UToast` + `useToast()` | Faible | `DONE` | `App.vue`, 6 appels. Renommage de champs : `severity: 'success'` → `color: 'success'` (et `'error'` → `'error'`), `summary` → `title`, `detail` → `description`, `life` → `duration`. `<Toast />` supprimé au profit de `<UApp>` (voir P6). |
 | T12 | `Slider` direct de `WindTab.vue` → `USlider` | Moyen | `TODO` | Le gradient `pt:root:class="bg-gradient-to-r from-blue-500 via-green-500 to-blue-500"` doit passer par `:ui` (slot `track`) ou du CSS ciblé dans `custom.css`. Attention au handler existant `Array.isArray($event) ? $event[0] : $event` — vérifier le type émis par `USlider` (range vs valeur simple). |
 | T13 | `InputNumber` direct de `WindTab.vue` → `UInputNumber` | Faible | `TODO` | `suffix="°"`, `:min="0" :max="360" :step="15"`, `class="w-20"`. Dépend des constats de T1. |
 
@@ -96,7 +97,7 @@ Ordre imposé par le risque : `SliderInput` d'abord (16 usages en dépendent), l
 |---|---|---|---|
 | T14 | Purge finale : plus aucune occurrence de `primevue`, `@primeuix`, `primeicons`, `pt:` dans `src/` et `package.json` | `TODO` | `grep -rn "primevue\|primeuix\|primeicons\|pt:" src/ package.json` doit rendre vide. |
 | T15 | *(optionnel)* Activer réellement le dark mode | `SKIP` par défaut | Nuxt UI le fournit gratuitement via `colorMode: true` + `useColorMode()`. À décider explicitement — aujourd'hui c'est du mort chez PrimeVue. Ne pas l'ouvrir dans le même chantier. |
-| T16 | Vérifier le poids du bundle avec un analyzer | `TODO` | `@nuxt/ui` est monolithique (Tiptap, Embla, Tanstack en dépendances) et le tree-shaking de `reka-ui` n'est pas garanti (issue nuxt/ui#3376). **Comparer aux chunks PrimeVue actuels avant/après** — c'est le principal risque non fonctionnel de ce choix. |
+| T16 | Vérifier le poids du bundle avec un analyzer | `WIP` | **Baseline PrimeVue mesurée avant migration** (`npm run build` sur `develop`) : `primevue1` 323,12 kB + `primeuix` 214,35 kB + `primevue2` 6,52 kB = **544 kB brut / 120,8 kB gzip**, plus 18,7 kB de CSS (4,45 kB gzip).<br>**Mesure intermédiaire** (Nuxt UI monté, composants pas encore migrés, donc les deux libs sont présentes) : `nuxtui` 276,11 kB (92,96 kB gzip) + `vendor` gonflé à 377,86 kB, CSS 197,15 kB (25,78 kB gzip). **Le CSS ×10 est attendu à ce stade** — Nuxt UI émet tout son CSS tant que Tailwind ne peut pas purger. **À re-mesurer après T14**, quand PrimeVue aura disparu. |
 | T17 | `npm run check:demo` vert (typecheck + oxlint + build) | `TODO` | |
 | T18 | Passe visuelle manuelle sur les 5 onglets, le drawer, le toast, la carte et le graphe | `TODO` | Vérifier surtout que Leaflet et Chart.js (`custom.css`, `.leaflet-map`, `.compass`) ne sont pas régressés par le changement de couche CSS. |
 

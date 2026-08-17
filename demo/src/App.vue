@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import Toast from 'primevue/toast';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from '@nuxt/ui/composables';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import ConfigModal from '~/components/ConfigModal.vue';
 import DataChart from '~/components/DataChart.vue';
@@ -100,17 +99,17 @@ const onGPXSelect = async (url: string) => {
     try {
         await loadGPXFile(url);
         toast.add({
-            severity: 'success',
-            summary: 'GPX Loaded',
-            detail: 'GPX file loaded successfully',
-            life: 3000,
+            color: 'success',
+            title: 'GPX Loaded',
+            description: 'GPX file loaded successfully',
+            duration: 3000,
         });
     } catch (error) {
         toast.add({
-            severity: 'error',
-            summary: 'Load Failed',
-            detail: 'Failed to load GPX file: ' + (error as Error).message,
-            life: 5000,
+            color: 'error',
+            title: 'Load Failed',
+            description: 'Failed to load GPX file: ' + (error as Error).message,
+            duration: 5000,
         });
     }
 };
@@ -119,17 +118,17 @@ const onFileUpload = async (file: File) => {
     try {
         await handleFileUpload(file);
         toast.add({
-            severity: 'success',
-            summary: 'File Uploaded',
-            detail: 'File uploaded successfully',
-            life: 3000,
+            color: 'success',
+            title: 'File Uploaded',
+            description: 'File uploaded successfully',
+            duration: 3000,
         });
     } catch (error) {
         toast.add({
-            severity: 'error',
-            summary: 'Upload Failed',
-            detail: 'Failed to upload file: ' + (error as Error).message,
-            life: 5000,
+            color: 'error',
+            title: 'Upload Failed',
+            description: 'Failed to upload file: ' + (error as Error).message,
+            duration: 5000,
         });
     }
 };
@@ -138,17 +137,17 @@ const onEnhancePath = async () => {
     try {
         await enhancePath();
         toast.add({
-            severity: 'success',
-            summary: 'Path Enhanced',
-            detail: 'Path enhanced successfully',
-            life: 3000,
+            color: 'success',
+            title: 'Path Enhanced',
+            description: 'Path enhanced successfully',
+            duration: 3000,
         });
     } catch (error) {
         toast.add({
-            severity: 'error',
-            summary: 'Enhancement Failed',
-            detail: 'Failed to enhance path: ' + (error as Error).message,
-            life: 5000,
+            color: 'error',
+            title: 'Enhancement Failed',
+            description: 'Failed to enhance path: ' + (error as Error).message,
+            duration: 5000,
         });
     }
 };
@@ -160,7 +159,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <Toast />
+    <UApp>
     <div
         id="app"
         class="h-screen flex flex-col bg-white/95 mx-auto w-full shadow-2xl overflow-hidden"
@@ -232,4 +231,5 @@ onMounted(() => {
             </div>
         </div>
     </div>
+    </UApp>
 </template>

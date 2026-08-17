@@ -1,17 +1,15 @@
 import path from 'path';
+import ui from '@nuxt/ui/vite';
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import { defineConfig } from 'vite';
 
 function manualChunks(id) {
-    if (id.includes('node_modules/primevue')) {
-        return 'primevue1';
+    if (id.includes('node_modules/@nuxt/ui')) {
+        return 'nuxtui';
     }
-    if (id.includes('node_modules/@primevue')) {
-        return 'primevue2';
-    }
-    if (id.includes('node_modules/@primeuix')) {
-        return 'primeuix';
+    if (id.includes('node_modules/reka-ui')) {
+        return 'rekaui';
     }
     if (id.includes('node_modules/leaflet')) {
         return 'leaflet';
@@ -27,7 +25,7 @@ function manualChunks(id) {
 }
 
 export default defineConfig({
-    plugins: [vue(), tailwindcss()],
+    plugins: [vue(), ui({ colorMode: false }), tailwindcss()],
     resolve: {
         alias: [
             { find: '@lib', replacement: path.resolve(__dirname, '../src') },
