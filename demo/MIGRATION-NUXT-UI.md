@@ -55,7 +55,7 @@
 
 | # | Tâche | Statut | Notes |
 |---|---|---|---|
-| P1 | Supprimer les 5 fichiers morts (`Modal`, `DataPanel`, `FieldsTab`, `VisualizationControls`, `ControlPanel`) | `TODO` | Fait disparaître `Dialog` du périmètre. Commit séparé, avant tout le reste. |
+| P1 | Supprimer les 5 fichiers morts (`Modal`, `DataPanel`, `FieldsTab`, `VisualizationControls`, `ControlPanel`) | `DONE` | Fait disparaître `Dialog` du périmètre. Commit séparé, avant tout le reste. |
 | P2 | Retirer `primeicons` de `package.json` et de `main.css` | `TODO` | Dépendance morte, indépendante de la migration. Peut être commitée dès maintenant. |
 | P3 | `npm i @nuxt/ui vue-router` · `npm rm primevue @primeuix/themes primeicons` | `TODO` | `vue-router` est requis par `@nuxt/ui/vue-plugin` même sans routes ; créer un router minimal (`createWebHashHistory`, une route `/`). |
 | P4 | `vite.config.ts` : ajouter le plugin `ui()` de `@nuxt/ui/vite` avec `colorMode: false` | `TODO` | `colorMode: false` tant que le dark mode n'est pas un objectif — évite de réintroduire du mort. Voir T15 si on le veut. |
