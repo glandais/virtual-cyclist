@@ -1,6 +1,6 @@
 # Migration ledger — PrimeVue 4 → Nuxt UI v4
 
-> **Statut global : `WIP`** — branche `worktree-migrate-nuxt-ui`. Prérequis P1–P9 faits, point de contrôle P vert. Reste T1–T13.
+> **Statut global : `WIP`** — branche `worktree-migrate-nuxt-ui`. **P1–P9 et T1–T14 faits** : plus aucun composant PrimeVue, typecheck + lint + build verts, passe visuelle OK. **Bloqué avant merge sur le poids du bundle (+55 % gzip) — voir §6.**
 > Décision : remplacer PrimeVue par **Nuxt UI v4** (MIT, bâti sur Tailwind v4 + Reka UI).
 > Motif : PrimeVue v5 passe sous licence commerciale.
 > Périmètre : `demo/` uniquement — la librairie `src/` n'a aucune dépendance UI.
@@ -76,18 +76,18 @@ Ordre imposé par le risque : `SliderInput` d'abord (16 usages en dépendent), l
 | # | Cible | Effort | Statut | Détail |
 |---|---|---|---|---|
 | **T1** | **`SliderInput.vue`** → `USlider` + `UInputNumber` | **Élevé** | `DONE` | **Composant pivot — à faire et valider en premier.** Vérifier explicitement l'équivalence de : `minFractionDigits`/`maxFractionDigits` (calculés depuis `step` dans `fractionDigits`), `useGrouping: false`, `locale="en-US"`, `suffix` (` ${unit}`). Si `UInputNumber` ne couvre pas `suffix`, le rendre en `<span>` adjacent. Migrer `pt:input:class="text-right w-full"` vers la prop `:ui`. |
-| T2 | `Button` → `UButton` | Faible | `TODO` | Mapping : `severity="secondary"` → `color="neutral"`, `warn` → `warning`, `primary` → `primary`, `success`/`danger` idem ; `outlined` → `variant="outline"` ; `size="small"` → `size="sm"` ; `:disabled` inchangé. Labels emoji restent en slot par défaut. |
-| T3 | `Checkbox` → `UCheckbox` | Faible | `TODO` | 7 usages, tous en `:modelValue` + `@update:modelValue` (pilotage externe, pas de `v-model`) — ce pattern est conservé tel quel. `:binary="true"` disparaît (comportement par défaut). `:inputId` → vérifier l'attribut équivalent pour garder les `<label :for>` de `FieldsSidebar`. |
-| T4 | `Select` → `USelect` | Faible | `TODO` | `FileSection.vue`. `:options` + `optionLabel`/`optionValue` → prop `items` avec `value-key`/`label-key`. Conserver `placeholder`, `:disabled`, `@update:modelValue` → `onGPXChange`. |
-| T5 | `ProgressSpinner` → **manuel** | Faible | `TODO` | Aucun spinner circulaire dédié dans Nuxt UI. Remplacer par `<UIcon name="i-lucide-loader-circle" class="animate-spin size-5" />` — **implique d'ajouter une collection d'icônes** (`@iconify-json/lucide`), première icône non-emoji du projet. Alternative sans dépendance : un `<div>` CSS `border` + `animate-spin`. **Trancher avant T5.** |
-| T6 | `RadioButton` ×3 → `URadioGroup` | Moyen | `TODO` | `PowerTab.vue` : pas de radio unitaire dans Nuxt UI. Les 3 radios sont déjà un seul groupe (`name="powerSource"`) → passer à un `URadioGroup` piloté par un tableau `items` `[{value, label, description}]`. **La mise en forme actuelle (carte cliquable `<label>` avec bordure, hover, titre gras + description) doit être reconstruite via les slots du composant** — c'est là que part l'effort, pas dans la logique. |
-| T7 | `Panel` ×4 → `UCollapsible` (+ `UCard`) | **Moyen-élevé** | `TODO` | Pas d'équivalent 1:1. Deux profils distincts : (a) `BikeTab` / `CyclistTab` / `FileSection` = `toggleable :collapsed="true"` + `#header` → `UCollapsible` avec slot `#default` en trigger ; (b) `ConfigModal` = **non toggleable**, simple conteneur titré → un `UCard` (ou du markup Tailwind nu) suffit. Migrer les `pt:root:class` / `pt:header:class` / `pt:content:class` (bleus de `FileSection` et `ConfigModal`) vers `:ui` ou des classes directes. |
-| T8 | `Tabs` (+`TabList`/`Tab`/`TabPanels`/`TabPanel`) → `UTabs` | Moyen | `TODO` | `ConfigModal.vue` : 5 onglets → API `items` array `[{label: '👤 Cyclist', slot: 'cyclist'}, ...]` avec un `<template #cyclist>` par onglet hébergeant le composant enfant. Refactor structurel, pas un renommage. Corrige au passage l'import barrel incohérent. |
-| T9 | `Accordion` (+3 sous-composants) → `UAccordion` | Moyen | `TODO` | `FieldsSidebar.vue` : `v-for` sur `fieldConfig` → construire un `computed` `items` `[{label: category.name, slot: categoryKey}]`. `multiple` → prop `type="multiple"`. `:value="Object.keys(fieldConfig)"` (tout ouvert par défaut) → `default-value` avec le même tableau. Le contenu (liste de `UCheckbox` + labels) passe dans les slots dynamiques. |
-| T10 | `Drawer` → `UDrawer` (ou `USlideover`) | Faible-moyen | `TODO` | `FieldsSidebar.vue` : `position="right"` → `direction="right"`. `header="📊 Chart Fields"` → slot `#header`. `class="!w-48/100"` (48 % de largeur, `!` pour battre la spécificité PrimeVue) → à réécrire proprement via `:ui`, le `!important` ne devrait plus être nécessaire. **Vérifier que `USlideover` n'est pas le meilleur choix** pour un panneau latéral persistant. |
+| T2 | `Button` → `UButton` | Faible | `DONE` | Mapping : `severity="secondary"` → `color="neutral"`, `warn` → `warning`, `primary` → `primary`, `success`/`danger` idem ; `outlined` → `variant="outline"` ; `size="small"` → `size="sm"` ; `:disabled` inchangé. Labels emoji restent en slot par défaut. |
+| T3 | `Checkbox` → `UCheckbox` | Faible | `DONE` | 7 usages, tous en `:modelValue` + `@update:modelValue` (pilotage externe, pas de `v-model`) — ce pattern est conservé tel quel. `:binary="true"` disparaît (comportement par défaut). `:inputId` → vérifier l'attribut équivalent pour garder les `<label :for>` de `FieldsSidebar`. |
+| T4 | `Select` → `USelect` | Faible | `DONE` | `FileSection.vue`. `:options` + `optionLabel`/`optionValue` → prop `items` avec `value-key`/`label-key`. Conserver `placeholder`, `:disabled`, `@update:modelValue` → `onGPXChange`. |
+| T5 | `ProgressSpinner` → **manuel** | Faible | `DONE` | Aucun spinner circulaire dédié dans Nuxt UI. Remplacer par `<UIcon name="i-lucide-loader-circle" class="animate-spin size-5" />` — **implique d'ajouter une collection d'icônes** (`@iconify-json/lucide`), première icône non-emoji du projet. Alternative sans dépendance : un `<div>` CSS `border` + `animate-spin`. **Trancher avant T5.** |
+| T6 | `RadioButton` ×3 → `URadioGroup` | Moyen | `DONE` | `PowerTab.vue` : pas de radio unitaire dans Nuxt UI. Les 3 radios sont déjà un seul groupe (`name="powerSource"`) → passer à un `URadioGroup` piloté par un tableau `items` `[{value, label, description}]`. **La mise en forme actuelle (carte cliquable `<label>` avec bordure, hover, titre gras + description) doit être reconstruite via les slots du composant** — c'est là que part l'effort, pas dans la logique. |
+| T7 | `Panel` ×4 → `UCollapsible` (+ `UCard`) | **Moyen-élevé** | `DONE` | Pas d'équivalent 1:1. Deux profils distincts : (a) `BikeTab` / `CyclistTab` / `FileSection` = `toggleable :collapsed="true"` + `#header` → `UCollapsible` avec slot `#default` en trigger ; (b) `ConfigModal` = **non toggleable**, simple conteneur titré → un `UCard` (ou du markup Tailwind nu) suffit. Migrer les `pt:root:class` / `pt:header:class` / `pt:content:class` (bleus de `FileSection` et `ConfigModal`) vers `:ui` ou des classes directes. |
+| T8 | `Tabs` (+`TabList`/`Tab`/`TabPanels`/`TabPanel`) → `UTabs` | Moyen | `DONE` | `ConfigModal.vue` : 5 onglets → API `items` array `[{label: '👤 Cyclist', slot: 'cyclist'}, ...]` avec un `<template #cyclist>` par onglet hébergeant le composant enfant. Refactor structurel, pas un renommage. Corrige au passage l'import barrel incohérent. |
+| T9 | `Accordion` (+3 sous-composants) → `UAccordion` | Moyen | `DONE` | `FieldsSidebar.vue` : `v-for` sur `fieldConfig` → construire un `computed` `items` `[{label: category.name, slot: categoryKey}]`. `multiple` → prop `type="multiple"`. `:value="Object.keys(fieldConfig)"` (tout ouvert par défaut) → `default-value` avec le même tableau. Le contenu (liste de `UCheckbox` + labels) passe dans les slots dynamiques. |
+| T10 | `Drawer` → `UDrawer` (ou `USlideover`) | Faible-moyen | `DONE` | `FieldsSidebar.vue` : `position="right"` → `direction="right"`. `header="📊 Chart Fields"` → slot `#header`. `class="!w-48/100"` (48 % de largeur, `!` pour battre la spécificité PrimeVue) → à réécrire proprement via `:ui`, le `!important` ne devrait plus être nécessaire. **Vérifier que `USlideover` n'est pas le meilleur choix** pour un panneau latéral persistant. |
 | T11 | `Toast` + `useToast()` → `UToast` + `useToast()` | Faible | `DONE` | `App.vue`, 6 appels. Renommage de champs : `severity: 'success'` → `color: 'success'` (et `'error'` → `'error'`), `summary` → `title`, `detail` → `description`, `life` → `duration`. `<Toast />` supprimé au profit de `<UApp>` (voir P6). |
-| T12 | `Slider` direct de `WindTab.vue` → `USlider` | Moyen | `TODO` | Le gradient `pt:root:class="bg-gradient-to-r from-blue-500 via-green-500 to-blue-500"` doit passer par `:ui` (slot `track`) ou du CSS ciblé dans `custom.css`. Attention au handler existant `Array.isArray($event) ? $event[0] : $event` — vérifier le type émis par `USlider` (range vs valeur simple). |
-| T13 | `InputNumber` direct de `WindTab.vue` → `UInputNumber` | Faible | `TODO` | `suffix="°"`, `:min="0" :max="360" :step="15"`, `class="w-20"`. Dépend des constats de T1. |
+| T12 | `Slider` direct de `WindTab.vue` → `USlider` | Moyen | `DONE` | Le gradient `pt:root:class="bg-gradient-to-r from-blue-500 via-green-500 to-blue-500"` doit passer par `:ui` (slot `track`) ou du CSS ciblé dans `custom.css`. Attention au handler existant `Array.isArray($event) ? $event[0] : $event` — vérifier le type émis par `USlider` (range vs valeur simple). |
+| T13 | `InputNumber` direct de `WindTab.vue` → `UInputNumber` | Faible | `DONE` | `suffix="°"`, `:min="0" :max="360" :step="15"`, `class="w-20"`. Dépend des constats de T1. |
 
 ---
 
@@ -95,11 +95,11 @@ Ordre imposé par le risque : `SliderInput` d'abord (16 usages en dépendent), l
 
 | # | Tâche | Statut | Notes |
 |---|---|---|---|
-| T14 | Purge finale : plus aucune occurrence de `primevue`, `@primeuix`, `primeicons`, `pt:` dans `src/` et `package.json` | `TODO` | `grep -rn "primevue\|primeuix\|primeicons\|pt:" src/ package.json` doit rendre vide. |
+| T14 | Purge finale : plus aucune occurrence de `primevue`, `@primeuix`, `primeicons`, `pt:` dans `src/` et `package.json` | `DONE` | `grep -rn "primevue\|primeuix\|primeicons\|pt:" src/ package.json` doit rendre vide. |
 | T15 | *(optionnel)* Activer réellement le dark mode | `SKIP` par défaut | Nuxt UI le fournit gratuitement via `colorMode: true` + `useColorMode()`. À décider explicitement — aujourd'hui c'est du mort chez PrimeVue. Ne pas l'ouvrir dans le même chantier. |
-| T16 | Vérifier le poids du bundle avec un analyzer | `WIP` | **Baseline PrimeVue mesurée avant migration** (`npm run build` sur `develop`) : `primevue1` 323,12 kB + `primeuix` 214,35 kB + `primevue2` 6,52 kB = **544 kB brut / 120,8 kB gzip**, plus 18,7 kB de CSS (4,45 kB gzip).<br>**Mesure intermédiaire** (Nuxt UI monté, composants pas encore migrés, donc les deux libs sont présentes) : `nuxtui` 276,11 kB (92,96 kB gzip) + `vendor` gonflé à 377,86 kB, CSS 197,15 kB (25,78 kB gzip). **Le CSS ×10 est attendu à ce stade** — Nuxt UI émet tout son CSS tant que Tailwind ne peut pas purger. **À re-mesurer après T14**, quand PrimeVue aura disparu. |
-| T17 | `npm run check:demo` vert (typecheck + oxlint + build) | `TODO` | |
-| T18 | Passe visuelle manuelle sur les 5 onglets, le drawer, le toast, la carte et le graphe | `TODO` | Vérifier surtout que Leaflet et Chart.js (`custom.css`, `.leaflet-map`, `.compass`) ne sont pas régressés par le changement de couche CSS. |
+| T16 | Vérifier le poids du bundle avec un analyzer | `BLOCKED` | **Régression confirmée — voir §8.** Mesures `npm run build` :<br>• **Avant (PrimeVue)** : JS 544,0 kB (**120,8 kB gzip**) + CSS 18,7 kB (4,5 kB gzip) = **125,3 kB gzip**<br>• **Après (Nuxt UI)** : JS 569,9 kB (**168,9 kB gzip**) + CSS 197,2 kB (25,8 kB gzip) = **194,6 kB gzip**<br>**+69,3 kB gzip, soit +55 %.** Le CSS passe de 18,7 à 197,2 kB brut (×10,5) : Tailwind ne purge pas la feuille de Nuxt UI. C'est exactement le risque anticipé (issue nuxt/ui#3376). **Ne pas merger sans avoir tranché ce point** — pistes en §8. |
+| T17 | `npm run check:demo` vert (typecheck + oxlint + build) | `DONE` | |
+| T18 | Passe visuelle manuelle sur les 5 onglets, le drawer, le toast, la carte et le graphe | `DONE` | Vérifier surtout que Leaflet et Chart.js (`custom.css`, `.leaflet-map`, `.compass`) ne sont pas régressés par le changement de couche CSS. |
 
 ---
 
@@ -130,7 +130,57 @@ Ordre imposé par le risque : `SliderInput` d'abord (16 usages en dépendent), l
 
 ---
 
-## 6. Références
+## 6. Points ouverts après la première passe
+
+La migration fonctionnelle est terminée (T1–T14 faits, typecheck + lint + build verts, passe
+visuelle OK sur les 5 onglets, le drawer, la carte et le graphe). Trois points restent à trancher
+**avant merge**.
+
+### 6.1 Poids du bundle — le seul vrai blocage
+
+| | JS gzip | CSS gzip | **Total gzip** |
+|---|---|---|---|
+| PrimeVue (avant) | 120,8 kB | 4,5 kB | **125,3 kB** |
+| Nuxt UI (après) | 168,9 kB | 25,8 kB | **194,6 kB** |
+| Delta | +48,1 kB | +21,3 kB | **+69,3 kB (+55 %)** |
+
+Le CSS brut passe de 18,7 kB à 197,2 kB (×10,5) : la feuille de Nuxt UI n'est pas purgée par
+Tailwind. Pistes, par ordre de rendement attendu :
+1. Vérifier la configuration `@source` de Tailwind v4 vis-à-vis de `node_modules/@nuxt/ui`.
+2. Restreindre les composants générés par le plugin `ui()` à ceux réellement utilisés.
+3. Analyser `nuxtui` avec un bundle analyzer : confirmer si Tiptap / Embla / Tanstack entrent
+   dans le chunk (issue nuxt/ui#3376) ou si les 569 kB sont bien du Reka UI utile.
+4. Si rien ne suffit : arbitrer explicitement +69 kB gzip contre le bénéfice de licence, ou
+   rouvrir le dossier Reka UI seul (2ᵉ choix de l'évaluation).
+
+### 6.2 Dépendance runtime à `api.iconify.design` — résolu, à ne pas régresser
+
+Nuxt UI récupérait ses icônes (`check`, `chevron-down`, `plus`, `minus`) **depuis l'API Iconify
+au runtime** — vérifié dans l'onglet réseau. La démo aurait cassé hors ligne ou derrière un
+pare-feu, là où PrimeVue n'avait aucune dépendance externe (icônes en emoji). Corrigé en
+installant `@iconify-json/lucide` en devDependency : après redémarrage du serveur, plus aucun
+appel sortant. **Ne pas retirer cette dépendance.**
+
+### 6.3 Fichiers générés commités
+
+`components.d.ts` et `auto-imports.d.ts` sont générés par le plugin `ui()` et **commités**, car
+`npm run typecheck` (`vue-tsc --noEmit`) tourne sans passer par Vite et ne les régénérerait pas.
+Contrepartie : ils changent à chaque ajout ou retrait de composant. Alternative si le bruit gêne :
+les gitignorer et faire précéder le typecheck d'un build.
+
+### 6.4 Écarts visuels assumés
+
+- Le suffixe d'unité (`W`, `m/s`, `kg⋅m²`…) est désormais **à côté** du champ, plus dedans :
+  `Intl.NumberFormat` n'accepte que sa propre liste d'unités, qui n'en couvre aucune ici.
+- `ProgressSpinner` est remplacé par un spinner CSS (`border` + `animate-spin`) : Nuxt UI n'a pas
+  de spinner circulaire et une seule occurrence ne justifiait pas d'icône dédiée.
+- Les `Panel` togglables deviennent des `UCollapsible` avec un chevron texte (`▲`/`▼`).
+- `UDrawer` est forcé en `:modal="false"` : ouvert par défaut, il rendait sinon le graphe
+  inutilisable derrière son overlay, ce que le `Drawer` PrimeVue ne faisait pas.
+
+---
+
+## 7. Références
 
 - Installation Vue standalone : <https://ui.nuxt.com/docs/getting-started/installation/vue>
 - Catalogue de composants : <https://ui.nuxt.com/components>

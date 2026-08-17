@@ -1,8 +1,24 @@
 <script setup lang="ts">
-import Checkbox from 'primevue/checkbox';
-import RadioButton from 'primevue/radiobutton';
 import { PowerParams, PowerSourceType } from '~/types';
 import SliderInput from './SliderInput.vue';
+
+const powerSourceItems = [
+    {
+        value: PowerSourceType.constant,
+        label: 'Constant Power',
+        description: 'Steady power output throughout the ride',
+    },
+    {
+        value: PowerSourceType.constant_tiring,
+        label: 'Constant with Fatigue',
+        description: 'Power decreases over time (realistic endurance)',
+    },
+    {
+        value: PowerSourceType.source,
+        label: 'From GPX Data',
+        description: 'Use power data from GPX file (if available)',
+    },
+];
 
 const props = defineProps<{
     modelValue: PowerParams;
@@ -24,61 +40,13 @@ const updateField = <K extends keyof PowerParams>(field: K, value: PowerParams[K
         <div class="mb-8">
             <label class="block font-medium text-gray-800 text-base mb-4">Power Source:</label>
 
-            <div class="flex flex-col gap-3">
-                <label
-                    class="flex items-start gap-3 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 hover:border-blue-500 transition-all"
-                >
-                    <RadioButton
-                        name="powerSource"
-                        :value="PowerSourceType.constant"
-                        :modelValue="modelValue.type"
-                        @update:modelValue="updateField('type', $event)"
-                        class="mt-1"
-                    />
-                    <span class="flex flex-col gap-1">
-                        <strong class="text-gray-800">Constant Power</strong>
-                        <small class="text-gray-600 text-sm"
-                            >Steady power output throughout the ride</small
-                        >
-                    </span>
-                </label>
-
-                <label
-                    class="flex items-start gap-3 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 hover:border-blue-500 transition-all"
-                >
-                    <RadioButton
-                        name="powerSource"
-                        :value="PowerSourceType.constant_tiring"
-                        :modelValue="modelValue.type"
-                        @update:modelValue="updateField('type', $event)"
-                        class="mt-1"
-                    />
-                    <span class="flex flex-col gap-1">
-                        <strong class="text-gray-800">Constant with Fatigue</strong>
-                        <small class="text-gray-600 text-sm"
-                            >Power decreases over time (realistic endurance)</small
-                        >
-                    </span>
-                </label>
-
-                <label
-                    class="flex items-start gap-3 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 hover:border-blue-500 transition-all"
-                >
-                    <RadioButton
-                        name="powerSource"
-                        :value="PowerSourceType.source"
-                        :modelValue="modelValue.type"
-                        @update:modelValue="updateField('type', $event)"
-                        class="mt-1"
-                    />
-                    <span class="flex flex-col gap-1">
-                        <strong class="text-gray-800">From GPX Data</strong>
-                        <small class="text-gray-600 text-sm"
-                            >Use power data from GPX file (if available)</small
-                        >
-                    </span>
-                </label>
-            </div>
+            <URadioGroup
+                name="powerSource"
+                variant="card"
+                :items="powerSourceItems"
+                :modelValue="modelValue.type"
+                @update:modelValue="updateField('type', $event as PowerSourceType)"
+            />
         </div>
 
         <div v-if="modelValue.type !== PowerSourceType.source" class="mt-8">
@@ -95,8 +63,7 @@ const updateField = <K extends keyof PowerParams>(field: K, value: PowerParams[K
 
             <div class="my-6">
                 <label class="flex items-start gap-3 cursor-pointer">
-                    <Checkbox
-                        :binary="true"
+                    <UCheckbox
                         :modelValue="modelValue.useHarmonics"
                         @update:modelValue="updateField('useHarmonics', !modelValue.useHarmonics)"
                         class="mt-1"

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import InputNumber from 'primevue/inputnumber';
-import Slider from 'primevue/slider';
 import { WindDemo } from '~/types';
 import SliderInput from './SliderInput.vue';
 
@@ -66,15 +64,15 @@ const getWindDirectionLabel = (deg: number): string => {
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <InputNumber
+                    <UInputNumber
                         :modelValue="modelValue.windDirection"
                         @update:modelValue="updateField('windDirection', $event ?? 0)"
                         :min="0"
                         :max="360"
                         :step="15"
-                        class="w-20"
-                        suffix="°"
+                        class="w-32"
                     />
+                    <span class="text-gray-600 text-sm font-medium">°</span>
                     <span class="text-gray-600 text-sm font-medium">
                         ({{ getWindDirectionLabel(modelValue.windDirection) }})
                     </span>
@@ -82,16 +80,16 @@ const getWindDirectionLabel = (deg: number): string => {
             </div>
 
             <div class="mb-1">
-                <Slider
+                <USlider
                     :modelValue="modelValue.windDirection"
                     @update:modelValue="
-                        updateField('windDirection', Array.isArray($event) ? $event[0] : $event)
+                        updateField('windDirection', Array.isArray($event) ? $event[0]! : $event!)
                     "
                     :min="0"
                     :max="360"
                     :step="15"
                     class="w-full"
-                    pt:root:class="bg-gradient-to-r from-blue-500 via-green-500 to-blue-500"
+                    :ui="{ track: 'bg-gradient-to-r from-blue-500 via-green-500 to-blue-500' }"
                 />
             </div>
         </div>
