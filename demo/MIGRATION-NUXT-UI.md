@@ -1,6 +1,6 @@
 # Migration ledger — PrimeVue 4 → Nuxt UI v4
 
-> **Statut global : `WIP`** — branche `worktree-migrate-nuxt-ui`. **P1–P9 et T1–T14 faits** : plus aucun composant PrimeVue, typecheck + lint + build verts, passe visuelle OK. **Bloqué avant merge sur le poids du bundle (+55 % gzip) — voir §6.**
+> **Statut global : `DONE`** — branche `worktree-migrate-nuxt-ui`. **P1–P9 et T1–T18 faits** : plus aucun composant PrimeVue, typecheck + lint + build verts, passe visuelle OK. Points ouverts tranchés et acceptés le 2026-08-17 (§6). Prêt pour merge.
 > Décision : remplacer PrimeVue par **Nuxt UI v4** (MIT, bâti sur Tailwind v4 + Reka UI).
 > Motif : PrimeVue v5 passe sous licence commerciale.
 > Périmètre : `demo/` uniquement — la librairie `src/` n'a aucune dépendance UI.
@@ -96,8 +96,8 @@ Ordre imposé par le risque : `SliderInput` d'abord (16 usages en dépendent), l
 | # | Tâche | Statut | Notes |
 |---|---|---|---|
 | T14 | Purge finale : plus aucune occurrence de `primevue`, `@primeuix`, `primeicons`, `pt:` dans `src/` et `package.json` | `DONE` | `grep -rn "primevue\|primeuix\|primeicons\|pt:" src/ package.json` doit rendre vide. |
-| T15 | *(optionnel)* Activer réellement le dark mode | `SKIP` par défaut | Nuxt UI le fournit gratuitement via `colorMode: true` + `useColorMode()`. À décider explicitement — aujourd'hui c'est du mort chez PrimeVue. Ne pas l'ouvrir dans le même chantier. |
-| T16 | Vérifier le poids du bundle avec un analyzer | `BLOCKED` | **Régression confirmée — voir §8.** Mesures `npm run build` :<br>• **Avant (PrimeVue)** : JS 544,0 kB (**120,8 kB gzip**) + CSS 18,7 kB (4,5 kB gzip) = **125,3 kB gzip**<br>• **Après (Nuxt UI)** : JS 569,9 kB (**168,9 kB gzip**) + CSS 197,2 kB (25,8 kB gzip) = **194,6 kB gzip**<br>**+69,3 kB gzip, soit +55 %.** Le CSS passe de 18,7 à 197,2 kB brut (×10,5) : Tailwind ne purge pas la feuille de Nuxt UI. C'est exactement le risque anticipé (issue nuxt/ui#3376). **Ne pas merger sans avoir tranché ce point** — pistes en §8. |
+| T15 | *(optionnel)* Activer réellement le dark mode | `SKIP` | Nuxt UI le fournit gratuitement via `colorMode: true` + `useColorMode()`. À décider explicitement — aujourd'hui c'est du mort chez PrimeVue. Ne pas l'ouvrir dans le même chantier. |
+| T16 | Vérifier le poids du bundle avec un analyzer | `DONE` | **Régression mesurée et acceptée — voir §6.1.** Mesures `npm run build` :<br>• **Avant (PrimeVue)** : JS 544,0 kB (**120,8 kB gzip**) + CSS 18,7 kB (4,5 kB gzip) = **125,3 kB gzip**<br>• **Après (Nuxt UI)** : JS 569,9 kB (**168,9 kB gzip**) + CSS 197,2 kB (25,8 kB gzip) = **194,6 kB gzip**<br>**+69,3 kB gzip, soit +55 %.** Le CSS passe de 18,7 à 197,2 kB brut (×10,5) : Tailwind ne purge pas la feuille de Nuxt UI. C'est exactement le risque anticipé (issue nuxt/ui#3376). Point tranché le 2026-08-17 : **accepté** au regard du bénéfice de licence. Pistes d'optimisation ultérieures en §6.1. |
 | T17 | `npm run check:demo` vert (typecheck + oxlint + build) | `DONE` | |
 | T18 | Passe visuelle manuelle sur les 5 onglets, le drawer, le toast, la carte et le graphe | `DONE` | Vérifier surtout que Leaflet et Chart.js (`custom.css`, `.leaflet-map`, `.compass`) ne sont pas régressés par le changement de couche CSS. |
 
@@ -130,13 +130,17 @@ Ordre imposé par le risque : `SliderInput` d'abord (16 usages en dépendent), l
 
 ---
 
-## 6. Points ouverts après la première passe
+## 6. Points tranchés
 
 La migration fonctionnelle est terminée (T1–T14 faits, typecheck + lint + build verts, passe
-visuelle OK sur les 5 onglets, le drawer, la carte et le graphe). Trois points restent à trancher
-**avant merge**.
+visuelle OK sur les 5 onglets, le drawer, la carte et le graphe).
 
-### 6.1 Poids du bundle — le seul vrai blocage
+> **Décision (2026-08-17) : les quatre points ci-dessous sont acceptés en l'état.** La migration
+> est validée pour merge. Le surpoids de bundle (§6.1) est assumé au regard du bénéfice de
+> licence ; les pistes d'optimisation restent notées comme travail ultérieur facultatif, pas
+> comme condition de merge.
+
+### 6.1 Poids du bundle — accepté
 
 | | JS gzip | CSS gzip | **Total gzip** |
 |---|---|---|---|
@@ -145,7 +149,8 @@ visuelle OK sur les 5 onglets, le drawer, la carte et le graphe). Trois points r
 | Delta | +48,1 kB | +21,3 kB | **+69,3 kB (+55 %)** |
 
 Le CSS brut passe de 18,7 kB à 197,2 kB (×10,5) : la feuille de Nuxt UI n'est pas purgée par
-Tailwind. Pistes, par ordre de rendement attendu :
+Tailwind. **Accepté en l'état pour une démo.** Pistes d'optimisation ultérieures, par ordre de
+rendement attendu (facultatives, hors périmètre de cette PR) :
 1. Vérifier la configuration `@source` de Tailwind v4 vis-à-vis de `node_modules/@nuxt/ui`.
 2. Restreindre les composants générés par le plugin `ui()` à ceux réellement utilisés.
 3. Analyser `nuxtui` avec un bundle analyzer : confirmer si Tiptap / Embla / Tanstack entrent
