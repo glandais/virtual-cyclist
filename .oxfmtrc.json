@@ -28,6 +28,8 @@
         "*.min.js",
         "package-lock.json",
         "CHANGELOG.md",
+        "demo/auto-imports.d.ts",
+        "demo/components.d.ts",
         ".claude/",
         ".serena/"
     ]
