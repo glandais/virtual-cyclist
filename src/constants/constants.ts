@@ -13,9 +13,12 @@
 
 /**
  * Standard gravitational acceleration (m/s²)
- * Source: International System of Units (SI)
+ * Source: International System of Units (SI), standard gravity g₀ = 9.80665 m/s²
+ *
+ * Historically 9.8 in this codebase; using the exact SI value removes a 0.07%
+ * systematic bias on both the gravity and rolling-resistance terms.
  */
-export const G = 9.8;
+export const G = 9.80665;
 
 /**
  * Minimal speed threshold = 2km/h (m/s)
@@ -72,10 +75,14 @@ export const DEFAULT_INERTIA_REAR = 0.07;
 
 /**
  * Standard road bike wheel radius (meters)
- * Source: 700c wheels with 25mm tire (~1.4m diameter total)
- * Standard wheel sizing for road bikes
+ * Source: 700c wheel with a 25mm tire — ~0.7m diameter, so a 0.35m radius.
+ * Martin et al. (1998) use r = 0.311m for a 20mm tire.
+ *
+ * Was 0.7 until the research review: that is the *diameter*. The bug understated
+ * the rotating mass in `getEquivalentMass()` (I/r²) by ~0.73kg and made
+ * `getWheelCircumference()` wrong by a factor of 2.
  */
-export const DEFAULT_WHEEL_RADIUS = 0.7;
+export const DEFAULT_WHEEL_RADIUS = 0.35;
 
 /**
  * Drivetrain efficiency (dimensionless, 0-1)
@@ -108,17 +115,25 @@ export const DEFAULT_CYCLIST_POWER_W = 280;
 
 /**
  * Maximum braking deceleration coefficient (g units)
- * Source: Academic research shows bicycle braking limit ~0.67g
+ * Source: the pitch-over (stoppie) ceiling is 0.56-0.63g, but measured riders
+ * actually use 0.41 ± 0.07g in combined braking — ~60-65% of the limit.
  * Reference: SAE Technical Paper 2020-01-0876 "Bicycle Braking Performance Testing"
- * Safety margin applied: 0.6g provides realistic but safe limit
+ *
+ * 0.4 models a *believable* rider. 0.6 (the old default) is the physical ceiling
+ * and is better set explicitly as an "expert descender" configuration.
  */
-export const DEFAULT_MAX_BRAKE_G = 0.6;
+export const DEFAULT_MAX_BRAKE_G = 0.4;
 
 /**
  * Maximum lean angle for cornering (degrees)
  * Source: Practical limit on crowned roads from cycling physics research
  * Reference: Brandt's analysis of bicycle cornering dynamics
- * Typical safe limit for road cycling with safety margin
+ *
+ * Cornering uses `v_max = √(g · R · tan θ)`, which is `v_max = √(µ · g · R)` with
+ * **µ ≡ tan θ** — so this parameter *is* a tyre friction coefficient. At 35°,
+ * µ = 0.70. Zignoli (2020) measures µ = 0.90 dry (42.0°) and µ = 0.36 wet (19.8°)
+ * for road tyres, so the default sits at 78% of dry grip: a confident rider
+ * leaving margin, consistent with real descenders riding below the optimal line.
  */
 export const DEFAULT_MAX_LEAN_ANGLE_DEG = 35;
 

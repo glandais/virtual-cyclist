@@ -112,7 +112,7 @@ Where:
 
 - `v_0`: Maximum speed at previous point
 - `v_f`: Required speed at current point
-- `a`: Maximum braking deceleration (default: 0.6g = 5.88 m/s²)
+- `a`: Maximum braking deceleration (default: 0.4g = 3.92 m/s²)
 - `d`: Distance between points
 
 If the cyclist cannot brake from `v_0` to `v_f` in distance `d`, reduce `v_0`.
@@ -331,7 +331,7 @@ $$P_{grav} = -m \cdot g \cdot v \cdot \sin(\arctan(grade))$$
 **Variables**:
 
 - $m$: Total system mass = cyclist + bike (kg, default: 80)
-- $g$: Gravitational acceleration (m/s², constant: 9.8)
+- $g$: Gravitational acceleration (m/s², constant: 9.80665)
 - $v$: Velocity (m/s)
 - $grade$: Road gradient (dimensionless, e.g., 0.05 for 5%)
 
@@ -443,9 +443,9 @@ $$v_{max} = \sqrt{g \cdot r \cdot \tan(\theta_{max})}$$
 
 **Variables**:
 
-- $g$: Gravitational acceleration (m/s², constant: 9.8)
+- $g$: Gravitational acceleration (m/s², constant: 9.80665)
 - $r$: Turning radius (m, calculated from GPS geometry + 2m safety margin)
-- $\theta_{max}$: Maximum lean angle (radians, default: 35° = 0.611 rad)
+- $\theta_{max}$: Maximum lean angle (radians, default: 35° = 0.611 rad, i.e. µ = tan θ = 0.70)
 
 **Derivation**: From circular motion physics, lateral acceleration $a = v^2 / r$. Maximum lateral force without losing traction: $F = m \cdot g \cdot \tan(\theta)$.
 
@@ -470,22 +470,22 @@ $$v_0 = \sqrt{v_f^2 + 2 \cdot a \cdot d}$$
 
 - $v_0$: Maximum allowable speed at previous point (m/s)
 - $v_f$: Required speed at current point (m/s, from cornering limit)
-- $a$: Maximum braking deceleration (m/s², default: 5.88 = 0.6g)
+- $a$: Maximum braking deceleration (m/s², default: 3.92 = 0.4g)
 - $d$: Distance between points (m)
 
 **Derivation**: From kinematic equation $v_f^2 = v_0^2 + 2ad$ with $a$ negative (braking).
 
 **Physical Meaning**: Ensures cyclist can brake safely from any point to the next required speed. Prevents entering turns too fast.
 
-**Example Values** (0.6g braking = 5.88 m/s²):
+**Example Values** (0.4g braking = 3.92 m/s²):
 
 | Distance | Final Speed | Max Initial Speed |
 | -------- | ----------- | ----------------- |
-| 10 m     | 20 km/h     | 28.8 km/h         |
-| 50 m     | 20 km/h     | 50.4 km/h         |
-| 100 m    | 20 km/h     | 69.5 km/h         |
+| 10 m     | 20 km/h     | 26.0 km/h         |
+| 50 m     | 20 km/h     | 41.2 km/h         |
+| 100 m    | 20 km/h     | 55.4 km/h         |
 
-**Safety Note**: 0.6g is conservative limit ensuring safe braking on dry pavement with quality brakes. Professional braking can exceed 0.8g.
+**Safety Note**: 0.4g is what riders _actually_ use — measured combined braking is 0.41 ± 0.07g. The physical ceiling is the pitch-over (stoppie) limit at 0.56-0.63g; set `maxBrakeG` to 0.6 to model an expert descender.
 
 ### 8. Equivalent Mass (Rotational Inertia)
 
@@ -499,20 +499,20 @@ $$I_{total} = I_{front} + I_{rear}$$
 - $m$: Total system mass = cyclist + bike (kg, default: 80)
 - $I_{front}$: Front wheel rotational inertia (kg·m², default: 0.05)
 - $I_{rear}$: Rear wheel rotational inertia (kg·m², default: 0.07)
-- $r$: Wheel radius (m, default: 0.7 for 700c wheels)
+- $r$: Wheel radius (m, default: 0.35 for 700c wheels — 0.7 m is the _diameter_)
 
 **Physical Meaning**: Accelerating wheels requires energy for both linear and rotational motion. The term $I/r^2$ converts rotational inertia to equivalent linear mass.
 
 **Example Calculation**:
 
 ```
-M_eq = 80 + (0.05 + 0.07) / 0.7²
-     = 80 + 0.12 / 0.49
-     = 80 + 0.245
-     = 80.245 kg
+M_eq = 80 + (0.05 + 0.07) / 0.35²
+     = 80 + 0.12 / 0.1225
+     = 80 + 0.980
+     = 80.980 kg
 ```
 
-**Impact**: Increases effective mass by ~0.3%, making acceleration slightly harder. More significant with heavier wheels.
+**Impact**: Increases effective mass by ~1.2%, making acceleration slightly harder. More significant with heavier wheels.
 
 ### 9. Energy Integration (Power to Speed)
 
@@ -558,8 +558,8 @@ Default values represent a recreational/competitive cyclist (intermediate to adv
 | Drag Coefficient   | `cd`          | 0.7           | dimensionless | Aerodynamic drag coefficient       |
 | Frontal Area       | `a`           | 0.5           | m²            | Projected frontal area             |
 | CdA                | `cd × a`      | 0.35          | m²            | Combined aerodynamic parameter     |
-| Max Brake          | `maxBrakeG`   | 0.6           | g             | Maximum braking deceleration       |
-| Max Brake (SI)     | `maxBrakeMS2` | 5.88          | m/s²          | Braking limit in standard units    |
+| Max Brake          | `maxBrakeG`   | 0.4           | g             | Maximum braking deceleration       |
+| Max Brake (SI)     | `maxBrakeMS2` | 3.92          | m/s²          | Braking limit in standard units    |
 | Max Lean Angle     | `maxAngleDeg` | 35            | degrees       | Maximum cornering lean angle       |
 | Max Lean (radians) | `maxAngleRad` | 0.611         | rad           | Lean angle in radians              |
 | Max Speed          | `maxSpeedKmH` | 100           | km/h          | Absolute maximum speed             |
@@ -583,8 +583,8 @@ Default values represent a modern road bike with high-performance components.
 | Front Wheel Inertia   | `inertiaFront`               | 0.05          | kg·m²         | Rotational inertia of front wheel   |
 | Rear Wheel Inertia    | `inertiaRear`                | 0.07          | kg·m²         | Rotational inertia of rear wheel    |
 | Total Inertia         | `inertiaFront + inertiaRear` | 0.12          | kg·m²         | Combined wheel inertia              |
-| Wheel Radius          | `wheelRadius`                | 0.7           | m             | Effective rolling radius (700c)     |
-| Wheel Diameter        | `2 × wheelRadius`            | 1.4           | m             | Wheel diameter                      |
+| Wheel Radius          | `wheelRadius`                | 0.35          | m             | Effective rolling radius (700c)     |
+| Wheel Diameter        | `2 × wheelRadius`            | 0.7           | m             | Wheel diameter                      |
 | Drivetrain Efficiency | `efficiency`                 | 0.976         | dimensionless | Power transmission efficiency       |
 | Power Loss            | `1 - efficiency`             | 0.024         | dimensionless | Drivetrain loss factor (2.4%)       |
 
@@ -611,7 +611,7 @@ Default values represent a modern road bike with high-performance components.
 | Temperature             | `T`      | 15            | °C      | Ambient temperature (affects ρ)    |
 | Wind Speed              | `w`      | 0-20          | m/s     | Wind velocity magnitude            |
 | Wind Direction          | `θ_wind` | 0-360         | degrees | Wind source direction (0° = North) |
-| Gravity                 | `g`      | 9.8           | m/s²    | Gravitational acceleration         |
+| Gravity                 | `g`      | 9.80665       | m/s²    | Gravitational acceleration         |
 
 **Temperature Impact on Density**:
 
@@ -959,6 +959,10 @@ function toEcef(point, zExaggeration): Vector3D {
 ---
 
 ## Examples
+
+> **Note**: the arithmetic below is worked with `g ≈ 9.8` for readability. The code uses the
+> exact SI value `g = 9.80665`, a 0.07 % difference that does not change any figure shown here
+> at the precision quoted.
 
 ### Example 1: Flat Terrain
 

@@ -96,7 +96,7 @@ describe('Bike', () => {
         test('should handle standard 700c wheel', () => {
             const bike = new Bike(0.004, 0.08, 0.12, DEFAULT_WHEEL_RADIUS, 0.976);
 
-            expect(bike.getWheelDiameter()).toBe(1.4);
+            expect(bike.getWheelDiameter()).toBe(0.7);
         });
     });
 
@@ -116,7 +116,7 @@ describe('Bike', () => {
         test('should calculate for standard 700c wheel', () => {
             const bike = Bike.getDefault();
 
-            expect(bike.getWheelCircumference()).toBeCloseTo(4.398229715, 6);
+            expect(bike.getWheelCircumference()).toBeCloseTo(2.199114858, 6);
         });
     });
 
@@ -246,7 +246,7 @@ describe('Bike', () => {
             const result = bike.toString();
 
             expect(result).toContain('Bike {');
-            expect(result).toContain('wheelSize: 1400mm');
+            expect(result).toContain('wheelSize: 700mm');
             expect(result).toContain('crr: 0.0040');
             expect(result).toContain('totalInertia:');
             expect(result).toContain('efficiency: 97.6%');

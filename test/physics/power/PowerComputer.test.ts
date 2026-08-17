@@ -71,10 +71,10 @@ describe('PowerComputer', () => {
             const equivalentMass = computer.callGetEquivalentMass(course);
 
             // Default: 80kg + rotational inertia
-            // Expected: ~80.24kg (0.12 kg⋅m² / (0.7m)²)
+            // Expected: ~80.98kg (0.12 kg⋅m² / (0.35m)²)
             expect(equivalentMass).toBeGreaterThan(80);
             expect(equivalentMass).toBeLessThan(81);
-            expect(equivalentMass).toBeCloseTo(80.244, 2);
+            expect(equivalentMass).toBeCloseTo(80.98, 2);
         });
 
         test('should handle custom inertia', () => {

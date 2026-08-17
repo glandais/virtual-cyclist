@@ -135,7 +135,7 @@ export class Cyclist {
      * for use in physics calculations.
      *
      * Formula: a_max = maxBrakeG × g
-     * Where g = 9.8 m/s² (standard gravitational acceleration)
+     * Where g = 9.80665 m/s² (standard gravitational acceleration)
      *
      * @returns Maximum braking deceleration (m/s²)
      */

@@ -18,7 +18,7 @@ export interface BikeProperties {
  * Default configuration represents:
  * - Modern road bike with high-performance tires (Crr = 0.004)
  * - Lightweight racing wheels with typical rotational inertia
- * - Standard 700c wheel size (radius = 0.7m)
+ * - Standard 700c wheel size (radius = 0.35m)
  * - High-efficiency modern drivetrain (97.6% efficiency)
  */
 export const getDefaultBikeProperties = (): BikeProperties => {
@@ -84,7 +84,7 @@ export class Bike {
      * Default configuration represents:
      * - Modern road bike with high-performance tires (Crr = 0.004)
      * - Lightweight racing wheels with typical rotational inertia
-     * - Standard 700c wheel size (radius = 0.7m)
+     * - Standard 700c wheel size (radius = 0.35m)
      * - High-efficiency modern drivetrain (97.6% efficiency)
      *
      * @returns Bike instance with scientifically validated defaults

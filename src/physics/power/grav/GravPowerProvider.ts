@@ -14,7 +14,7 @@ import { Path } from '@/types/path/';
  *
  * Where:
  * - m: total system mass (cyclist + bike) in kg
- * - g: gravitational acceleration (9.8 m/s²)
+ * - g: gravitational acceleration (9.80665 m/s²)
  * - v: velocity in m/s
  * - grade: road gradient (dimensionless, e.g., 0.05 for 5%)
  *
