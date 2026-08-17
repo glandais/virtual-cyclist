@@ -25,6 +25,8 @@ declare module 'vue' {
     SliderInput: typeof import('./src/components/SliderInput.vue')['default']
     Toolbar: typeof import('./src/components/Toolbar.vue')['default']
     UApp: typeof import('./node_modules/@nuxt/ui/dist/runtime/components/App.vue')['default']
+    UInputNumber: typeof import('./node_modules/@nuxt/ui/dist/runtime/components/InputNumber.vue')['default']
+    USlider: typeof import('./node_modules/@nuxt/ui/dist/runtime/components/Slider.vue')['default']
     WindTab: typeof import('./src/components/WindTab.vue')['default']
   }
 }
