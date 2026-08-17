@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import Panel from 'primevue/panel';
-import Select from 'primevue/select';
 import { computed, ref, watch } from 'vue';
 import type { Path } from '@lib/types';
 
@@ -76,12 +74,12 @@ watch(
                 <label for="gpx-select" class="font-semibold text-gray-700"
                     >Choose sample GPX:</label
                 >
-                <Select
+                <USelect
                     id="gpx-select"
                     v-model="selectedGPX"
-                    :options="gpxOptions"
-                    optionLabel="label"
-                    optionValue="value"
+                    :items="gpxOptions"
+                    label-key="label"
+                    value-key="value"
                     placeholder="Select a sample file..."
                     :disabled="isProcessing"
                     @update:modelValue="onGPXChange"
@@ -103,37 +101,40 @@ watch(
                 />
             </div>
         </div>
-        <Panel
+        <UCollapsible
             v-if="fileInfo"
             id="file-info"
-            toggleable
-            :collapsed="true"
-            class="mt-4"
-            pt:root:class="bg-blue-50 border-blue-200"
-            pt:header:class="text-blue-900"
-            pt:content:class="pt-0"
+            class="mt-4 rounded-lg border border-blue-200 bg-blue-50"
         >
-            <template #header>
-                <span class="font-semibold">📄 {{ fileName }}</span>
+            <template #default="{ open }">
+                <button
+                    type="button"
+                    class="flex w-full items-center justify-between p-4 text-blue-900 cursor-pointer"
+                >
+                    <span class="font-semibold">📄 {{ fileName }}</span>
+                    <span class="text-xs">{{ open ? '▲' : '▼' }}</span>
+                </button>
             </template>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-white p-2 rounded text-center">
-                    <div class="text-sm text-gray-600">Info</div>
-                    <div class="text-base font-semibold text-blue-900">
-                        {{ fileInfo.pointCount.toLocaleString() }} pts /
-                        {{ fileInfo.distance.toFixed(1) }} km
+            <template #content>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 pt-0">
+                    <div class="bg-white p-2 rounded text-center">
+                        <div class="text-sm text-gray-600">Info</div>
+                        <div class="text-base font-semibold text-blue-900">
+                            {{ fileInfo.pointCount.toLocaleString() }} pts /
+                            {{ fileInfo.distance.toFixed(1) }} km
+                        </div>
+                    </div>
+                    <div class="bg-white p-2 rounded text-center">
+                        <div class="text-sm text-gray-600">Elevation</div>
+                        <div class="text-base font-semibold text-blue-900">
+                            +{{ fileInfo.elevationGain.toFixed(0) }}m / -{{
+                                fileInfo.elevationLoss.toFixed(0)
+                            }}m [{{ fileInfo.minElevation.toFixed(0) }},
+                            {{ fileInfo.maxElevation.toFixed(0) }}]m
+                        </div>
                     </div>
                 </div>
-                <div class="bg-white p-2 rounded text-center">
-                    <div class="text-sm text-gray-600">Elevation</div>
-                    <div class="text-base font-semibold text-blue-900">
-                        +{{ fileInfo.elevationGain.toFixed(0) }}m / -{{
-                            fileInfo.elevationLoss.toFixed(0)
-                        }}m [{{ fileInfo.minElevation.toFixed(0) }},
-                        {{ fileInfo.maxElevation.toFixed(0) }}]m
-                    </div>
-                </div>
-            </div>
-        </Panel>
+            </template>
+        </UCollapsible>
     </section>
 </template>

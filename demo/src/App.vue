@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import Toast from 'primevue/toast';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from '@nuxt/ui/composables';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import ConfigModal from '~/components/ConfigModal.vue';
 import DataChart from '~/components/DataChart.vue';
@@ -100,17 +99,17 @@ const onGPXSelect = async (url: string) => {
     try {
         await loadGPXFile(url);
         toast.add({
-            severity: 'success',
-            summary: 'GPX Loaded',
-            detail: 'GPX file loaded successfully',
-            life: 3000,
+            color: 'success',
+            title: 'GPX Loaded',
+            description: 'GPX file loaded successfully',
+            duration: 3000,
         });
     } catch (error) {
         toast.add({
-            severity: 'error',
-            summary: 'Load Failed',
-            detail: 'Failed to load GPX file: ' + (error as Error).message,
-            life: 5000,
+            color: 'error',
+            title: 'Load Failed',
+            description: 'Failed to load GPX file: ' + (error as Error).message,
+            duration: 5000,
         });
     }
 };
@@ -119,17 +118,17 @@ const onFileUpload = async (file: File) => {
     try {
         await handleFileUpload(file);
         toast.add({
-            severity: 'success',
-            summary: 'File Uploaded',
-            detail: 'File uploaded successfully',
-            life: 3000,
+            color: 'success',
+            title: 'File Uploaded',
+            description: 'File uploaded successfully',
+            duration: 3000,
         });
     } catch (error) {
         toast.add({
-            severity: 'error',
-            summary: 'Upload Failed',
-            detail: 'Failed to upload file: ' + (error as Error).message,
-            life: 5000,
+            color: 'error',
+            title: 'Upload Failed',
+            description: 'Failed to upload file: ' + (error as Error).message,
+            duration: 5000,
         });
     }
 };
@@ -138,17 +137,17 @@ const onEnhancePath = async () => {
     try {
         await enhancePath();
         toast.add({
-            severity: 'success',
-            summary: 'Path Enhanced',
-            detail: 'Path enhanced successfully',
-            life: 3000,
+            color: 'success',
+            title: 'Path Enhanced',
+            description: 'Path enhanced successfully',
+            duration: 3000,
         });
     } catch (error) {
         toast.add({
-            severity: 'error',
-            summary: 'Enhancement Failed',
-            detail: 'Failed to enhance path: ' + (error as Error).message,
-            life: 5000,
+            color: 'error',
+            title: 'Enhancement Failed',
+            description: 'Failed to enhance path: ' + (error as Error).message,
+            duration: 5000,
         });
     }
 };
@@ -160,76 +159,81 @@ onMounted(() => {
 </script>
 
 <template>
-    <Toast />
-    <div
-        id="app"
-        class="h-screen flex flex-col bg-white/95 mx-auto w-full shadow-2xl overflow-hidden"
-    >
-        <!-- Header Section -->
-        <header
-            class="bg-gradient-to-r from-slate-700 to-blue-500 text-white p-6 text-center shadow-md flex-shrink-0"
+    <UApp>
+        <div
+            id="app"
+            class="h-screen flex flex-col bg-white/95 mx-auto w-full shadow-2xl overflow-hidden"
         >
-            <h1 class="text-4xl mb-2 font-light">🚴‍♂️ Virtual Cyclist - Interactive GPX Analysis</h1>
-            <p class="text-lg opacity-90">
-                Upload GPX routes and simulate realistic cycling speeds based on terrain and rider
-                physics
-            </p>
-        </header>
+            <!-- Header Section -->
+            <header
+                class="bg-gradient-to-r from-slate-700 to-blue-500 text-white p-6 text-center shadow-md flex-shrink-0"
+            >
+                <h1 class="text-4xl mb-2 font-light">
+                    🚴‍♂️ Virtual Cyclist - Interactive GPX Analysis
+                </h1>
+                <p class="text-lg opacity-90">
+                    Upload GPX routes and simulate realistic cycling speeds based on terrain and
+                    rider physics
+                </p>
+            </header>
 
-        <!-- Toolbar -->
-        <Toolbar
-            :has-data="hasData"
-            :is-processing="isProcessing"
-            :status-text="statusText"
-            :files-section-visible="filesSectionVisible"
-            :config-visible="configVisible"
-            :fields-sidebar-visible="fieldsSidebarVisible"
-            @toggle-files-section="filesSectionVisible = !filesSectionVisible"
-            @toggle-config="configVisible = !configVisible"
-            @toggle-fields-sidebar="fieldsSidebarVisible = !fieldsSidebarVisible"
-            @enhance-path="onEnhancePath"
-            @reset-zoom="handleResetZoom"
-        />
-        <FieldsSidebar v-model="config.selectedFields" v-model:visible="fieldsSidebarVisible" />
-
-        <!-- Scrollable Content Area -->
-        <div class="flex-1 min-h-0 overflow-y-auto flex flex-col">
-            <!-- File Selection Section (Toggleable) -->
-            <FileSection
-                v-if="filesSectionVisible"
-                :file-name="fileName"
-                :current-path="currentPath"
+            <!-- Toolbar -->
+            <Toolbar
+                :has-data="hasData"
                 :is-processing="isProcessing"
-                @gpx-select="onGPXSelect"
-                @file-upload="onFileUpload"
+                :status-text="statusText"
+                :files-section-visible="filesSectionVisible"
+                :config-visible="configVisible"
+                :fields-sidebar-visible="fieldsSidebarVisible"
+                @toggle-files-section="filesSectionVisible = !filesSectionVisible"
+                @toggle-config="configVisible = !configVisible"
+                @toggle-fields-sidebar="fieldsSidebarVisible = !fieldsSidebarVisible"
+                @enhance-path="onEnhancePath"
+                @reset-zoom="handleResetZoom"
             />
+            <FieldsSidebar v-model="config.selectedFields" v-model:visible="fieldsSidebarVisible" />
 
-            <!-- Configuration Panel (Toggleable) -->
-            <ConfigModal v-if="configVisible" v-model="config" />
+            <!-- Scrollable Content Area -->
+            <div class="flex-1 min-h-0 overflow-y-auto flex flex-col">
+                <!-- File Selection Section (Toggleable) -->
+                <FileSection
+                    v-if="filesSectionVisible"
+                    :file-name="fileName"
+                    :current-path="currentPath"
+                    :is-processing="isProcessing"
+                    @gpx-select="onGPXSelect"
+                    @file-upload="onFileUpload"
+                />
 
-            <!-- Chart and Map Section with Sidebar -->
-            <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 p-4 flex-1 min-h-0">
-                <!-- Chart with Fields Sidebar -->
-                <div class="flex h-full border border-gray-200 rounded-lg overflow-hidden bg-white">
-                    <DataChart
-                        ref="dataChartRef"
+                <!-- Configuration Panel (Toggleable) -->
+                <ConfigModal v-if="configVisible" v-model="config" />
+
+                <!-- Chart and Map Section with Sidebar -->
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 p-4 flex-1 min-h-0">
+                    <!-- Chart with Fields Sidebar -->
+                    <div
+                        class="flex h-full border border-gray-200 rounded-lg overflow-hidden bg-white"
+                    >
+                        <DataChart
+                            ref="dataChartRef"
+                            :current-path="currentPath"
+                            :selected-fields="config.selectedFields"
+                            :is-processing="isProcessing"
+                            :hovered-info="hoveredInfo"
+                            @hover-change="handleHoverChange"
+                            class="flex-1"
+                        />
+                    </div>
+
+                    <!-- Map -->
+                    <MapView
+                        ref="mapViewRef"
                         :current-path="currentPath"
-                        :selected-fields="config.selectedFields"
-                        :is-processing="isProcessing"
                         :hovered-info="hoveredInfo"
                         @hover-change="handleHoverChange"
-                        class="flex-1"
                     />
                 </div>
-
-                <!-- Map -->
-                <MapView
-                    ref="mapViewRef"
-                    :current-path="currentPath"
-                    :hovered-info="hoveredInfo"
-                    @hover-change="handleHoverChange"
-                />
             </div>
         </div>
-    </div>
+    </UApp>
 </template>

@@ -1,10 +1,4 @@
 <script setup lang="ts">
-import { Drawer } from 'primevue';
-import Accordion from 'primevue/accordion';
-import AccordionContent from 'primevue/accordioncontent';
-import AccordionHeader from 'primevue/accordionheader';
-import AccordionPanel from 'primevue/accordionpanel';
-import Checkbox from 'primevue/checkbox';
 import { computed } from 'vue';
 import { fieldConfig } from '~/config/fieldConfig';
 
@@ -23,6 +17,18 @@ const visibleModel = computed({
     set: (value: boolean) => emit('update:visible', value),
 });
 
+// Nuxt UI drives the accordion from an items array with one named slot per
+// entry, instead of PrimeVue's nested AccordionPanel/Header/Content elements.
+const categoryKeys = Object.keys(fieldConfig);
+
+const accordionItems = computed(() =>
+    categoryKeys.map(key => ({
+        label: fieldConfig[key as keyof typeof fieldConfig]!.name,
+        value: key,
+        slot: key,
+    }))
+);
+
 const toggleField = (fieldKey: string) => {
     const newSet = new Set(props.modelValue);
     if (newSet.has(fieldKey)) {
@@ -35,31 +41,36 @@ const toggleField = (fieldKey: string) => {
 </script>
 
 <template>
-    <Drawer
-        v-model:visible="visibleModel"
-        header="📊 Chart Fields"
-        position="right"
-        class="!w-48/100"
+    <!--
+        `modal: false` keeps this a side panel rather than a blocking dialog: it is open by
+        default and the chart behind it must stay usable, which PrimeVue's Drawer allowed.
+    -->
+    <UDrawer
+        v-model:open="visibleModel"
+        title="📊 Chart Fields"
+        direction="right"
+        :handle="false"
+        :modal="false"
+        :ui="{ content: 'w-48/100' }"
     >
-        <Accordion :value="Object.keys(fieldConfig)" multiple class="border-none">
-            <AccordionPanel
-                v-for="(category, categoryKey) in fieldConfig"
-                :key="categoryKey"
-                :value="categoryKey"
+        <template #body>
+            <UAccordion
+                type="multiple"
+                :items="accordionItems"
+                :default-value="categoryKeys"
+                :unmount-on-hide="false"
             >
-                <AccordionHeader class="text-sm font-semibold">
-                    {{ category.name }}
-                </AccordionHeader>
-                <AccordionContent>
+                <template v-for="categoryKey in categoryKeys" #[categoryKey] :key="categoryKey">
                     <div class="flex flex-col gap-2 p-2">
                         <div
-                            v-for="(field, fieldKey) in category.fields"
+                            v-for="(field, fieldKey) in fieldConfig[
+                                categoryKey as keyof typeof fieldConfig
+                            ]!.fields"
                             :key="fieldKey"
                             class="flex items-start gap-2 p-1 rounded hover:bg-gray-50"
                         >
-                            <Checkbox
-                                :inputId="`sidebar-field-${fieldKey}`"
-                                :binary="true"
+                            <UCheckbox
+                                :id="`sidebar-field-${fieldKey}`"
                                 :modelValue="modelValue.has(fieldKey)"
                                 @update:modelValue="toggleField(fieldKey)"
                                 class="mt-0.5"
@@ -73,8 +84,8 @@ const toggleField = (fieldKey: string) => {
                             </label>
                         </div>
                     </div>
-                </AccordionContent>
-            </AccordionPanel>
-        </Accordion>
-    </Drawer>
+                </template>
+            </UAccordion>
+        </template>
+    </UDrawer>
 </template>

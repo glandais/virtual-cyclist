@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import InputNumber from 'primevue/inputnumber';
-import Slider from 'primevue/slider';
 import { computed } from 'vue';
 
 const props = defineProps<{
@@ -40,6 +38,14 @@ const fractionDigits = computed(() => {
     }
     return 4;
 });
+
+// Nuxt UI drives the number field through Intl.NumberFormat instead of the
+// minFractionDigits / maxFractionDigits / useGrouping props PrimeVue exposed.
+const formatOptions = computed<Intl.NumberFormatOptions>(() => ({
+    minimumFractionDigits: fractionDigits.value,
+    maximumFractionDigits: fractionDigits.value,
+    useGrouping: false,
+}));
 </script>
 
 <template>
@@ -50,20 +56,23 @@ const fractionDigits = computed(() => {
         </label>
 
         <div class="flex items-center gap-3 mb-2">
-            <Slider v-model="value" :min="min" :max="max" :step="step || 1" class="flex-1" />
+            <USlider v-model="value" :min="min" :max="max" :step="step || 1" class="flex-1" />
             <div class="flex items-center gap-2 min-w-[150px] justify-end">
-                <InputNumber
+                <UInputNumber
                     v-model="value"
                     :min="min"
                     :max="max"
                     :step="step || 1"
-                    :minFractionDigits="fractionDigits"
-                    :maxFractionDigits="fractionDigits"
-                    :useGrouping="false"
+                    :format-options="formatOptions"
                     locale="en-US"
-                    pt:input:class="text-right w-full"
-                    :suffix="unit ? ` ${unit}` : undefined"
+                    :ui="{ base: 'text-right w-full' }"
                 />
+                <!--
+                    Rendered next to the field rather than as an in-input suffix: Intl only
+                    accepts its own sanctioned unit list, which covers none of the units used
+                    here (W, m/s, kg⋅m², G, km/h...).
+                -->
+                <span v-if="unit" class="text-gray-600 text-sm whitespace-nowrap">{{ unit }}</span>
             </div>
         </div>
 

@@ -1,8 +1,8 @@
 /* Tailwind CSS v4 */
 @import 'tailwindcss';
 
-/* PrimeIcons */
-@import 'primeicons/primeicons.css';
+/* Nuxt UI (must come after Tailwind) */
+@import '@nuxt/ui';
 
 /* Custom application CSS */
 @import './custom.css';

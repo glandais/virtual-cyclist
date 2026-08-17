@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { EnhanceOptions } from '@lib/types';
-import Checkbox from 'primevue/checkbox';
 import SliderInput from './SliderInput.vue';
 
 const props = defineProps<{
@@ -44,8 +43,7 @@ const updateSimplifyField = <K extends keyof NonNullable<EnhanceOptions['simplif
                 <label
                     class="flex items-start gap-3 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 hover:border-blue-500 transition-all"
                 >
-                    <Checkbox
-                        :binary="true"
+                    <UCheckbox
                         :modelValue="modelValue.fixElevation ?? true"
                         @update:modelValue="updateField('fixElevation', !modelValue.fixElevation)"
                         class="mt-1"
@@ -61,8 +59,7 @@ const updateSimplifyField = <K extends keyof NonNullable<EnhanceOptions['simplif
                 <label
                     class="flex items-start gap-3 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 hover:border-blue-500 transition-all"
                 >
-                    <Checkbox
-                        :binary="true"
+                    <UCheckbox
                         :modelValue="modelValue.computeMaxSpeeds ?? true"
                         @update:modelValue="
                             updateField('computeMaxSpeeds', !modelValue.computeMaxSpeeds)
@@ -81,8 +78,7 @@ const updateSimplifyField = <K extends keyof NonNullable<EnhanceOptions['simplif
                 <label
                     class="flex items-start gap-3 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 hover:border-blue-500 transition-all"
                 >
-                    <Checkbox
-                        :binary="true"
+                    <UCheckbox
                         :modelValue="modelValue.virtualizeTrack ?? true"
                         @update:modelValue="
                             updateField('virtualizeTrack', !modelValue.virtualizeTrack)
@@ -101,8 +97,7 @@ const updateSimplifyField = <K extends keyof NonNullable<EnhanceOptions['simplif
                 <label
                     class="flex items-start gap-3 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 hover:border-blue-500 transition-all"
                 >
-                    <Checkbox
-                        :binary="true"
+                    <UCheckbox
                         :modelValue="modelValue.computeOnePointPerSecond ?? true"
                         @update:modelValue="
                             updateField(
@@ -129,8 +124,7 @@ const updateSimplifyField = <K extends keyof NonNullable<EnhanceOptions['simplif
             <label
                 class="flex items-start gap-3 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 hover:border-blue-500 transition-all mb-6"
             >
-                <Checkbox
-                    :binary="true"
+                <UCheckbox
                     :modelValue="modelValue.simplifyPath?.enable ?? true"
                     @update:modelValue="
                         updateSimplifyField('enable', !(modelValue.simplifyPath?.enable ?? true))
