@@ -22,15 +22,15 @@
         "vue-router": "^5.2.0"
     },
     "devDependencies": {
-        "@iconify-json/lucide": "^1.2.123",
+        "@iconify-json/lucide": "^1.2.124",
         "@tailwindcss/vite": "^4.3.3",
         "@vitejs/plugin-vue": "^6.0.8",
         "autoprefixer": "^10.5.4",
-        "oxlint": "^1.78.0",
+        "oxlint": "^1.79.0",
         "postcss": "^8.5.26",
         "tailwindcss": "^4.2.4",
         "typescript": "^6.0.3",
-        "vite": "^8.2.1",
-        "vue-tsc": "^3.3.9"
+        "vite": "^8.2.2",
+        "vue-tsc": "^3.3.10"
     }
 }
