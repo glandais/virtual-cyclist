@@ -197,8 +197,8 @@ Enhancer.getDefaultCourse(path: Path): CoursePhysics
 ### Module Path Aliases
 
 ```typescript
-import { something } from '@/types/path'; // src/types/path
 import { test } from '#/mocks/mock'; // test/mocks/mock
+import { something } from '@/types/path'; // src/types/path
 ```
 
 ### Build System
