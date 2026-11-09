@@ -18,19 +18,19 @@
         "chart.js": "^4.6.1",
         "chartjs-plugin-zoom": "^2.2.0",
         "leaflet": "^1.9.4",
-        "vue": "^3.5.44",
+        "vue": "^3.5.45",
         "vue-router": "^5.4.0"
     },
     "devDependencies": {
-        "@iconify-json/lucide": "^1.2.149",
-        "@tailwindcss/vite": "^4.3.3",
+        "@iconify-json/lucide": "^1.2.151",
+        "@tailwindcss/vite": "^4.3.4",
         "@vitejs/plugin-vue": "^6.0.10",
         "autoprefixer": "^10.6.2",
-        "oxlint": "^1.90.0",
+        "oxlint": "^1.91.0",
         "postcss": "^8.5.32",
-        "tailwindcss": "^4.2.4",
+        "tailwindcss": "^4.3.4",
         "typescript": "^7.0.2",
-        "vite": "^8.3.5",
+        "vite": "^8.3.6",
         "vue-tsc": "^3.3.14"
     }
 }
