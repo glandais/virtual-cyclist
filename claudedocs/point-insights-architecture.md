@@ -675,8 +675,8 @@ export function usePointSelection(path: Ref<Path | null>) {
 <script setup lang="ts">
 import { computed } from 'vue';
 import { Path } from '@/types/path';
-import CategorySection from './CategorySection.vue';
 import { getFieldCategories } from '@/utils/fieldInsights';
+import CategorySection from './CategorySection.vue';
 
 const props = defineProps<{
     path: Path | null;
@@ -903,11 +903,11 @@ const toggle = () => {
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
 import katex from 'katex';
-import type { FieldInsight } from '@/utils/fieldInsights';
-import ComputationSteps from './ComputationSteps.vue';
+import { ref, computed } from 'vue';
 import AlgorithmSteps from './AlgorithmSteps.vue';
+import ComputationSteps from './ComputationSteps.vue';
+import type { FieldInsight } from '@/utils/fieldInsights';
 
 const props = defineProps<{
     field: FieldInsight;
