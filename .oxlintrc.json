@@ -138,7 +138,7 @@
                                 "message": "Importing from @ is not allowed. Use specific module paths like @/types/ or @/utils/ instead."
                             },
                             {
-                                "regex": "^@/(?!.*/$)",
+                                "regex": "^@/(.*[^/])?$",
                                 "message": "Imports from @/ must end with a trailing slash (e.g., @/module/ not @/module)"
                             },
                             {
@@ -193,7 +193,7 @@
                     {
                         "patterns": [
                             {
-                                "regex": "^(?!\\./[a-zA-Z0-9]+$.*)",
+                                "regex": "^([^.]|\\.$|\\.[^/]|\\./$|\\./.*[^a-zA-Z0-9])",
                                 "message": "index.ts files can only import from sibling files using ./[a-zA-Z]+ pattern"
                             }
                         ]
