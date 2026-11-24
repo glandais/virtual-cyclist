@@ -1,3 +1,9 @@
+## [1.3.2](https://github.com/glandais/virtual-cyclist/compare/v1.3.1...v1.3.2) (2026-11-24)
+
+### Bug Fixes
+
+* **demo:** pin typescript to 6.x for vue-tsc compatibility ([#180](https://github.com/glandais/virtual-cyclist/issues/180)) ([1670c02](https://github.com/glandais/virtual-cyclist/commit/1670c02466579e2c18ee0054adc1b63104546d95))
+
 ## [1.3.1](https://github.com/glandais/virtual-cyclist/compare/v1.3.0...v1.3.1) (2026-08-17)
 
 
