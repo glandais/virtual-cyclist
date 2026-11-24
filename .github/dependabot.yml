@@ -44,6 +44,10 @@ updates:
       include: "scope"
     labels:
       - "dependencies"
+    ignore:
+      # vue-tsc (@volar/typescript) requires typescript <7
+      - dependency-name: "typescript"
+        versions: [">=7"]
     groups:
       vitest:
         patterns:
